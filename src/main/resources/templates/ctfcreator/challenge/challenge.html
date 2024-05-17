@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Homepage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script th:src="@{/webjars/htmx.org/1.9.12/dist/htmx.min.js}" defer></script>
+</head>
+<body>
+    <div>
+        <div class="challenge-left">
+            <label for="challenge-name">Nazwa zadania</label>
+            <input id="challenge-name" name="challengeName" type="text">
+            <label for="challenge-description">Opis zadania</label>
+            <input id="challenge-description" name="challengeDescription" type="text">
+        </div>
+        <div class="challenge-middle">
+            <p>Typ zadania</p>
+            <ul class="challenge-type-container">
+                <li>Web-Security</li>
+            </ul>
+            <p>Link do zadania</p>
+            <p class="hello-world">HEJJJ</p>
+            <p
+                    th:hx-get="@{/ctf-creator/challenge/github-link/question}"
+                    hx-trigger="mouseover"
+                    hx-target=".hello-world"
+                    hx-swap="innerHTML"
+            >
+                ????????
+            </p>
+            <form
+                    th:hx-post="@{/ctf-creator/challenge/github-link}"
+                    hx-swap="none"
+            >
+                <label for="github-link">Link do zadania</label>
+                <input id="github-link" name="githubLink" type="text">
+                <button type="submit">Zatwierdź</button>
+            </form>
+        </div>
+        <div class="challenge-right">
+            <label for="challenge-teams">Drużyny</label>
+            <input id="challenge-teams" name="teams" type="checkbox">
+            <label for="flag-generation-method">Generowanie Flag</label>
+            <input id="flag-generation-method" name="flagGenerationMethod">
+            <label for="max-points-for-challenge">Maxymalna liczba punktów za zadanie</label>
+            <input id="max-points-for-challenge" name="maxPointsForChallenge" type="text">
+            <label for="func-calculating-points-for-challenge">Funkcja do obliczania kolejnych punktów dla następnych osób</label>
+            <input id="func-calculating-points-for-challenge" name="maxPointsForChallenge" type="text">
+            <label for="min-points-for-challenge">Minimalna liczba punktów za zadanie</label>
+            <input id="min-points-for-challenge" name="maxPointsForChallenge" type="text">
+        </div>
+        <button type="submit">Utwórz</button>
+    </div>
+</body>
+</html>

@@ -20,9 +20,13 @@ ext {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.modulith:spring-modulith-starter-core'
+
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:3.3.0'
+	implementation('org.webjars.npm:htmx.org:1.9.12')
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
