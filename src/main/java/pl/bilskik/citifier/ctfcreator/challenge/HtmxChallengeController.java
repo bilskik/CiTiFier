@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/ctf-creator/challenge")
-public class ChallengeHtmxController {
+public class HtmxChallengeController {
 
     @HxRequest
     @GetMapping("/load-button")
@@ -26,5 +26,11 @@ public class ChallengeHtmxController {
     @ResponseBody
     public void loadGithubLink(@RequestParam String githubLink) {
         //call github and build app
+    }
+
+    @HxRequest
+    @PostMapping
+    @ResponseBody
+    public void submitChallenge(ChallengeDTO challengeDTO) {
     }
 }

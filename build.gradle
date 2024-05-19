@@ -27,6 +27,9 @@ dependencies {
 	implementation 'io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:3.3.0'
 	implementation('org.webjars.npm:htmx.org:1.9.12')
 
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
