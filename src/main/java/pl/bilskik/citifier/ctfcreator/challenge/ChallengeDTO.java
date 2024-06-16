@@ -1,6 +1,5 @@
 package pl.bilskik.citifier.ctfcreator.challenge;
 
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
