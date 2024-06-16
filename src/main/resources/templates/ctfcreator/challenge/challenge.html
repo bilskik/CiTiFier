@@ -10,9 +10,23 @@
     <div>
         <div class="challenge-left">
             <label for="challenge-name">Nazwa zadania</label>
-            <input id="challenge-name" name="challengeName" type="text" class="challenge-input">
+            <input
+                    id="challenge-name"
+                    name="name"
+                    type="text"
+                    class="challenge"
+                    th:hx-post="@{/ctf-creator/challenge/challenge-name}"
+                    hx-trigger="blur"
+            >
             <label for="challenge-description">Opis zadania</label>
-            <input id="challenge-description" name="challengeDescription" type="text" class="challenge-input">
+            <input
+                    id="challenge-description"
+                    name="description"
+                    type="text"
+                    class="challenge"
+                    th:hx-post="@{/ctf-creator/challenge/challenge-description}"
+                    hx-trigger="blur"
+            >
         </div>
         <div class="challenge-middle">
             <p>Typ zadania</p>
@@ -34,25 +48,68 @@
                     hx-swap="none"
             >
                 <label for="github-link">Link do zadania</label>
-                <input id="github-link" name="githubLink" type="text" class="challenge-input">
+                <input id="github-link" name="githubLink" type="text" class="challenge">
                 <button type="submit">Zatwierdź</button>
             </form>
+            <p>Dostępność zadania</p>
+            <label for="challenge-start">Od</label>
+            <input
+                    id="challenge-start"
+                    name="start"
+                    type="datetime-local"
+                    class="challenge challenge-date"
+            >
+            <label for="challenge-finish">Do</label>
+            <input
+                    id="challenge-finish"
+                    name="finish"
+                    type="datetime-local"
+                    class="challenge challenge-date"
+                    th:hx-post="@{/ctf-creator/challenge/challenge-finish}"
+                    hx-include=".challenge-date"
+                    hx-trigger="blur"
+
+            >
+            <label for="challenge-share-task-details-at-start">Udostępnij treść zadania o godzinie rozpoczęcia zadania</label>
+            <input
+                    id="challenge-share-task-details-at-start"
+                    name="shareTaskDetailsAtStart"
+                    type="checkbox"
+                    class="challenge"
+            >
         </div>
         <div class="challenge-right">
             <label for="challenge-teams">Drużyny</label>
-            <input id="challenge-teams" name="isTeamsEnabled" type="checkbox" class="challenge-input">
-            <label for="flag-generation-method">Generowanie Flag</label>
-            <input id="flag-generation-method" name="flagGenerationMethod" class="challenge-input">
-            <label for="max-points-for-challenge">Maxymalna liczba punktów za zadanie</label>
-            <input id="max-points-for-challenge" name="maxPointsForChallenge" type="text" class="challenge-input">
-            <label for="func-calculating-points-for-challenge">Funkcja do obliczania kolejnych punktów dla następnych osób</label>
-            <input id="func-calculating-points-for-challenge" name="pointCalculationFunction" type="text" class="challenge-input">
+            <input id="challenge-teams" name="isTeamsEnabled" type="checkbox" class="challenge">
             <label for="min-points-for-challenge">Minimalna liczba punktów za zadanie</label>
-            <input id="min-points-for-challenge" name="minPointsForChallenge" type="text" class="challenge-input">
+            <input
+                    id="min-points-for-challenge"
+                    name="minPoints"
+                    type="text"
+                    class="challenge challenge-points"
+                    th:hx-post="@{/ctf-creator/challenge/min-points}"
+                    hx-trigger="blur"
+            >
+            <label for="max-points-for-challenge">Maxymalna liczba punktów za zadanie</label>
+            <input
+                    id="max-points-for-challenge"
+                    name="maxPoints"
+                    type="text"
+                    class="challenge challenge-points"
+                    th:hx-post="@{/ctf-creator/challenge/max-points}"
+                    hx-trigger="blur"
+                    hx-include=".challenge-points"
+            >
+
+            <label for="flag-generation-method">Generowanie Flag</label>
+            <input id="flag-generation-method" name="flagGenerationMethod" class="challenge">
+            <label for="func-calculating-points-for-challenge">Funkcja do obliczania kolejnych punktów dla następnych osób</label>
+            <input id="func-calculating-points-for-challenge" name="pointCalculationFunction" type="text" class="challenge">
+
         </div>
         <button
             th:hx-post="@{/ctf-creator/challenge}"
-            hx-include=".challenge-input"
+            hx-include=".challenge"
         >
             Utwórz
         </button>

@@ -1,6 +1,9 @@
 package pl.bilskik.citifier.ctfcreator.challenge;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -8,13 +11,16 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class ChallengeDTO {
-    private String challengeName;
-    private String challengeDescription;
+    private String name;
+    private String description;
 //    private String challengeType;
     private String githubLink;
+    private LocalDateTime start;
+    private LocalDateTime finish;
+    private boolean shareTaskDetailsAtStart;
     private boolean isTeamsEnabled;
     private String flagGenerationMethod;
-    private Integer maxPointsForChallenge;
+    private Integer minPoints;
+    private Integer maxPoints;
     private String pointCalculationFunction;
-    private Integer minPointsForChallenge;
 }
