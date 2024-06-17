@@ -1,6 +1,15 @@
 package pl.bilskik.citifier.ctfcreator.challenge;
 
-public enum FlagGenerationMethod {
+
+import pl.bilskik.citifier.common.EnumUtils;
+
+import java.util.List;
+
+public enum FlagGenerationMethodEnum {
     RANDOM,
-    GENERATED
+    IMPORTED;
+
+    public static List<String> convertToList() {
+        return EnumUtils.generalEnumToListStringConverter(FlagGenerationMethodEnum.class);
+    }
 }

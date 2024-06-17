@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 public class ChallengeDTO {
     private String name;
     private String description;
-//    private String challengeType;
+    private ChallengeTypeEnum challengeType;
     private String githubLink;
     private LocalDateTime start;
     private LocalDateTime finish;
     private boolean shareTaskDetailsAtStart;
     private boolean isTeamsEnabled;
-    private String flagGenerationMethod;
+    private FlagGenerationMethodEnum flagGenerationMethod;
     private Integer minPoints;
     private Integer maxPoints;
     private String pointCalculationFunction;

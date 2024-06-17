@@ -100,6 +100,7 @@ public class HtmxChallengeController {
     @PostMapping
     @ResponseBody
     public void submitChallenge(@Valid ChallengeDTO challengeDTO) {
+
         System.out.println(challengeDTO.toString());
     }
 }

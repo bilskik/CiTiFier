@@ -1,121 +1,166 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Homepage</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script th:src="@{/webjars/htmx.org/1.9.12/dist/htmx.min.js}" defer></script>
-</head>
+    <head th:replace="~{fragments/head :: head}">
+    </head>
 <body>
-    <div>
-        <div class="challenge-left">
-            <label for="challenge-name" th:text="#{ctfcreator.challenge.name}"></label>
-            <input
-                    id="challenge-name"
-                    name="name"
-                    type="text"
-                    class="challenge"
-                    th:hx-post="@{/ctf-creator/challenge/challenge-name}"
-                    hx-trigger="blur"
-            >
-            <label for="challenge-description" th:text="#{ctfcreator.challenge.description}"></label>
-            <input
-                    id="challenge-description"
-                    name="description"
-                    type="text"
-                    class="challenge"
-                    th:hx-post="@{/ctf-creator/challenge/challenge-description}"
-                    hx-trigger="blur"
-            >
+    <th:block th:insert="~{common/navbar.html}">
+    </th:block>
+    <form
+        onsubmit="this.checkValidity();"
+        th:hx-post="@{/ctf-creator/challenge}"
+        hx-include=".challenge"
+        class="container-fluid"
+    >
+        <div class="row">
+            <div class="challenge-left col-sm">
+                <div class="form-group">
+                    <label th:text="#{ctfcreator.challenge.name}" for="challenge-name" ></label>
+                    <input
+                            id="challenge-name"
+                            name="name"
+                            type="text"
+                            class="challenge form-control"
+
+                    />
+                </div>
+                <div class="form-group">
+                    <label th:text="#{ctfcreator.challenge.description}" for="challenge-description"></label>
+                    <input
+                            id="challenge-description"
+                            name="description"
+                            type="text"
+                            class="challenge form-control"
+                    >
+                </div>
+            </div>
+
+            <div class="challenge-middle col-sm">
+                <div class="challenge-type-container form-group">
+                    <label
+                            th:text="#{ctfcreator.challenge.challenge-type}"
+                            for="challenge-type"
+                    >
+                    </label>
+                    <select
+                            id="challenge-type"
+                            name="challengeType"
+                            class="challenge form-control"
+                    >
+
+                        <option th:each="challengeType : ${challengeTypes}" th:text="${challengeType}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label th:text="#{ctfcreator.challenge.github-link}" for="github-link"></label>
+                    <input id="github-link" name="githubLink" type="text" class="challenge">
+                    <button th:text="#{common.submit}" type="submit"></button>
+                </div>
+
+                <p th:text="#{ctfcreator.challenge.availability}"></p>
+
+                <div class="form-group">
+                    <label for="challenge-start" th:text="#{ctfcreator.challenge.challenge-start}"></label>
+                    <input
+                            id="challenge-start"
+                            name="start"
+                            type="datetime-local"
+                            class="challenge challenge-date"
+                    >
+                    <label for="challenge-finish" th:text="#{ctfcreator.challenge.challenge-finish}"></label>
+                    <input
+                            id="challenge-finish"
+                            name="finish"
+                            type="datetime-local"
+                            class="challenge challenge-date"
+                            th:hx-post="@{/ctf-creator/challenge/challenge-finish}"
+                            hx-include=".challenge-date"
+                            hx-trigger="blur"
+
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="challenge-share-task-details-at-start" th:text="#{ctfcreator.challenge.task-details-share-at-start}"></label>
+                    <input
+                            id="challenge-share-task-details-at-start"
+                            name="shareTaskDetailsAtStart"
+                            type="checkbox"
+                            class="challenge"
+                    >
+                </div>
+            </div>
+            <div class="challenge-right col-sm">
+                <div class="form-group">
+                    <label for="challenge-teams" th:text="#{ctfcreator.challenge.teams-enabled}"></label>
+                    <input id="challenge-teams" name="isTeamsEnabled" type="checkbox" class="challenge">
+                </div>
+
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.challenge.flag-generation-method}"
+                            for="flag-generation-method"
+                    ></label>
+                    <select
+                            id="flag-generation-method"
+                            name="flagGenerationMethod"
+                            class="challenge form-control"
+                    >
+
+                        <option th:each="method: ${flagGenerationMethods}" th:text="${method}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.challenge.max-points-for-challenge}"
+                            for="max-points-for-challenge"
+                    ></label>
+                    <input
+                            id="max-points-for-challenge"
+                            name="maxPoints"
+                            type="text"
+                            class="challenge challenge-points"
+                            th:hx-post="@{/ctf-creator/challenge/max-points}"
+                            hx-trigger="blur"
+                            hx-include=".challenge-points"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="func-calculating-points-for-challenge"
+                           th:text="#{ctfcreator.challenge.point-calculation-function}"
+                    >
+                    </label>
+                    <input
+                            id="func-calculating-points-for-challenge"
+                            name="pointCalculationFunction"
+                            type="text"
+                            class="challenge"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.challenge.min-points-for-challenge}"
+                            for="min-points-for-challenge"
+                    ></label>
+                    <input
+                            id="min-points-for-challenge"
+                            name="minPoints"
+                            type="text"
+                            class="challenge challenge-points"
+                            th:hx-post="@{/ctf-creator/challenge/min-points}"
+                            hx-trigger="blur"
+                    >
+                </div>
+                <button
+                        th:text="#{common.create}"
+                        type="submit"
+                >
+                </button>
+            </div>
         </div>
-        <div class="challenge-middle">
-            <p th:text="#{ctfcreator.challenge.challenge-type}"></p>
-<!--            Hardcoded value: -->
-            <ul class="challenge-type-container">
-                <li>Web-Security</li>
-            </ul>
-            <p th:text="#{ctfcreator.challenge.github-link}">Link do zadania</p>
-            <p class="hello-world">HEJJJ</p>
-            <p
-                    th:hx-get="@{/ctf-creator/challenge/github-link/question}"
-                    hx-trigger="mouseover"
-                    hx-target=".hello-world"
-                    hx-swap="innerHTML"
-            >
-                ????????
-            </p>
-<!---->
-
-            <form
-                    th:hx-post="@{/ctf-creator/challenge/github-link}"
-                    hx-swap="none"
-            >
-                <label for="github-link" th:text="#{ctfcreator.challenge.github-link}"></label>
-                <input id="github-link" name="githubLink" type="text" class="challenge">
-                <button type="submit" th:text="#{common.submit}"></button>
-            </form>
-            <p th:text="#{ctfcreator.challenge.availability}"></p>
-            <label for="challenge-start" th:text="#{ctfcreator.challenge.challenge-start}"></label>
-            <input
-                    id="challenge-start"
-                    name="start"
-                    type="datetime-local"
-                    class="challenge challenge-date"
-            >
-            <label for="challenge-finish" th:text="#{ctfcreator.challenge.challenge-finish}"></label>
-            <input
-                    id="challenge-finish"
-                    name="finish"
-                    type="datetime-local"
-                    class="challenge challenge-date"
-                    th:hx-post="@{/ctf-creator/challenge/challenge-finish}"
-                    hx-include=".challenge-date"
-                    hx-trigger="blur"
-
-            >
-            <label for="challenge-share-task-details-at-start" th:text="#{ctfcreator.challenge.task-details-share-at-start}"></label>
-            <input
-                    id="challenge-share-task-details-at-start"
-                    name="shareTaskDetailsAtStart"
-                    type="checkbox"
-                    class="challenge"
-            >
-        </div>
-        <div class="challenge-right">
-            <label for="challenge-teams" th:text="#{ctfcreator.challenge.teams-enabled}"></label>
-            <input id="challenge-teams" name="isTeamsEnabled" type="checkbox" class="challenge">
-            <label for="min-points-for-challenge" th:text="#{ctfcreator.challenge.min-points-for-challenge}"></label>
-            <input
-                    id="min-points-for-challenge"
-                    name="minPoints"
-                    type="text"
-                    class="challenge challenge-points"
-                    th:hx-post="@{/ctf-creator/challenge/min-points}"
-                    hx-trigger="blur"
-            >
-            <label for="max-points-for-challenge" th:text="#{ctfcreator.challenge.max-points-for-challenge}"></label>
-            <input
-                    id="max-points-for-challenge"
-                    name="maxPoints"
-                    type="text"
-                    class="challenge challenge-points"
-                    th:hx-post="@{/ctf-creator/challenge/max-points}"
-                    hx-trigger="blur"
-                    hx-include=".challenge-points"
-            >
-
-            <label for="flag-generation-method" th:text="#{ctfcreator.challenge.flag-generation-method}"></label>
-            <input id="flag-generation-method" name="flagGenerationMethod" class="challenge">
-            <label for="func-calculating-points-for-challenge" th:text="#{ctfcreator.challenge.point-calculation-function}"></label>
-            <input id="func-calculating-points-for-challenge" name="pointCalculationFunction" type="text" class="challenge">
-
-        </div>
-        <button
-            th:hx-post="@{/ctf-creator/challenge}"
-            hx-include=".challenge"
-            th:text="#{common.create}"
-        >
-        </button>
-    </div>
+    </form>
 </body>
 </html>
