@@ -1,6 +1,10 @@
 package pl.bilskik.citifier.ctfcreator.challenge;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import pl.bilskik.citifier.common.validator.LocalDateTimeComparasion;
+import pl.bilskik.citifier.common.validator.NumberComparasion;
 
 import java.time.LocalDateTime;
 
@@ -9,17 +13,24 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@NumberComparasion(firstField = "minPoints", secondField = "maxPoints", message = "maxPoints must be greater than minPoints!")
+@LocalDateTimeComparasion(firstField = "start", secondField = "finish", message = "Challenge cannot start before finish!")
 public class ChallengeDTO {
+
+    @NotNull
     private String name;
+    @NotNull
     private String description;
     private ChallengeTypeEnum challengeType;
+    @NotNull
     private String githubLink;
     private LocalDateTime start;
     private LocalDateTime finish;
     private boolean shareTaskDetailsAtStart;
     private boolean isTeamsEnabled;
     private FlagGenerationMethodEnum flagGenerationMethod;
+    @Min(0)
     private Integer minPoints;
     private Integer maxPoints;
-    private String pointCalculationFunction;
+    private String pointCalculationFunction; //change to enum
 }
