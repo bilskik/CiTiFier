@@ -1,0 +1,25 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav">
+           <li class="nav-item">
+               <a
+                   th:text="#{navbar.administration-panel}"
+                   class="nav-link"
+               >
+               </a>
+           </li>
+            <li class="nav-item">
+                <a
+                    th:text="#{navbar.statistics}"
+                    class="nav-link"
+                >
+                </a>
+            </li>
+        </ul>
+    </div>
+    <button
+            class="btn"
+            th:text="#{navbar.logout}"
+            type="button"
+    ></button>
+</nav>
