@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container h-100">
+        <div class="row h-80 pt-5">
+            <div class="col-md-6 mx-auto border p-5 rounded">
+                <form
+                    th:hx-post="@{/ctf-core/login}"
+                    th:hx-trigger="submit"
+                    th:hx-boost="true"
+                >
+                    <div>
+                        <h1
+                                th:text="#{ctfcore.login.title}"
+                                class="mb-2"
+                        >
+                        </h1>
+                        <p th:text="#{ctfcore.login-register.sub-title}"></p>
+                    </div>
+                    <div class="form-group mt-2 mb-2">
+                        <label
+                            th:text="#{ctfcore.login.tournament-code}"
+                            for="tournament-code"
+                            class="form-label"
+                        >
+                        </label>
+                        <input
+                                id="tournament-code"
+                                name="tournamentCode"
+                                type="text"
+                                class="form-control"
+                                required
+                        />
+                    </div>
+                    <div class="form-group mt-2 mb-2">
+                        <label
+                                th:text="#{ctfcore.login-register.login}"
+                                for="login"
+                                class="form-label"
+                        >
+                        </label>
+                        <input
+                                id="login"
+                                name="login"
+                                type="text"
+                                class="form-control"
+                                required
+                        />
+                    </div>
+                    <div class="form-group mt-2 mb-2">
+                        <label
+                                th:text="#{ctfcore.login-register.password}"
+                                for="password"
+                                class="form-label"
+                        >
+                        </label>
+                        <input
+                                id="password"
+                                name="password"
+                                type="text"
+                                class="form-control"
+                                required
+                        />
+                    </div>
+                    <button
+                        th:text="#{common.login}"
+                        class="btn btn-primary w-100 mt-2 mb-2 border"
+                        type="submit"
+                    >
+                    </button>
+                </form>
+                <hr>
+                <a
+                        th:href="@{/ctf-core/redirect-to-register}"
+                        th:text="#{common.register}"
+                        th:hx-boost="true"
+                        class="btn btn-outline w-100 mt-2 border"
+                >
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
