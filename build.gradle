@@ -24,6 +24,8 @@ dependencies {
 	implementation 'org.springframework.modulith:spring-modulith-starter-core'
 	implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.5'
 
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.3.1'
+
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:3.3.0'
 	implementation('org.webjars.npm:htmx.org:1.9.12')
