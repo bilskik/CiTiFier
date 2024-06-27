@@ -9,9 +9,8 @@ public class PageChallengeController {
 
     @GetMapping(path = "/")
     public String challengePage(Model model) {
-        System.out.println(ChallengeTypeEnum.convertToList());
-        model.addAttribute("challengeTypes", ChallengeTypeEnum.convertToList());
-        model.addAttribute("flagGenerationMethods", FlagGenerationMethodEnum.convertToList());
+        model.addAttribute("challengeTypes", ChallengeType.convertToList());
+        model.addAttribute("flagGenerationMethods", FlagGenerationMethod.convertToList());
 
         return "ctfcreator/challenge/challenge";
     }
