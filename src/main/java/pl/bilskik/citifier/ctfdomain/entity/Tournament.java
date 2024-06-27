@@ -15,6 +15,8 @@ import java.util.List;
 public class Tournament {
 
     @Id
+    @SequenceGenerator(name = "tournament_seq", sequenceName = "TOURNAMENT_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tournament_seq")
     @Column(name = "TOURNAMENT_ID", nullable = false)
     private Long tournamentId;
 

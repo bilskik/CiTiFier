@@ -15,6 +15,8 @@ import java.util.List;
 public class Team {
 
     @Id
+    @SequenceGenerator(name = "team_seq", sequenceName = "TEAM_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_seq")
     @Column(name = "TEAM_ID", nullable = false)
     private Long teamId;
 

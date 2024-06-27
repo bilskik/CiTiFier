@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 public class Challenge {
 
     @Id
+    @SequenceGenerator(name = "challenge_seq", sequenceName = "CHALLENGE_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "challenge_seq")
     @Column(name = "CHALLENGE_ID", nullable = false)
     private Long challengeId;
 

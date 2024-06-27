@@ -13,6 +13,8 @@ import lombok.*;
 public class Student extends User {
 
     @Id
+    @SequenceGenerator(name = "user_seq", sequenceName = "USER_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @Column(name = "STUDENT_ID", nullable = false)
     private Long studentId;
 
