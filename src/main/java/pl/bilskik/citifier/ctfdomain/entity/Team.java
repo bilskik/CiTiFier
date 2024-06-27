@@ -29,7 +29,7 @@ public class Team {
     private Tournament tournament;
 
     @OneToMany(
-            mappedBy = "TEAM"
+            mappedBy = "team"
     )
     private List<Student> studentList;
 }

@@ -18,7 +18,7 @@ public class CTFCreator extends User {
     private Long ctfCreatorId;
 
     @OneToMany(
-            mappedBy = "CTF_CREATOR"
+            mappedBy = "ctfCreator"
     )
     private List<Tournament> tournamentList;
 

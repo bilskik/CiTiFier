@@ -36,12 +36,12 @@ public class Tournament {
     private List<Challenge> challengeList;
 
     @OneToMany(
-            mappedBy = "TOURNAMENT"
+            mappedBy = "tournament"
     )
     private List<Student> studentList;
 
     @OneToMany(
-            mappedBy = "TOURNAMENT"
+            mappedBy = "tournament"
     )
     private List<Team> teamList;
 
