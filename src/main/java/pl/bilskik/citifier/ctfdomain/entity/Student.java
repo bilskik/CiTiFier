@@ -20,14 +20,14 @@ public class Student extends User {
 
     @ManyToOne
     @JoinColumn(
-            name = "TEAM_ID",
+            name = "FK_TEAM_ID",
             referencedColumnName = "TEAM_ID"
     )
     private Team team;
 
     @ManyToOne
     @JoinColumn(
-            name = "TOURNAMENT_ID",
+            name = "FK_TOURNAMENT_ID",
             referencedColumnName = "TOURNAMENT_ID"
     )
     private Tournament tournament;

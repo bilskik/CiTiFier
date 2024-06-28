@@ -2,7 +2,9 @@ package pl.bilskik.citifier.ctfdomain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import pl.bilskik.citifier.ctfdomain.entity.converter.LocalDateTimeTimestampConverter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -25,6 +27,21 @@ public class Tournament {
 
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
+
+    @Convert(converter = LocalDateTimeTimestampConverter.class)
+    @Column(name = "START", nullable = false)
+    private LocalDateTime start;
+
+    @Convert(converter = LocalDateTimeTimestampConverter.class)
+    @Column(name = "FINISH", nullable = false)
+    private LocalDateTime finish;
+
+    @Column(name = "TEAM_CREATION_POST_LAUNCH", nullable = false)
+    private boolean teamsCreationPostLaunch;
+
+    @Convert(converter = LocalDateTimeTimestampConverter.class)
+    @Column(name = "TEAM_EDITION_DEADLINE", nullable = false)
+    private LocalDateTime teamEditionDeadline;
 
     @JoinTable(
             name = "TOURNAMENT_CHALLENGE",
@@ -49,7 +66,7 @@ public class Tournament {
 
     @ManyToOne
     @JoinColumn(
-            name = "CTF_CREATOR_ID",
+            name = "FK_CTF_CREATOR_ID",
             referencedColumnName = "CTF_CREATOR_ID"
     )
     private CTFCreator ctfCreator;

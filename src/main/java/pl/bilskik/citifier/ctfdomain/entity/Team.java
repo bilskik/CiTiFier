@@ -25,7 +25,7 @@ public class Team {
 
     @ManyToOne
     @JoinColumn(
-            name = "TOURNAMENT_ID",
+            name = "FK_TOURNAMENT_ID",
             referencedColumnName = "TOURNAMENT_ID"
     )
     private Tournament tournament;

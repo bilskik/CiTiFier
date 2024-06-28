@@ -5,6 +5,7 @@ import lombok.*;
 import pl.bilskik.citifier.ctfcreator.challenge.ChallengeType;
 import pl.bilskik.citifier.ctfcreator.challenge.FlagGenerationMethod;
 import pl.bilskik.citifier.ctfcreator.challenge.PointCalculationFunction;
+import pl.bilskik.citifier.ctfdomain.entity.converter.LocalDateTimeTimestampConverter;
 
 import java.time.LocalDateTime;
 
@@ -29,16 +30,18 @@ public class Challenge {
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
-    @Column(name = "CHALLENGE_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "CHALLENGE_TYPE", nullable = false)
     private ChallengeType challengeType;
 
     @Column(name = "GITHUB_LINK", nullable = false)
     private String githubLink;
 
+    @Convert(converter = LocalDateTimeTimestampConverter.class)
     @Column(name = "START", nullable = false)
     private LocalDateTime start;
 
+    @Convert(converter = LocalDateTimeTimestampConverter.class)
     @Column(name = "FINISH", nullable = false)
     private LocalDateTime finish;
 
@@ -48,8 +51,8 @@ public class Challenge {
     @Column(name = "IS_TEAMS_ENABLED")
     private boolean isTeamsEnabled;
 
-    @Column(name = "FLAG_GENERATION_METHOD", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "FLAG_GENERATION_METHOD", nullable = false)
     private FlagGenerationMethod flagGenerationMethod;
 
     @Column(name = "MIN_POINTS", nullable = false)
@@ -63,6 +66,10 @@ public class Challenge {
     private PointCalculationFunction pointCalculationFunction;
 
     @ManyToOne
+    @JoinColumn(
+            name = "FK_TOURNAMENT_ID",
+            referencedColumnName = "TOURNAMENT_ID"
+    )
     private Tournament tournament;
 
 }
