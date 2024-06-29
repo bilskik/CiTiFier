@@ -3,11 +3,25 @@ name: Java build with Gradle
 on:
   push:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: test1234
+          POSTGRES_DB: pg
+        options: >-
+          --health-cmd "pg_isready -U postgres -d pg" 
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
     steps:
     - name: Checkout project sources
       uses: actions/checkout@v4

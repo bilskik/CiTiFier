@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11
+      author: bilskik
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: CHALLENGE
+            baseColumnNames: FK_TOURNAMENT_ID
+            referencedTableName: TOURNAMENT
+            referencedColumnNames: TOURNAMENT_ID
+            constraintName: FK_TOURNAMENT_ID
+
+        - addForeignKeyConstraint:
+            baseTableName: STUDENT
+            baseColumnNames: FK_TEAM_ID
+            referencedTableName: TEAM
+            referencedColumnNames: TEAM_ID
+            constraintName: FK_TEAM_ID
+
+        - addForeignKeyConstraint:
+            baseTableName: STUDENT
+            baseColumnNames: FK_TOURNAMENT_ID
+            referencedTableName: TOURNAMENT
+            referencedColumnNames: TOURNAMENT_ID
+            constraintName: FK_TOURNAMENT_ID
+
+        - addForeignKeyConstraint:
+            baseTableName: TEAM
+            baseColumnNames: FK_TOURNAMENT_ID
+            referencedTableName: TOURNAMENT
+            referencedColumnNames: TOURNAMENT_ID
+            constraintName: FK_TOURNAMENT_ID
+
+        - addForeignKeyConstraint:
+            baseTableName: TOURNAMENT
+            baseColumnNames: FK_CTF_CREATOR_ID
+            referencedTableName: CTF_CREATOR
+            referencedColumnNames: CTF_CREATOR_ID
+            constraintName: FK_CTF_CREATOR_ID

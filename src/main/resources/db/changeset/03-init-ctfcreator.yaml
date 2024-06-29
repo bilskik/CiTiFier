@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6
+      author: bilskik
+      changes:
+        - createTable:
+            tableName: CTF_CREATOR
+            schemaName: ctf
+            columns:
+              - column:
+                  name: CTF_CREATOR_ID
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyConstraintName: PK_CTF_CREATOR_ID
+              - column:
+                  name: LOGIN
+                  type: NVARCHAR(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: PASSWORD
+                  type: NVARCHAR(255)
+                  constraints:
+                    nullable: false

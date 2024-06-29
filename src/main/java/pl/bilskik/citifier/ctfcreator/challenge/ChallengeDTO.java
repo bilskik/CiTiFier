@@ -21,16 +21,16 @@ public class ChallengeDTO {
     private String name;
     @NotNull
     private String description;
-    private ChallengeTypeEnum challengeType;
+    private ChallengeType challengeType;
     @NotNull
     private String githubLink;
     private LocalDateTime start;
     private LocalDateTime finish;
     private boolean shareTaskDetailsAtStart;
     private boolean isTeamsEnabled;
-    private FlagGenerationMethodEnum flagGenerationMethod;
+    private FlagGenerationMethod flagGenerationMethod;
     @Min(0)
     private Integer minPoints;
     private Integer maxPoints;
-    private String pointCalculationFunction; //change to enum
+    private PointCalculationFunction pointCalculationFunction;
 }

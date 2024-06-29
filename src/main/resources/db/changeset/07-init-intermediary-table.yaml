@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10
+      author: bilskik
+      changes:
+        - createTable:
+            tableName: TOURNAMENT_CHALLENGE
+            columns:
+              - column:
+                  name: TOURNAMENT_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: CHALLENGE_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: TOURNAMENT_CHALLENGE
+            baseColumnNames: TOURNAMENT_ID
+            referencedTableName: TOURNAMENT
+            referencedColumnNames: TOURNAMENT_ID
+            constraintName: FK_TOURNAMENT
+
+        - addForeignKeyConstraint:
+            baseTableName: TOURNAMENT_CHALLENGE
+            baseColumnNames: CHALLENGE_ID
+            referencedTableName: CHALLENGE
+            referencedColumnNames: CHALLENGE_ID
+            constraintName: FK_CHALLENGE

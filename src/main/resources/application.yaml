@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: CiTiFier
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        highlight_sql: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pg
+    username: postgres
+    password: test1234
+    driver-class-name: org.postgresql.Driver
+    dbcp2:
+      default-schema: ${db.schemaName}
+
+  liquibase:
+    change-log: db/changelog/changelog-master.yaml
+    default-schema: ${db.schemaName}
+
+preliquibase:
+  sql-script-references: classpath:/db/preliquibase/schema-creation.sql
+
+
+db:
+  schemaName: ctf

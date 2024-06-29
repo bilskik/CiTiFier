@@ -4,13 +4,13 @@ import pl.bilskik.citifier.common.EnumUtils;
 
 import java.util.List;
 
-public enum ChallengeTypeEnum {
+public enum ChallengeType {
     WEB_SECURITY,
     REVERSE_ENGINEERING,
     EXPLOITATION,
     CRYPTOGRAPHY;
 
     public static List<String> convertToList() {
-        return EnumUtils.generalEnumToListStringConverter(ChallengeTypeEnum.class);
+        return EnumUtils.generalEnumToListStringConverter(ChallengeType.class);
     }
 }
