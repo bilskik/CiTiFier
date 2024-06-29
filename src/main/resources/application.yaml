@@ -17,8 +17,15 @@ spring:
     password: test1234
     driver-class-name: org.postgresql.Driver
     dbcp2:
-      default-schema: ctf
+      default-schema: ${.db.schemaName}
 
   liquibase:
-    change-log: db/changelog/changelog-master.yml
-    default-schema: ctf
+    change-log: db/changelog/changelog-master.yaml
+    default-schema: ${db.schemaName}
+
+preliquibase:
+  sql-script-references: classpath:/db/preliquibase/schema-creation.sql
+
+
+db:
+  schemaName: ctf
