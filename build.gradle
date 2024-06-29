@@ -23,6 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.modulith:spring-modulith-starter-core'
 	implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.5'
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.3.1'
 	implementation 'net.lbruun.springboot:preliquibase-spring-boot-starter:1.5.1'
@@ -35,6 +36,7 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
