@@ -1,10 +1,7 @@
 package pl.bilskik.citifier.ctfcore.login;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -17,4 +14,5 @@ public class LoginDTO {
     private String login;
     @NotNull
     private String password;
+    private boolean isCtfCreator;
 }

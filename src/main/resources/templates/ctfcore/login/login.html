@@ -11,6 +11,7 @@
                     th:hx-post="@{/ctf-core/login}"
                     th:hx-trigger="submit"
                     th:hx-boost="true"
+                    th:hx-target="body"
                 >
                     <div>
                         <h1
@@ -20,11 +21,11 @@
                         </h1>
                         <p th:text="#{ctfcore.login-register.sub-title}"></p>
                     </div>
-                    <div class="form-group mt-2 mb-2">
+                    <div class="form-group mt-2 mb-2 tournament-code">
                         <label
-                            th:text="#{ctfcore.login.tournament-code}"
-                            for="tournament-code"
-                            class="form-label"
+                                th:text="#{ctfcore.login.tournament-code}"
+                                for="tournament-code"
+                                class="form-label"
                         >
                         </label>
                         <input
@@ -65,6 +66,30 @@
                                 required
                         />
                     </div>
+                    <div class="form-group mt-2 mb-2">
+                        <label
+                                th:text="#{ctfcore.login-register.ctf-creator}"
+                                for="is-ctf-creator"
+                                class="form-check-label"
+                        >
+                        </label>
+                        <input
+                                th:hx-post="@{/ctf-core/login/tournament-code}"
+                                th:hx-trigger="change"
+                                th:hx-target=".tournament-code"
+                                th:hx-swap="innerHTML"
+                                id="is-ctf-creator"
+                                name="ctfCreator"
+                                type="checkbox"
+                                class="form-check-input"
+                        />
+                    </div>
+                    <div
+                            th:if="${loginExceptionMessage != null && !loginExceptionMessage.isEmpty()}"
+                            class="text-danger fw-bold mt-2 mb-2"
+                    >
+                        <span th:text="${loginExceptionMessage}"></span>
+                    </div>
                     <button
                         th:text="#{common.login}"
                         class="btn btn-primary w-100 mt-2 mb-2 border"
@@ -74,7 +99,7 @@
                 </form>
                 <hr>
                 <a
-                        th:href="@{/ctf-core/redirect-to-register}"
+                        th:href="@{/ctf-core/login/redirect-to-register}"
                         th:text="#{common.register}"
                         th:hx-boost="true"
                         class="btn btn-outline w-100 mt-2 border"

@@ -34,6 +34,13 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
+    public StudentDTO findByLoginAndTournamentCode(String login, String tournamentCode) {
+        Optional<Student> studentOptional = studentRepository.findByLoginAndTournamentCode(login, tournamentCode);
+
+        return studentOptional.map(mapper::toStudentDTO).orElse(null);
+    }
+
+    @Override
     public List<StudentDTO> findAll() {
         return studentRepository.findAll()
                 .parallelStream()

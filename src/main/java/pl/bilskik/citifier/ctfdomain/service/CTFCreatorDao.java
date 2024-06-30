@@ -6,9 +6,11 @@ import java.util.List;
 
 public interface CTFCreatorDao {
 
-    List<CTFCreatorDTO> findAll();
-
     CTFCreatorDTO findById(Long id);
+
+    CTFCreatorDTO findByLogin(String login);
+
+    List<CTFCreatorDTO> findAll();
 
     CTFCreatorDTO createCTFCreator(CTFCreatorDTO ctfCreatorDTO);
 

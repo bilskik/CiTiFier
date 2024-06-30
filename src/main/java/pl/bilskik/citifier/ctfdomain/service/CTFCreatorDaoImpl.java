@@ -36,6 +36,13 @@ public class CTFCreatorDaoImpl implements CTFCreatorDao {
     }
 
     @Override
+    public CTFCreatorDTO findByLogin(String login) {
+        Optional<CTFCreator> optionalCTFCreatorDTO = ctfCreatorRepository.findByLogin(login);
+
+        return optionalCTFCreatorDTO.map(mapper::toCTFCreatorDTO).orElse(null);
+    }
+
+    @Override
     public CTFCreatorDTO createCTFCreator(CTFCreatorDTO ctfCreatorDTO) {
         if(ctfCreatorDTO == null) {
             throw new IllegalArgumentException("CTFCreatorDTO cannot be null");
