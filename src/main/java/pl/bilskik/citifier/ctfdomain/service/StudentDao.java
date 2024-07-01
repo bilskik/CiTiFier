@@ -10,6 +10,8 @@ public interface StudentDao {
 
     StudentDTO findByLogin(String login);
 
+    StudentDTO findByLoginAndTournamentCode(String login, String tournamentCode);
+
     List<StudentDTO> findAll();
 
     StudentDTO createNewStudent(StudentDTO studentDTO);

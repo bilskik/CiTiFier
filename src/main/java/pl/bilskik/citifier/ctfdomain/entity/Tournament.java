@@ -22,6 +22,9 @@ public class Tournament {
     @Column(name = "TOURNAMENT_ID", nullable = false)
     private Long tournamentId;
 
+    @Column(name = "TOURNAMENT_CODE", nullable = false, unique = true)
+    private String tournamentCode;
+
     @Column(name = "NAME", nullable = false)
     private String name;
 

@@ -1,5 +1,6 @@
 package pl.bilskik.citifier.ctfdomain.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,14 @@ public class CTFCreatorDaoImpl implements CTFCreatorDao {
     }
 
     @Override
+    public CTFCreatorDTO findByLogin(String login) {
+        Optional<CTFCreator> optionalCTFCreatorDTO = ctfCreatorRepository.findByLogin(login);
+
+        return optionalCTFCreatorDTO.map(mapper::toCTFCreatorDTO).orElse(null);
+    }
+
+    @Override
+    @Transactional
     public CTFCreatorDTO createCTFCreator(CTFCreatorDTO ctfCreatorDTO) {
         if(ctfCreatorDTO == null) {
             throw new IllegalArgumentException("CTFCreatorDTO cannot be null");

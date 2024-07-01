@@ -1,5 +1,6 @@
 package pl.bilskik.citifier.ctfdomain.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,13 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
+    public StudentDTO findByLoginAndTournamentCode(String login, String tournamentCode) {
+        Optional<Student> studentOptional = studentRepository.findByLoginAndTournamentCode(login, tournamentCode);
+
+        return studentOptional.map(mapper::toStudentDTO).orElse(null);
+    }
+
+    @Override
     public List<StudentDTO> findAll() {
         return studentRepository.findAll()
                 .parallelStream()
@@ -42,6 +50,7 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
+    @Transactional
     public StudentDTO createNewStudent(StudentDTO studentDTO) {
         if(studentDTO == null) {
             throw new IllegalArgumentException("StudentDTO cannot be null");
