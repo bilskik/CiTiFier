@@ -1,7 +1,12 @@
 package pl.bilskik.citifier.ctfcore.login;
 
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxPushUrl;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,12 +28,18 @@ public class LoginController {
         return "ctfcore/login/login";
     }
 
+    @HxRequest
     @PostMapping(path = "/ctf-core/login")
     public String submitLogin(
             @ModelAttribute @Valid LoginDTO loginDTO,
             BindingResult bindingResult,
             Model model
     ) {
+
+        if(loginDTO != null) {
+            model.addAttribute("loginDTO", loginDTO);
+        }
+
         if(bindingResult.hasErrors()) {
             return "ctfcore/login/login";
         }
@@ -43,7 +54,7 @@ public class LoginController {
             return "ctfcore/login/login";
         }
 
-        return "redirect:/login";
+        return "redirect:/challenge";
     }
 
     @HxRequest

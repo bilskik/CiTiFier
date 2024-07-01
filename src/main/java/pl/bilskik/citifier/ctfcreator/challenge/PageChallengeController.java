@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageChallengeController {
 
-    @GetMapping(path = "/")
+    @GetMapping(path = "/challenge")
     public String challengePage(Model model) {
         model.addAttribute("challengeTypes", ChallengeType.convertToList());
         model.addAttribute("flagGenerationMethods", FlagGenerationMethod.convertToList());

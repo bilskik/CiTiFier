@@ -16,6 +16,10 @@ public class LoginService {
 
     //mocked login
     public void login(LoginDTO loginDTO) {
+        if(loginDTO == null) {
+            throw new LoginException("Oops cos poszlo nie tak :(");
+        }
+
         if(loginDTO.isCtfCreator()) {
             CTFCreatorDTO ctfCreatorDTO = ctfCreatorDao.findByLogin(loginDTO.getLogin());
 

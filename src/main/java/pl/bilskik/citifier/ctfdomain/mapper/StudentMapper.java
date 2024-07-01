@@ -10,5 +10,4 @@ public interface StudentMapper {
     StudentDTO toStudentDTO(Student student);
 
     Student toStudent(StudentDTO studentDTO);
-
 }

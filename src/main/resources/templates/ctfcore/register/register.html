@@ -3,6 +3,9 @@
 <head th:replace="~{fragments/head :: head}">
     <title>Register</title>
 </head>
+<script>
+
+</script>
 <body>
     <div class="container" th:style="'height: 100vh;'">
         <div class="row h-80 pt-5">
@@ -11,6 +14,9 @@
                         th:hx-post="@{ctf-core/register}"
                         th:hx-trigger="submit"
                         th:hx-boost="true"
+                        th:hx-target="body"
+                        th:hx-swap="outerHTML"
+                        th:hx-push-url="true"
                 >
                     <div>
                         <h1
@@ -43,28 +49,34 @@
                         >
                         </label>
                         <input
+                                th:title="#{ctfcore.register.password-regex-message}"
                                 id="password"
                                 name="password"
                                 type="text"
                                 class="form-control"
                                 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$"
-                                th:title="#{ctfcore.register.password-regex-message}"
                                 required
                         />
                     </div>
                     <div class="form-group mt-2 mb-2">
                         <label
-                                th:text="#{ctfcore.register.ctf-creator}"
+                                th:text="#{ctfcore.login-register.ctf-creator}"
                                 for="is-ctf-creator"
                                 class="form-check-label"
                         >
                         </label>
                         <input
                                 id="is-ctf-creator"
-                                name="isCtfCreator"
+                                name="ctfCreator"
                                 type="checkbox"
                                 class="form-check-input"
                         />
+                    </div>
+                    <div
+                            th:if="${registerExceptionMessage != null && !registerExceptionMessage.isEmpty()}"
+                            class="text-danger fw-bold mt-2 mb-2"
+                    >
+                        <span th:text="${registerExceptionMessage}"></span>
                     </div>
                     <button
                             th:text="#{common.register}"
@@ -78,6 +90,7 @@
                         th:href="@{/ctf-core/redirect-to-login}"
                         th:text="#{common.login}"
                         th:hx-boost="true"
+                        th:hx-push-url="true"
                         class="btn btn-outline w-100 mt-2 border"
                 >
                 </a>

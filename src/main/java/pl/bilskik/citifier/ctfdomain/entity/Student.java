@@ -2,6 +2,7 @@ package pl.bilskik.citifier.ctfdomain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "STUDENT")
@@ -9,7 +10,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class Student extends User {
 
     @Id

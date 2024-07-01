@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDTO {
-    @NotNull
     private String tournamentCode;
     @NotNull
     private String login;
