@@ -23,6 +23,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.name}"
                             id="challenge-name"
                             name="name"
                             type="text"
@@ -37,6 +38,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.description}"
                             id="challenge-description"
                             name="description"
                             type="text"
@@ -55,6 +57,7 @@
                     >
                     </label>
                     <select
+                            th:value="${challengeDTO?.challengeType}"
                             id="challenge-type"
                             name="challengeType"
                             class="challenge form-control"
@@ -72,6 +75,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.githubLink}"
                             id="github-link"
                             name="githubLink"
                             type="text"
@@ -96,6 +100,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.start}"
                             id="challenge-start"
                             name="start"
                             type="datetime-local"
@@ -107,6 +112,7 @@
                             for="challenge-finish"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.finish}"
                             id="challenge-finish"
                             name="finish"
                             type="datetime-local"
@@ -122,6 +128,7 @@
                             class="form-check-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.shareTaskDetailsAtStart}"
                             id="challenge-share-task-details-at-start"
                             name="shareTaskDetailsAtStart"
                             type="checkbox"
@@ -137,6 +144,7 @@
                             class="form-check-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.teamsEnabled}"
                             id="challenge-teams"
                             name="isTeamsEnabled"
                             type="checkbox"
@@ -150,6 +158,7 @@
                             for="flag-generation-method"
                     ></label>
                     <select
+                            th:value="${challengeDTO?.flagGenerationMethod}"
                             id="flag-generation-method"
                             name="flagGenerationMethod"
                             class="challenge form-control"
@@ -166,6 +175,7 @@
                             for="max-points-for-challenge"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.maxPoints}"
                             id="max-points-for-challenge"
                             name="maxPoints"
                             type="text"
@@ -181,6 +191,7 @@
                     >
                     </label>
                     <input
+                            th:value="${challengeDTO?.pointCalculationFunction}"
                             id="func-calculating-points-for-challenge"
                             name="pointCalculationFunction"
                             type="text"
@@ -195,6 +206,7 @@
                             for="min-points-for-challenge"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.minPoints}"
                             id="min-points-for-challenge"
                             name="minPoints"
                             type="text"

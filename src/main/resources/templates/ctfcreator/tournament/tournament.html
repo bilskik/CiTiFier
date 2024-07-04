@@ -12,7 +12,7 @@
         th:hx-include=".tournament"
         class="container-fluid"
     >
-        <div class="row">
+        <div class="row gx-5 gy-5">
             <div class="tournament-left col-sm">
                 <div class="form-group">
                     <label
@@ -21,6 +21,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${tournamentDTO?.name}"
                             id="tournament-name"
                             name="name"
                             type="text"
@@ -35,6 +36,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${tournamentDTO?.description}"
                             id="tournament-description"
                             name="description"
                             type="text"
@@ -51,6 +53,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${tournamentDTO?.start}"
                             id="tournament-start"
                             name="start"
                             type="datetime-local"
@@ -62,6 +65,7 @@
                             for="tournament-finish"
                     ></label>
                     <input
+                            th:value="${tournamentDTO?.finish}"
                             id="tournament-finish"
                             name="finish"
                             type="datetime-local"
@@ -69,7 +73,6 @@
                             required
                     >
                 </div>
-
                 <div class="tournament-users-creation-method form-group">
                     <label
                             th:text="#{ctfcreator.tournament.user-creation-method}"
@@ -83,11 +86,28 @@
                             class="tournament form-control"
                             required
                     >
-
+                        <option th:each="method : ${userCreationMethod}" th:text="${method}"></option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label
+                        th:text="#{ctfcreator.tournament.user-amount}"
+                        for="tournament-user-amount"
+                        class="form-label"
+                    >
+                    <input
+                            th:value="${tournamentDTO?.finish}"
+                            id="tournament-user-amount"
+                            name="userAmount"
+                            type="text"
+                            class="tournament tournament-user-amount form-control"
+                            required
+                    >
+                    </label>
                 </div>
                 <button
                     th:text="#{ctfcreator.tournament.user-password-download}"
+                    th:hx-post=""
                     class="btn btn-primary w-100 border"
                 >
                 </button>
@@ -100,6 +120,7 @@
                             class="form-check-label"
                     ></label>
                     <input
+                            th:value="${tournamentDTO?.teamsEnabled}"
                             id="tournament-teams-enabled"
                             name="teamsEnabled"
                             type="checkbox"
@@ -113,6 +134,7 @@
                             class="form-check-label"
                     ></label>
                     <input
+                            th:value="${tournamentDTO?.teamsSize}"
                             id="tournament-max-teams-size"
                             name="teamsSize"
                             class="tournament form-control"
@@ -126,6 +148,7 @@
                             class="form-check-label"
                     ></label>
                     <input
+                            th:value="${tournamentDTO?.teamsCreationEnabledAfterLaunch}"
                             id="tournament-teams-creation-post-launch"
                             name="teamsCreationEnabledAfterLaunch"
                             type="checkbox"
@@ -139,6 +162,7 @@
                             class="form-check-label"
                     ></label>
                     <input
+                            th:value="${tournamentDTO?.teamsEditionTo}"
                             id="tournament-teams-edition"
                             name="teamsEditionTo"
                             type="datetime-local"
