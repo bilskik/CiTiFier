@@ -6,15 +6,14 @@
 <body>
     <th:block th:insert="~{common/navbar.html}">
     </th:block>
-
     <form
         th:hx-post="@{/ctf-creator/challenge}"
         th:hx-trigger="submit"
         th:hx-include=".challenge"
         id="challenge-form"
-        class="container-fluid"
+        class="container-fluid ps-5 pe-5 w-100 h-100"
     >
-        <div class="row">
+        <div class="row g-5">
             <div class="challenge-left col-sm">
                 <div class="form-group">
                     <label
@@ -23,6 +22,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.name}"
                             id="challenge-name"
                             name="name"
                             type="text"
@@ -36,13 +36,16 @@
                             for="challenge-description"
                             class="form-label"
                     ></label>
-                    <input
+                    <textarea
+                            th:value="${challengeDTO?.description}"
                             id="challenge-description"
                             name="description"
                             type="text"
                             class="challenge form-control"
+                            rows="20"
                             required
                     >
+                    </textarea>
                 </div>
             </div>
 
@@ -55,6 +58,7 @@
                     >
                     </label>
                     <select
+                            th:value="${challengeDTO?.challengeType}"
                             id="challenge-type"
                             name="challengeType"
                             class="challenge form-control"
@@ -72,6 +76,7 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.githubLink}"
                             id="github-link"
                             name="githubLink"
                             type="text"
@@ -81,9 +86,12 @@
                     <button
                             th:text="#{common.submit}"
                             th:hx-post="@{/ctf-creator/challenge/github-link}"
+                            th:hx-trigger="click"
                             th:hx-params="githubLink"
+                            th:hx-swap="none"
                             id="challenge-github-link-button"
                             type="button"
+                            class="btn btn-primary border"
                     ></button>
                 </div>
 
@@ -96,17 +104,22 @@
                             class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.start}"
                             id="challenge-start"
                             name="start"
                             type="datetime-local"
                             class="challenge challenge-date form-control"
                             required
                     >
+                </div>
+
+                <div class="form-group">
                     <label
                             th:text="#{ctfcreator.challenge.challenge-finish}"
                             for="challenge-finish"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.finish}"
                             id="challenge-finish"
                             name="finish"
                             type="datetime-local"
@@ -122,6 +135,7 @@
                             class="form-check-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.shareTaskDetailsAtStart}"
                             id="challenge-share-task-details-at-start"
                             name="shareTaskDetailsAtStart"
                             type="checkbox"
@@ -137,6 +151,7 @@
                             class="form-check-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.teamsEnabled}"
                             id="challenge-teams"
                             name="isTeamsEnabled"
                             type="checkbox"
@@ -150,6 +165,7 @@
                             for="flag-generation-method"
                     ></label>
                     <select
+                            th:value="${challengeDTO?.flagGenerationMethod}"
                             id="flag-generation-method"
                             name="flagGenerationMethod"
                             class="challenge form-control"
@@ -164,12 +180,14 @@
                     <label
                             th:text="#{ctfcreator.challenge.max-points-for-challenge}"
                             for="max-points-for-challenge"
+                            class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.maxPoints}"
                             id="max-points-for-challenge"
                             name="maxPoints"
                             type="text"
-                            class="challenge challenge-points"
+                            class="challenge challenge-points form-control"
                             required
                     >
                 </div>
@@ -178,13 +196,15 @@
                     <label
                             th:text="#{ctfcreator.challenge.point-calculation-function}"
                             for="func-calculating-points-for-challenge"
+                            class="form-label"
                     >
                     </label>
                     <input
+                            th:value="${challengeDTO?.pointCalculationFunction}"
                             id="func-calculating-points-for-challenge"
                             name="pointCalculationFunction"
                             type="text"
-                            class="challenge"
+                            class="challenge form-control"
                             required
                     >
                 </div>
@@ -193,23 +213,25 @@
                     <label
                             th:text="#{ctfcreator.challenge.min-points-for-challenge}"
                             for="min-points-for-challenge"
+                            class="form-label"
                     ></label>
                     <input
+                            th:value="${challengeDTO?.minPoints}"
                             id="min-points-for-challenge"
                             name="minPoints"
                             type="text"
-                            class="challenge challenge-points"
+                            class="challenge challenge-points form-control"
                             required
                     >
                 </div>
-                <button
-                        th:text="#{common.create}"
-                        type="submit"
-                        class="btn"
-                >
-                </button>
             </div>
         </div>
+        <button
+                th:text="#{common.create}"
+                type="submit"
+                class="btn btn-primary border float-end"
+        >
+        </button>
     </form>
 </body>
 </html>

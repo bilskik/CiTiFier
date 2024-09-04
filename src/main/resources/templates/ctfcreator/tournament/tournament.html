@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title>Tournament</title>
+</head>
+<body>
+    <th:block th:insert="~{common/navbar.html}">
+    </th:block>
+    <form
+        th:hx-post="@{/ctf-creator/tournament}"
+        th:hx-trigger="submit"
+        th:hx-include=".tournament"
+        class="container-fluid ps-5 pe-5 w-100 h-100"
+    >
+        <div class="row g-5">
+            <div class="tournament-left col-sm">
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.tournament.name}"
+                            for="tournament-name"
+                            class="form-label"
+                    ></label>
+                    <input
+                            th:value="${tournamentDTO?.name}"
+                            id="tournament-name"
+                            name="name"
+                            type="text"
+                            class="tournament form-control"
+                            required
+                    />
+                </div>
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.tournament.description}"
+                            for="tournament-description"
+                            class="form-label"
+                    ></label>
+                    <textarea
+                            th:value="${tournamentDTO?.description}"
+                            id="tournament-description"
+                            name="description"
+                            type="text"
+                            class="tournament form-control"
+                            rows="20"
+                            required
+                    >
+                    </textarea>
+                </div>
+            </div>
+            <div class="tournament-middle col-sm">
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.tournament.tournament-start}"
+                            for="tournament-start"
+                            class="form-label"
+                    ></label>
+                    <input
+                            th:value="${tournamentDTO?.start}"
+                            id="tournament-start"
+                            name="start"
+                            type="datetime-local"
+                            class="tournament tournament-date form-control"
+                            required
+                    >
+                    <label
+                            th:text="#{ctfcreator.tournament.tournament-finish}"
+                            for="tournament-finish"
+                    ></label>
+                    <input
+                            th:value="${tournamentDTO?.finish}"
+                            id="tournament-finish"
+                            name="finish"
+                            type="datetime-local"
+                            class="tournament tournament-date form-control"
+                            required
+                    >
+                </div>
+                <div class="tournament-users-creation-method form-group">
+                    <label
+                            th:text="#{ctfcreator.tournament.user-creation-method}"
+                            for="tournament-user-creation-method"
+                            class="form-label"
+                    >
+                    </label>
+                    <select
+                            id="tournament-user-creation-method"
+                            name="userCreationMethod"
+                            class="tournament form-control"
+                            required
+                    >
+                        <option th:each="method : ${userCreationMethod}" th:text="${method}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label
+                        th:text="#{ctfcreator.tournament.user-amount}"
+                        for="tournament-user-amount"
+                        class="form-label"
+                    >
+                    <input
+                            th:value="${tournamentDTO?.finish}"
+                            id="tournament-user-amount"
+                            name="userAmount"
+                            type="text"
+                            class="tournament tournament-user-amount form-control"
+                            required
+                    >
+                    </label>
+                </div>
+                <button
+                    th:text="#{ctfcreator.tournament.user-password-download}"
+                    class="btn btn-primary w-100 border"
+                >
+                </button>
+            </div>
+            <div class="tournament-right col-sm">
+                <div class="form-check">
+                    <label
+                            th:text="#{ctfcreator.tournament.teams-enabled}"
+                            for="tournament-teams-enabled"
+                            class="form-check-label"
+                    ></label>
+                    <input
+                            th:value="${tournamentDTO?.teamsEnabled}"
+                            id="tournament-teams-enabled"
+                            name="teamsEnabled"
+                            type="checkbox"
+                            class="tournament form-check-input"
+                    >
+                </div>
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.tournament.max-teams-size}"
+                            for="tournament-max-teams-size"
+                            class="form-label"
+                    ></label>
+                    <input
+                            th:value="${tournamentDTO?.teamsSize}"
+                            id="tournament-max-teams-size"
+                            name="teamsSize"
+                            class="tournament form-control"
+                            required
+                    >
+                </div>
+                <div class="form-check">
+                    <label
+                            th:text="#{ctfcreator.tournament.teams-creation-post-launch}"
+                            for="tournament-teams-creation-post-launch"
+                            class="form-check-label"
+                    ></label>
+                    <input
+                            th:value="${tournamentDTO?.teamsCreationEnabledAfterLaunch}"
+                            id="tournament-teams-creation-post-launch"
+                            name="teamsCreationEnabledAfterLaunch"
+                            type="checkbox"
+                            class="tournament form-check-input"
+                    >
+                </div>
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.tournament.teams-edition}"
+                            for="tournament-teams-edition"
+                            class="form-label"
+                    ></label>
+                    <input
+                            th:value="${tournamentDTO?.teamsEditionTo}"
+                            id="tournament-teams-edition"
+                            name="teamsEditionTo"
+                            type="datetime-local"
+                            class="tournament tournament-date form-control"
+                    >
+                </div>
+            </div>
+        </div>
+        <button
+                th:text="#{common.create}"
+                type="submit"
+                class="btn btn-primary border float-end"
+        >
+        </button>
+    </form>
+</body>
