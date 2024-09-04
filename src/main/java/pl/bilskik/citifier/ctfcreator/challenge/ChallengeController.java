@@ -45,7 +45,7 @@ public class ChallengeController {
     }
 
     @HxRequest
-    @PostMapping
+    @PostMapping(value = "/ctf-creator/challenge")
     @ResponseBody
     public String submitChallenge(
             @ModelAttribute @Valid ChallengeDTO challengeDTO,
