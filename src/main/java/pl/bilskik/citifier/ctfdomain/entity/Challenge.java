@@ -10,7 +10,7 @@ import pl.bilskik.citifier.ctfdomain.entity.converter.LocalDateTimeTimestampConv
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "CHALLENEGE")
+@Table(name = "CHALLENGE")
 @Getter
 @Setter
 @AllArgsConstructor
