@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title>Challenge</title>
+</head>
+<body>
+    <th:block th:insert="~{common/navbar.html}">
+    </th:block>
+    <div>
+        <table id="challenge-list" class="table">
+            <thead>
+                <tr>
+                    <th th:value="#{ctfcreator.challenge-list.id}"></th>
+                    <th th:value="#{ctfcreator.challenge-list.challenge-name}"></th>
+                    <th th:value="#{ctfcreator.challenge-list.challenge-type}"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <th:block th:each="challenge, iteration: ${challengeList}">
+                    <tr>
+                        <td th:text="${iteration.index}"></td>
+                        <td th:text="${challenge.name}"></td>
+                        <td th:text="${challenge.challengeType}"></td>
+                        <td>
+                            <button th:text="#{common.edit}"></button>
+                        </td>
+                        <td th:text="${challenge.status}"></td>
+<!--                    do translacji + zielon/czerwony kolorek-->
+                    </tr>
+                </th:block>
+            </tbody>
+        </table>
+    </div>
+</body>

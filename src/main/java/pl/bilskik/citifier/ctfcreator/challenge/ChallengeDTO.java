@@ -26,6 +26,7 @@ public class ChallengeDTO {
     private String githubLink;
     private LocalDateTime start;
     private LocalDateTime finish;
+    private ChallengeStatus status;
     private boolean shareTaskDetailsAtStart;
     private boolean isTeamsEnabled;
     private FlagGenerationMethod flagGenerationMethod;
