@@ -46,7 +46,6 @@ public class ChallengeController {
 
     @HxRequest
     @PostMapping(value = "/ctf-creator/challenge")
-    @ResponseBody
     public String submitChallenge(
             @ModelAttribute @Valid ChallengeDTO challengeDTO,
             BindingResult result,
@@ -66,6 +65,6 @@ public class ChallengeController {
             return "ctfcreator/challenge/challenge";
         }
 
-        return "ctfcreator/challenge/challenge";
+        return "redirect:/challenge-list";
     }
 }

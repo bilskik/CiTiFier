@@ -10,6 +10,9 @@
         th:hx-post="@{/ctf-creator/challenge}"
         th:hx-trigger="submit"
         th:hx-include=".challenge"
+        th:hx-target="body"
+        th:hx-swap="outerHTML"
+        th:hx-push-url="true"
         id="challenge-form"
         class="container-fluid ps-5 pe-5 w-100 h-100"
     >

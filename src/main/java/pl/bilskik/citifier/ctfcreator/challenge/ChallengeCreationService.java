@@ -15,6 +15,7 @@ public class ChallengeCreationService {
             throw new IllegalArgumentException("OOps cos poszlo nie tak :(");
         }
 
+        challengeDTO.setPointCalculationFunction(PointCalculationFunction.LINEAR); //mocked
         challengeDao.createNewChallenge(challengeDTO);
 
     }
