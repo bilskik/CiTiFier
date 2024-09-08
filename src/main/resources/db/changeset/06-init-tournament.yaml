@@ -46,8 +46,6 @@ databaseChangeLog:
               - column:
                   name: TEAM_EDITION_DEADLINE
                   type: TIMESTAMP
-                  constraints:
-                    nullable: false
               - column:
                   name: FK_CTF_CREATOR_ID
                   type: BIGINT

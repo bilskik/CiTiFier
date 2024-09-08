@@ -14,7 +14,7 @@ public class ChallengeListController {
 
     private final ChallengeService challengeService;
 
-    @GetMapping("/ctf-creator/challenge-list")
+    @GetMapping("/challenge-list")
     public String challengeList(Model model) {
         String tournamentCode = "10";
 

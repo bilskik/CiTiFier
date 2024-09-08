@@ -15,10 +15,11 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@LocalDateTimeComparasion(firstField = "start", secondField = "finish", message = "Ej ty! Turniej nie może się skończyć przed rozpoczęciem!")
-@LocalDateTimeComparasion(firstField = "teamsEditionTo", secondField = "finish", message = "Ej ty! Chcesz edytować drużyny po zakończeniu turnieju!")
+//@LocalDateTimeComparasion(firstField = "start", secondField = "finish", message = "Ej ty! Turniej nie może się skończyć przed rozpoczęciem!")
+//@LocalDateTimeComparasion(firstField = "teamsEditionTo", secondField = "finish", message = "Ej ty! Chcesz edytować drużyny po zakończeniu turnieju!")
 public class TournamentDTO {
 
+    private String tournamentCode;
     @NotNull
     private String name;
     @NotNull
@@ -27,7 +28,7 @@ public class TournamentDTO {
     private LocalDateTime finish;
     private UserCreationMethod userCreationMethod;
     private boolean teamsEnabled;
-    @Min(value = 2, message = "Daj choć dwie osoby do drużyny...!")
+//    @Min(value = 2, message = "Daj choć dwie osoby do drużyny...!")
     private Integer teamsSize;
     private boolean teamsCreationEnabledAfterLaunch;
     private LocalDateTime teamsEditionTo;

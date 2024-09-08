@@ -43,7 +43,7 @@ public class Tournament {
     private boolean teamsCreationPostLaunch;
 
     @Convert(converter = LocalDateTimeTimestampConverter.class)
-    @Column(name = "TEAM_EDITION_DEADLINE", nullable = false)
+    @Column(name = "TEAM_EDITION_DEADLINE")
     private LocalDateTime teamEditionDeadline;
 
     @JoinTable(

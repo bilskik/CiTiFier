@@ -10,6 +10,9 @@
         th:hx-post="@{/ctf-creator/tournament}"
         th:hx-trigger="submit"
         th:hx-include=".tournament"
+        th:hx-target="body"
+        th:hx-swap="outerHTML"
+        th:hx-push-url="true"
         class="container-fluid ps-5 pe-5 w-100 h-100"
     >
         <div class="row g-5">
@@ -121,54 +124,19 @@
                             class="form-check-label"
                     ></label>
                     <input
-                            th:value="${tournamentDTO?.teamsEnabled}"
+                            th:checked="${tournamentDTO?.teamsEnabled}"
+                            th:hx-post="@{/ctf-creator/tournament/teams}"
+                            th:hx-trigger="change"
+                            th:hx-target=".tournament-teams"
+                            th:hx-swap="innerHTML"
+                            th:hx-push-url="false"
                             id="tournament-teams-enabled"
                             name="teamsEnabled"
                             type="checkbox"
                             class="tournament form-check-input"
                     >
                 </div>
-                <div class="form-group">
-                    <label
-                            th:text="#{ctfcreator.tournament.max-teams-size}"
-                            for="tournament-max-teams-size"
-                            class="form-label"
-                    ></label>
-                    <input
-                            th:value="${tournamentDTO?.teamsSize}"
-                            id="tournament-max-teams-size"
-                            name="teamsSize"
-                            class="tournament form-control"
-                            required
-                    >
-                </div>
-                <div class="form-check">
-                    <label
-                            th:text="#{ctfcreator.tournament.teams-creation-post-launch}"
-                            for="tournament-teams-creation-post-launch"
-                            class="form-check-label"
-                    ></label>
-                    <input
-                            th:value="${tournamentDTO?.teamsCreationEnabledAfterLaunch}"
-                            id="tournament-teams-creation-post-launch"
-                            name="teamsCreationEnabledAfterLaunch"
-                            type="checkbox"
-                            class="tournament form-check-input"
-                    >
-                </div>
-                <div class="form-group">
-                    <label
-                            th:text="#{ctfcreator.tournament.teams-edition}"
-                            for="tournament-teams-edition"
-                            class="form-label"
-                    ></label>
-                    <input
-                            th:value="${tournamentDTO?.teamsEditionTo}"
-                            id="tournament-teams-edition"
-                            name="teamsEditionTo"
-                            type="datetime-local"
-                            class="tournament tournament-date form-control"
-                    >
+                <div class="tournament-teams">
                 </div>
             </div>
         </div>

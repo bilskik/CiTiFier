@@ -9,7 +9,11 @@ public interface TournamentDao {
 
     List<TournamentDTO> findAll();
 
+    List<String> findAllTournamentCodes();
+
     List<TournamentDTO> findAllByCTFCreator(CTFCreator ctfCreator);
+
+    List<TournamentDTO> findAllByCTFCreatorLogin(String login);
 
     TournamentDTO createNewTournament(TournamentDTO tournament);
 
