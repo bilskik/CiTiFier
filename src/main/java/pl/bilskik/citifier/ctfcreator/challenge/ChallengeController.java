@@ -1,13 +1,15 @@
 package pl.bilskik.citifier.ctfcreator.challenge;
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import pl.bilskik.citifier.ctfcreator.challenge.github.GithubService;
 
 import java.util.List;
 
@@ -18,10 +20,12 @@ public class ChallengeController {
 
     private final static List<String> challengeTypes;
     private final static List<String> flagGenerationMethod;
+    private final static List<String> pointCalculationFunctions;
 
     static {
         challengeTypes = ChallengeType.convertToList();
         flagGenerationMethod = FlagGenerationMethod.convertToList();
+        pointCalculationFunctions = PointCalculationFunction.convertToList();
     }
 
     private final ChallengeCreationService challengeCreationService;
@@ -30,18 +34,13 @@ public class ChallengeController {
     public void addCommonAttributes(Model model) {
         model.addAttribute("challengeTypes", challengeTypes);
         model.addAttribute("flagGenerationMethods", flagGenerationMethod);
+        model.addAttribute("pointCalculationFunctions", pointCalculationFunctions);
     }
 
     @GetMapping(path = "/challenge")
     public String challengePage(Model model) {
+        model.addAttribute("challengeDTO", new ChallengeDTO());
         return "ctfcreator/challenge/challenge";
-    }
-
-    @HxRequest
-    @PostMapping(value = "/ctf-creator/challenge/github-link")
-    @ResponseBody
-    public void loadGithubLink(@Nullable String githubLink) {
-        System.out.println(githubLink);
     }
 
     @HxRequest
@@ -56,7 +55,7 @@ public class ChallengeController {
         }
 
         if(result.hasErrors()) {
-            result.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+            return "ctfcreator/challenge/challenge";
         }
 
         try {
