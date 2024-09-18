@@ -29,3 +29,10 @@ preliquibase:
 
 db:
   schemaName: ctf
+
+oauth2:
+  github:
+    client-id:
+    client-secret:
+    app-id:
+    file-path: D:\\CLONED_REPO_CITIFIER
