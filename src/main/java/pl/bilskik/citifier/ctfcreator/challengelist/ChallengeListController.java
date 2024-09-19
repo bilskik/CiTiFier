@@ -16,9 +16,7 @@ public class ChallengeListController {
 
     @GetMapping("/challenge-list")
     public String challengeList(Model model) {
-        String tournamentCode = "10";
-
-        List<ChallengeDTO> challengeList = challengeService.findAllChallengesByTournamentCode(tournamentCode);
+        List<ChallengeDTO> challengeList = challengeService.findAllChallenges();
         model.addAttribute("challengeList", challengeList);
 
         return "ctfcreator/challenge/challenge-list";

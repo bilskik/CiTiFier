@@ -22,7 +22,12 @@
                         <td th:text="${challenge.name}"></td>
                         <td th:text="${challenge.challengeType}"></td>
                         <td>
-                            <button th:text="#{common.edit}"></button>
+                            <button
+                                    th:text="#{common.start}"
+                                    th:hx-get="@{/ctf-creator/challenge-start}"
+                                    class="btn btn-primary"
+                            >
+                            </button>
                         </td>
                         <td th:text="${challenge.status}"></td>
 <!--                    do translacji + zielon/czerwony kolorek-->

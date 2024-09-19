@@ -23,4 +23,8 @@ public class ChallengeService {
 
         return new ArrayList<>();
     }
+
+    public List<ChallengeDTO> findAllChallenges() {
+        return challengeDao.findAll();
+    }
 }
