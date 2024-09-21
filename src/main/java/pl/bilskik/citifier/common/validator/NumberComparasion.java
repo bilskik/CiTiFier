@@ -22,4 +22,6 @@ public @interface NumberComparasion {
     String firstField();
 
     String secondField();
+
+    String errorPath();
 }

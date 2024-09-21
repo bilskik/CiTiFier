@@ -9,7 +9,7 @@ public enum PointCalculationFunction {
     GAUSSIAN;
 
     public static List<String> convertToList() {
-        return EnumUtils.generalEnumToListStringConverter(FlagGenerationMethod.class);
+        return EnumUtils.generalEnumToListStringConverter(PointCalculationFunction.class);
     }
 
     public static String getFunction(PointCalculationFunction functionName) {

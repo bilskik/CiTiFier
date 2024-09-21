@@ -52,9 +52,9 @@
                                 th:title="#{ctfcore.register.password-regex-message}"
                                 id="password"
                                 name="password"
-                                type="text"
+                                type="password"
                                 class="form-control"
-                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{7,}$"
                                 required
                         />
                     </div>

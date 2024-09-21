@@ -28,8 +28,22 @@ public class TournamentDaoImpl implements TournamentDao {
     }
 
     @Override
+    public List<String> findAllTournamentCodes() {
+        return tournamentRepository.findAllTournamentCodes();
+    }
+
+    @Override
     public List<TournamentDTO> findAllByCTFCreator(CTFCreator ctfCreator) {
         List<Tournament> tournaments = tournamentRepository.findByCtfCreator(ctfCreator);
+
+        return tournaments.parallelStream()
+                .map(mapper::toTournamentDTO)
+                .toList();
+    }
+
+    @Override
+    public List<TournamentDTO> findAllByCTFCreatorLogin(String login) {
+        List<Tournament> tournaments = tournamentRepository.findByCTFCreatorLogin(login);
 
         return tournaments.parallelStream()
                 .map(mapper::toTournamentDTO)
