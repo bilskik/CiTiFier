@@ -30,6 +30,9 @@ preliquibase:
 db:
   schemaName: ctf
 
+kubernetess:
+  cluster-config-path:
+
 oauth2:
   github:
     client-id:
