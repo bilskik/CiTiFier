@@ -2,6 +2,7 @@ package pl.bilskik.citifier.ctfcreator.kubernetes;
 
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.RequiredArgsConstructor;
 
@@ -12,10 +13,11 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class K8sDeploymentManager {
 
-    private final static String NAMESPACE = "default";
+    private final static String DEFAULT_NAMESPACE = "default";
     private final K8sClusterConnectorBuilder connectorBuilder;
     private final K8sDeploymentCreator deploymentCreator;
     private final K8sServiceCreator nodePortCreator;
+    private final K8sStatefulSetCreator statefulSetCreator;
 
     public void deploy() {
         try (KubernetesClient client = connectorBuilder.buildClient()) {
@@ -37,9 +39,21 @@ public class K8sDeploymentManager {
                         30001 + i
                 );
 
-                client.apps().deployments().inNamespace(NAMESPACE).resource(deployment).create();
-                client.services().inNamespace(NAMESPACE).resource(service).create();
+                client.apps().deployments().inNamespace(DEFAULT_NAMESPACE).resource(deployment).create();
+                client.services().inNamespace(DEFAULT_NAMESPACE).resource(service).create();
             }
+
+            StatefulSet statefulSet = statefulSetCreator.createStatefulSet(
+                    "statefulset-name",
+                    Collections.singletonMap("app", "statefulset"),
+                    Collections.singletonMap("app", "db"),
+                    "nginx",
+                    "nginx",
+                    "/cache",
+                    "nginx-cache"
+            );
+
+            client.apps().statefulSets().inNamespace(DEFAULT_NAMESPACE).resource(statefulSet).create();
         }
     }
 }
