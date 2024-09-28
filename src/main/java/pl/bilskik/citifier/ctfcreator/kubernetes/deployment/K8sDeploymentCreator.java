@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.kubernetes;
+package pl.bilskik.citifier.ctfcreator.kubernetes.deployment;
 
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.apps.Deployment;

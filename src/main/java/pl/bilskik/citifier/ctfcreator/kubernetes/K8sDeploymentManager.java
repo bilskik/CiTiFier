@@ -1,20 +1,12 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes;
 
-import io.fabric8.kubernetes.api.model.ConfigMap;
-import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
-import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.beans.factory.annotation.Qualifier;
-import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sConfigMapCreator;
-import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sSecretCreator;
+import pl.bilskik.citifier.ctfcreator.kubernetes.deployment.K8sDeploymentCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sServiceCreator;
-import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.K8sStatefulSetCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.K8sStatefulSetManager;
-import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.volume.K8sVolumeCreator;
-import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.volume.K8sVolumeMountCreator;
 
 import java.util.Collections;
 import java.util.HashMap;
