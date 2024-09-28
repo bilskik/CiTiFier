@@ -3,10 +3,18 @@ package pl.bilskik.citifier.ctfcreator.kubernetes;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.beans.factory.annotation.Qualifier;
+import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sConfigMapCreator;
+import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sSecretCreator;
+import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sServiceCreator;
+import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.K8sStatefulSetCreator;
+import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.K8sStatefulSetManager;
+import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.volume.K8sVolumeCreator;
+import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.volume.K8sVolumeMountCreator;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,37 +29,36 @@ public class K8sDeploymentManager {
     private K8sDeploymentCreator deploymentCreator;
     private K8sServiceCreator nodePortCreator;
     private K8sServiceCreator headlessCreator;
-    private K8sStatefulSetCreator statefulSetCreator;
-    private K8sConfigMapCreator configMapCreator;
-    private K8sSecretCreator secretCreator;
+    private K8sStatefulSetManager statefulSetManager;
 
     public K8sDeploymentManager(
             K8sClusterConnectorBuilder connectorBuilder,
             K8sDeploymentCreator deploymentCreator,
             @Qualifier("nodePortService") K8sServiceCreator nodePortCreator,
             @Qualifier("headlessService") K8sServiceCreator headlessCreator,
-            K8sStatefulSetCreator statefulSetCreator,
-            K8sConfigMapCreator configMapCreator,
-            K8sSecretCreator secretCreator
+            K8sStatefulSetManager statefulSetManager
     ) {
         this.connectorBuilder = connectorBuilder;
         this.deploymentCreator = deploymentCreator;
         this.nodePortCreator = nodePortCreator;
         this.headlessCreator = headlessCreator;
-        this.statefulSetCreator = statefulSetCreator;
-        this.configMapCreator = configMapCreator;
-        this.secretCreator = secretCreator;
+        this.statefulSetManager = statefulSetManager;
     }
 
     public void deploy() {
         try (KubernetesClient client = connectorBuilder.buildClient()) {
-            for(int i=0; i<5; i++) {
+            statefulSetManager.deployStatefulSet(client);
+            for(int i=0; i<2; i++) {
+                Map<String, String> envMap = new HashMap<>();
+                envMap.put("SPRING_PROFILES_ACTIVE", "prod");
+
                 Deployment deployment = deploymentCreator.createDeployment(
                         "deployment-" + i + "-name",
                         Collections.singletonMap("app", "deployment"),
                         Collections.singletonMap("app", "pod" + i),
-                        "nginx" + i,
-                        "nginx"
+                        "note-app" + i,
+                        "secure-notes-app",
+                        envMap
                 );
 
                 Service service = nodePortCreator.createService(
@@ -59,7 +66,7 @@ public class K8sDeploymentManager {
                         Collections.singletonMap("app", "nodePort"),
                         Collections.singletonMap("app", "pod" + i),
                         8000 + i,
-                        80,
+                        3443,
                         30001 + i
                 );
 
@@ -67,48 +74,15 @@ public class K8sDeploymentManager {
                 client.services().inNamespace(DEFAULT_NAMESPACE).resource(service).create();
             }
 
-            Map<String, String> env = new HashMap<>();
-            env.put("POSTGRES_USER", "user");
-            env.put("POSTGRES_DB", "mydb");
-
-            ConfigMap configMap = configMapCreator.createConfigMap(
-              "postgres-config-map",
-                Collections.singletonMap("app", "configMap"),
-                env
-            );
-
-            Secret secret = secretCreator.createSecret(
-              "postgres-secret",
-                    Collections.singletonMap("app", "secret"),
-                    "Opaque",
-                    Collections.singletonMap("POSTGRES_PASSWORD", "password")
-            );
-
-            StatefulSet statefulSet = statefulSetCreator.createStatefulSet(
-                    "postgres-statefulset",
-                    Collections.singletonMap("app", "postgres-statefulset"),
-                    Collections.singletonMap("app", "db"),
-                    "postgres",
-                    "postgres",
-                    "postgres-config-map",
-                    "postgres-secret",
-                    "/cache",
-                    "postgres-cache"
-            );
-
-
             Service headlessService = headlessCreator.createService(
-                    "headless-service",
+                    "db",
                     Collections.singletonMap("app", "headlessService"),
                     Collections.singletonMap("app", "db"),
-                    9000,
+                    5432,
                     5432,
                     null
             );
 
-            client.secrets().inNamespace(DEFAULT_NAMESPACE).resource(secret).create();
-            client.configMaps().inNamespace(DEFAULT_NAMESPACE).resource(configMap).create();
-            client.apps().statefulSets().inNamespace(DEFAULT_NAMESPACE).resource(statefulSet).create();
             client.services().inNamespace(DEFAULT_NAMESPACE).resource(headlessService).create();
         }
     }

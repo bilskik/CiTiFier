@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.kubernetes;
+package pl.bilskik.citifier.ctfcreator.kubernetes.statefulset;
 
 
 import io.fabric8.kubernetes.api.model.*;
@@ -6,13 +6,14 @@ import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.api.model.apps.StatefulSetBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class K8sStatefulSetCreator {
 
     private final static String API_VERSION = "apps/v1";
-    private final static int REPLICA_NUMBER = 2;
+    private final static int REPLICA_NUMBER = 1;
 
     public StatefulSet createStatefulSet(
             String statefulSetName,
@@ -22,8 +23,8 @@ public class K8sStatefulSetCreator {
             String containerImage,
             String configMapName,
             String secretName,
-            String volumePath,
-            String volumeName
+            List<Volume> volumes,
+            List<VolumeMount> volumeMounts
     ) {
         return new StatefulSetBuilder()
                 .withApiVersion(API_VERSION)
@@ -51,16 +52,9 @@ public class K8sStatefulSetCreator {
                                 .addNewEnvFrom()
                                     .withSecretRef(new SecretEnvSourceBuilder().withName(secretName).build())
                                 .endEnvFrom()
-                                .addNewVolumeMount()
-                                    .withMountPath(volumePath)
-                                    .withName(volumeName)
-                                .endVolumeMount()
+                                .withVolumeMounts(volumeMounts)
                             .endContainer()
-                            .addNewVolume()
-                                .withName(volumeName)
-                                .withNewEmptyDir()
-                                .endEmptyDir()
-                            .endVolume()
+                            .withVolumes(volumes)
                         .endSpec()
                     .endTemplate()
                 .endSpec()
