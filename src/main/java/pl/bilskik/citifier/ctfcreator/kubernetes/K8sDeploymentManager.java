@@ -1,6 +1,7 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
@@ -22,6 +23,7 @@ public class K8sDeploymentManager {
     private K8sServiceCreator headlessCreator;
     private K8sStatefulSetCreator statefulSetCreator;
     private K8sConfigMapCreator configMapCreator;
+    private K8sSecretCreator secretCreator;
 
     public K8sDeploymentManager(
             K8sClusterConnectorBuilder connectorBuilder,
@@ -29,7 +31,8 @@ public class K8sDeploymentManager {
             @Qualifier("nodePortService") K8sServiceCreator nodePortCreator,
             @Qualifier("headlessService") K8sServiceCreator headlessCreator,
             K8sStatefulSetCreator statefulSetCreator,
-            K8sConfigMapCreator configMapCreator
+            K8sConfigMapCreator configMapCreator,
+            K8sSecretCreator secretCreator
     ) {
         this.connectorBuilder = connectorBuilder;
         this.deploymentCreator = deploymentCreator;
@@ -37,6 +40,7 @@ public class K8sDeploymentManager {
         this.headlessCreator = headlessCreator;
         this.statefulSetCreator = statefulSetCreator;
         this.configMapCreator = configMapCreator;
+        this.secretCreator = secretCreator;
     }
 
     public void deploy() {
@@ -65,7 +69,6 @@ public class K8sDeploymentManager {
 
             Map<String, String> env = new HashMap<>();
             env.put("POSTGRES_USER", "user");
-            env.put("POSTGRES_PASSWORD", "password");
             env.put("POSTGRES_DB", "mydb");
 
             ConfigMap configMap = configMapCreator.createConfigMap(
@@ -74,7 +77,12 @@ public class K8sDeploymentManager {
                 env
             );
 
-
+            Secret secret = secretCreator.createSecret(
+              "postgres-secret",
+                    Collections.singletonMap("app", "secret"),
+                    "Opaque",
+                    Collections.singletonMap("POSTGRES_PASSWORD", "password")
+            );
 
             StatefulSet statefulSet = statefulSetCreator.createStatefulSet(
                     "postgres-statefulset",
@@ -83,6 +91,7 @@ public class K8sDeploymentManager {
                     "postgres",
                     "postgres",
                     "postgres-config-map",
+                    "postgres-secret",
                     "/cache",
                     "postgres-cache"
             );
@@ -97,6 +106,7 @@ public class K8sDeploymentManager {
                     null
             );
 
+            client.secrets().inNamespace(DEFAULT_NAMESPACE).resource(secret).create();
             client.configMaps().inNamespace(DEFAULT_NAMESPACE).resource(configMap).create();
             client.apps().statefulSets().inNamespace(DEFAULT_NAMESPACE).resource(statefulSet).create();
             client.services().inNamespace(DEFAULT_NAMESPACE).resource(headlessService).create();
