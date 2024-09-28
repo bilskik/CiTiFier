@@ -24,6 +24,8 @@ dependencies {
 	implementation 'org.springframework.modulith:spring-modulith-starter-core'
 	implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.5'
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+
+	implementation 'io.fabric8:kubernetes-client:6.13.0'
 	implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
