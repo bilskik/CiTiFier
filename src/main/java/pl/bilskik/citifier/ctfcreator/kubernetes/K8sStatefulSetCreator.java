@@ -1,6 +1,9 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes;
 
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.ConfigMapEnvSource;
+import io.fabric8.kubernetes.api.model.ConfigMapEnvSourceBuilder;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.api.model.apps.StatefulSetBuilder;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ public class K8sStatefulSetCreator {
             Map<String,String> podLabel,
             String containerName,
             String containerImage,
+            String configMapName,
             String volumePath,
             String volumeName
     ) {
@@ -42,6 +46,9 @@ public class K8sStatefulSetCreator {
                                 .addNewContainer()
                                 .withName(containerName)
                                 .withImage(containerImage)
+                                .addNewEnvFrom()
+                                    .withConfigMapRef(new ConfigMapEnvSourceBuilder().withName(configMapName).build())
+                                .endEnvFrom()
                                 .addNewVolumeMount()
                                     .withMountPath(volumePath)
                                     .withName(volumeName)

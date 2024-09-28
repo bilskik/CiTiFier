@@ -6,11 +6,11 @@ import io.fabric8.kubernetes.api.model.ServiceBuilder;
 
 import java.util.Map;
 
-@org.springframework.stereotype.Service("nodePortService")
-public class K8sNodePortCreator implements K8sServiceCreator {
+@org.springframework.stereotype.Service("headlessService")
+public class K8sHeadlessService implements K8sServiceCreator {
 
     private final static String API_VERSION = "v1";
-    private final static String NODE_PORT = "NodePort";
+    private final static String NONE = "None";
     private final static String APP_PROTOCOL = "HTTP";
 
     @Override
@@ -29,12 +29,11 @@ public class K8sNodePortCreator implements K8sServiceCreator {
                     .withLabels(serviceLabel)
                 .endMetadata()
                 .withNewSpec()
-                    .withType(NODE_PORT)
+                    .withClusterIP(NONE)
                     .withSelector(servicePodSelector)
                     .addNewPort()
                         .withPort(port)
                         .withTargetPort(new IntOrString(targetPort))
-                        .withNodePort(nodePort)
                         .withAppProtocol(APP_PROTOCOL)
                     .endPort()
                 .endSpec()

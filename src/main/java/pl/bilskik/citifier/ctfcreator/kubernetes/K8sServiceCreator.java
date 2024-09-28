@@ -6,11 +6,11 @@ import java.util.Map;
 
 public interface K8sServiceCreator {
     Service createService(
-        String nodePortName,
-        Map<String, String> nodePortLabel,
-        Map<String, String> podSelectorLabel,
-        int port,
-        int targetPort,
-        int nodePort
+        String serviceName,
+        Map<String, String> serviceLabel,
+        Map<String, String> servicePodSelector,
+        Integer port,
+        Integer targetPort,
+        Integer nodePort
     );
 }
