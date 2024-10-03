@@ -9,7 +9,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 public class DockerCompose {
     private String version;
-    private Map<String, Service> services;
+    private Map<String, ComposeService> services;
 }
