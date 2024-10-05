@@ -2,6 +2,7 @@ package pl.bilskik.citifier.ctfcreator.docker.model;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -14,5 +15,5 @@ public class ComposeService {
     private String containerName;
     private Map<String, String> environments;
     private Map<String, String> ports;
-    private Object volumes;
+    private List<Volume> volumes;
 }

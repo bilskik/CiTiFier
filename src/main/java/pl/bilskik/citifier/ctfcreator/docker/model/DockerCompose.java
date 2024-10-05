@@ -13,4 +13,5 @@ import java.util.Map;
 public class DockerCompose {
     private String version;
     private Map<String, ComposeService> services;
+    private Map<String, Volume> volumes;
 }
