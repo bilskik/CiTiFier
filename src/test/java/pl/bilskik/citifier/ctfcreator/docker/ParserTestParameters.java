@@ -1,8 +1,7 @@
 package pl.bilskik.citifier.ctfcreator.docker;
 
-import pl.bilskik.citifier.ctfcreator.docker.model.ComposeService;
-import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
-import pl.bilskik.citifier.ctfcreator.docker.model.Volume;
+import pl.bilskik.citifier.ctfcreator.docker.model.*;
+import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.CommandType;
 import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.VolumeType;
 
 import java.util.ArrayList;
@@ -10,6 +9,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ParserTestParameters {
+
+    private static DockerCompose generalDockerComposeBuilder(
+            String version,
+            Map<String, ComposeService> services,
+            Map<String, Volume> volumes
+    ) {
+
+        return DockerCompose.builder()
+                .version(version)
+                .services(services)
+                .volumes(volumes)
+                .build();
+    }
+
 
     protected static final String DOCKER_COMPOSE_1 =
             "version: '3.8'\n" +
@@ -48,14 +61,11 @@ public class ParserTestParameters {
         db.setEnvironments(new HashMap<>(){{put("POSTGRES_USER", "user"); put("POSTGRES_PASSWORD", "password");}});
         db.setPorts(new HashMap<>(){{put("5432", "5432");}});
         db.setVolumes(new ArrayList<>());
+
         services.put("backend", backend);
         services.put("db", db);
 
-        return DockerCompose.builder()
-                .version("3.8")
-                .services(services)
-                .volumes(new HashMap<>())
-                .build();
+        return generalDockerComposeBuilder("3.8", services, new HashMap<>());
     }
 
     protected static final String DOCKER_COMPOSE_2 =
@@ -125,11 +135,7 @@ public class ParserTestParameters {
         Map<String, Volume> volumes = new HashMap<>();
         volumes.put("db-data", new Volume("db-data", VolumeType.VOLUME, null, null));
 
-        return DockerCompose.builder()
-                .version("3.8")
-                .services(services)
-                .volumes(volumes)
-                .build();
+        return generalDockerComposeBuilder("3.8", services, volumes);
     }
 
     protected static final String DOCKER_COMPOSE_3 =
@@ -184,11 +190,51 @@ public class ParserTestParameters {
         services.put("backend", backend);
         services.put("db", db);
 
-        return DockerCompose.builder()
-                .version("3.8")
-                .services(services)
-                .volumes(new HashMap<>())
-                .build();
+        return generalDockerComposeBuilder("3.8", services, new HashMap<>());
+    }
+
+    protected static final String DOCKER_COMPOSE_4 =
+            "version: '3.8'\n" +
+                    "services:\n" +
+                    "  backend:\n" +
+                    "    image: python:3.9\n" +
+                    "    container_name: backend\n" +
+                    "    entrypoint: /bin/sh -c 'python app.py'\n" + 
+                    "    command: [\"flask\", \"run\", \"--host=0.0.0.0\", \"--port=5001\"]\n" +
+                    "\n" +
+                    "  db:\n" +
+                    "    image: mariadb:latest\n" +
+                    "    container_name: db\n" +
+                    "    entrypoint: [\"docker-entrypoint.sh\"]\n" + 
+                    "    command: [\"mysqld\"]";
+
+
+    protected static DockerCompose buildDockerCompose4() {
+        Map<String, ComposeService> services = new HashMap<>();
+        ComposeService backend = new ComposeService();
+        backend.setImage("python:3.9");
+        backend.setContainerName("backend");
+        backend.setVolumes(new ArrayList<>());
+        backend.setPorts(new HashMap<>());
+        backend.setEnvironments(new HashMap<>());
+        backend.setEntrypoint(new Entrypoint(new ArrayList<>(){{ add("/bin/sh -c 'python app.py'"); }}, CommandType.SHELL));
+        backend.setCommand(new Command(new ArrayList<>(){{
+            add("flask"); add("run"); add("--host=0.0.0.0"); add("--port=5001");
+        }}, CommandType.EXEC));
+
+        ComposeService db = new ComposeService();
+        db.setImage("mariadb:latest");
+        db.setContainerName("db");
+        db.setVolumes(new ArrayList<>());
+        db.setPorts(new HashMap<>());
+        db.setEnvironments(new HashMap<>());
+        db.setEntrypoint(new Entrypoint(new ArrayList<>(){{ add("docker-entrypoint.sh"); }}, CommandType.EXEC));
+        db.setCommand(new Command(new ArrayList<>(){{ add("mysqld"); }}, CommandType.EXEC));
+
+        services.put("backend", backend);
+        services.put("db", db);
+
+        return generalDockerComposeBuilder("3.8", services, new HashMap<>());
     }
 
 }

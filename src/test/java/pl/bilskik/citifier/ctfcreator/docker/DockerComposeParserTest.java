@@ -29,7 +29,7 @@ class DockerComposeParserTest extends ParserTestParameters {
 
     @ParameterizedTest
     @MethodSource
-    public void docker_parser_test(String yamlInput, DockerCompose expected) {
+    public void dockerParserTest(String yamlInput, DockerCompose expected) {
         Yaml yaml = configureYaml();
         Map<String, Object> yamlData = yaml.load(yamlInput);
         DockerCompose actual = parser.parse(yamlData);
@@ -53,11 +53,12 @@ class DockerComposeParserTest extends ParserTestParameters {
         assertEquals(expected.getVolumes(), actual.getVolumes());
     }
 
-    public static Stream<Arguments> docker_parser_test() {
+    public static Stream<Arguments> dockerParserTest() {
         return Stream.of(
                 Arguments.of(DOCKER_COMPOSE_1, buildDockerCompose1()),
                 Arguments.of(DOCKER_COMPOSE_2, buildDockerCompose2()),
-                Arguments.of(DOCKER_COMPOSE_3, buildDockerCompose3())
+                Arguments.of(DOCKER_COMPOSE_3, buildDockerCompose3()),
+                Arguments.of(DOCKER_COMPOSE_4, buildDockerCompose4())
         );
     }
 
