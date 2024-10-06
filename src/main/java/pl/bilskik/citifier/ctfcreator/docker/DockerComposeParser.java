@@ -51,11 +51,6 @@ public class DockerComposeParser {
 
         Map<String, Volume> volumeList = new HashMap<>();
         for(var volumeEntry: volumeMap.entrySet()) {
-            Map<String, Object> volume = volumeEntry.getValue();
-            if(volume == null || volume.isEmpty()) {
-                continue;
-            }
-
             Volume volumeObj = new Volume();
             volumeObj.setVolumeName(volumeEntry.getKey());
             volumeObj.setVolumeType(VolumeType.VOLUME);

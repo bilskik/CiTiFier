@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Volume {
     private String volumeName; //only in VOLUME type
     private VolumeType volumeType;

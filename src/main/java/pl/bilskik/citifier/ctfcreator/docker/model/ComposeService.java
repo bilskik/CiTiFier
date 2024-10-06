@@ -10,6 +10,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class ComposeService {
     private String image;
     private String containerName;
