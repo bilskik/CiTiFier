@@ -17,4 +17,6 @@ public class ComposeService {
     private Map<String, String> environments;
     private Map<String, String> ports;
     private List<Volume> volumes;
+    private Entrypoint entrypoint;
+    private Command command;
 }

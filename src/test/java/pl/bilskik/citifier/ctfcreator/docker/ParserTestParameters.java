@@ -3,7 +3,7 @@ package pl.bilskik.citifier.ctfcreator.docker;
 import pl.bilskik.citifier.ctfcreator.docker.model.ComposeService;
 import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
 import pl.bilskik.citifier.ctfcreator.docker.model.Volume;
-import pl.bilskik.citifier.ctfcreator.docker.model.VolumeType;
+import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.VolumeType;
 
 import java.util.ArrayList;
 import java.util.HashMap;

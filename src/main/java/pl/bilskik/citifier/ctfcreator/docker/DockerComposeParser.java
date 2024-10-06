@@ -2,16 +2,16 @@ package pl.bilskik.citifier.ctfcreator.docker;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.bilskik.citifier.ctfcreator.docker.model.ComposeService;
-import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
-import pl.bilskik.citifier.ctfcreator.docker.model.Volume;
-import pl.bilskik.citifier.ctfcreator.docker.model.VolumeType;
+import pl.bilskik.citifier.ctfcreator.docker.model.*;
+import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.CommandType;
+import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.VolumeType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 @Service
 @Slf4j
@@ -24,6 +24,8 @@ public class DockerComposeParser {
     private final static String ENVIRONMENT = "environment";
     private final static String PORTS = "ports";
     private final static String VOLUMES = "volumes";
+    private final static String COMMAND = "command";
+    private final static String ENTRYPOINT = "entrypoint";
 
     private final static String SERVICES_NOT_FOUND = "Cannot find services!";
 
@@ -100,10 +102,35 @@ public class DockerComposeParser {
             };
             composeService.setPorts(genericMapListParser(serviceData.get(PORTS), portFunc));
             composeService.setVolumes(parseServiceVolume(serviceData.get(VOLUMES), compose.getVolumes()));
+            composeService.setEntrypoint(parseEntrypoint(serviceData.get(ENTRYPOINT)));
+            composeService.setCommand(parseCommand(serviceData.get(COMMAND)));
 
             compose.getServices().put(serviceName, composeService);
         });
 
+    }
+
+    private Entrypoint parseEntrypoint(Object o) {
+        return parseCommandOrEntrypoint(o, Entrypoint::new);
+    }
+
+    private Command parseCommand(Object o) {
+        return parseCommandOrEntrypoint(o, Command::new);
+    }
+
+    private <T> T parseCommandOrEntrypoint(Object o, BiFunction<List<String>, CommandType, T> constructor) {
+        if(o instanceof String) {
+            return constructor.apply(new ArrayList<>(){{ add((String)o);}}, CommandType.SHELL);
+        } else if(o instanceof List<?>) {
+            List<String> list = new ArrayList<>();
+            for(Object item: (List<?>) o) {
+                if(item instanceof String) {
+                    list.add((String)item);
+                }
+            }
+            return constructor.apply(list, CommandType.EXEC);
+        }
+        return null;
     }
 
     private List<Volume> parseServiceVolume(Object values, Map<String, Volume> existingVolumes) {
@@ -155,14 +182,14 @@ public class DockerComposeParser {
     @SuppressWarnings("unchecked")
     private Map<String, String> genericMapListParser(Object values, BiConsumer<String, Map<String, String>> callback) {
         if(values instanceof List) {
-            List<String> envList = (List<String>) values;
-            Map<String, String> envMap = new HashMap<>();
-            for(var env : envList) {
-                if(env != null && !env.isEmpty()) {
-                    callback.accept(env, envMap);
+            List<String> list = (List<String>) values;
+            Map<String, String> outputMap = new HashMap<>();
+            for(var val : list) {
+                if(val != null && !val.isEmpty()) {
+                    callback.accept(val, outputMap);
                 }
             }
-            return envMap;
+            return outputMap;
         } else if(values instanceof Map) {
             return (Map<String, String>) values;
         }
