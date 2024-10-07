@@ -4,6 +4,7 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.beans.factory.annotation.Qualifier;
+import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
 import pl.bilskik.citifier.ctfcreator.kubernetes.deployment.K8sDeploymentCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sServiceCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.K8sStatefulSetManager;
@@ -37,7 +38,7 @@ public class K8sDeploymentManager {
         this.statefulSetManager = statefulSetManager;
     }
 
-    public void deploy() {
+    public void deploy(DockerCompose compose) {
         try (KubernetesClient client = connectorBuilder.buildClient()) {
             statefulSetManager.deployStatefulSet(client);
             for(int i=0; i<2; i++) {
