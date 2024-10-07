@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
+import static pl.bilskik.citifier.ctfcreator.docker.TypeConverter.*;
+
 @Service
 @Slf4j
 public class DockerComposeParser {
@@ -41,7 +43,6 @@ public class DockerComposeParser {
         }
         parseServices((Map<String, Map<String, Object>>) data.get(SERVICES), compose);
 
-        System.out.println(compose.toString());
         return compose;
     }
 
@@ -67,6 +68,7 @@ public class DockerComposeParser {
     private void parseServices(Map<String, Map<String, Object>> services, DockerCompose compose) {
         if(services == null || services.isEmpty()) {
             log.info("No services found in the Docker Compose configuration");
+            return;
         }
 
         services.forEach((serviceName, serviceData) -> {
@@ -122,12 +124,7 @@ public class DockerComposeParser {
         if(o instanceof String) {
             return constructor.apply(new ArrayList<>(){{ add((String)o);}}, CommandType.SHELL);
         } else if(o instanceof List<?>) {
-            List<String> list = new ArrayList<>();
-            for(Object item: (List<?>) o) {
-                if(item instanceof String) {
-                    list.add((String)item);
-                }
-            }
+            List<String> list = convertToStringList((List<?>)o);
             return constructor.apply(list, CommandType.EXEC);
         }
         return null;
@@ -178,11 +175,9 @@ public class DockerComposeParser {
         return volume;
     }
 
-
-    @SuppressWarnings("unchecked")
     private Map<String, String> genericMapListParser(Object values, BiConsumer<String, Map<String, String>> callback) {
-        if(values instanceof List) {
-            List<String> list = (List<String>) values;
+        if(values instanceof List<?>) {
+            List<String> list = convertToStringList((List<?>)values);
             Map<String, String> outputMap = new HashMap<>();
             for(var val : list) {
                 if(val != null && !val.isEmpty()) {
@@ -190,11 +185,10 @@ public class DockerComposeParser {
                 }
             }
             return outputMap;
-        } else if(values instanceof Map) {
-            return (Map<String, String>) values;
+        } else if(values instanceof Map<?,?>) {
+            return convertToMapString((Map<?,?>) values);
         }
 
         return new HashMap<>();
     }
-
 }
