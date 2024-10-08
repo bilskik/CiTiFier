@@ -52,14 +52,14 @@ public class ParserTestParameters {
         backend.setImage("node:14");
         backend.setContainerName("backend");
         backend.setEnvironments(new HashMap<>(){{put("NODE_ENV", "production");}});
-        backend.setPorts(new HashMap<>(){{put("3000", "3000");}});
+        backend.setPorts(new ArrayList<>(){{add(new Port("3000", "3000"));}});
         backend.setVolumes(new ArrayList<>());
 
         ComposeService db = new ComposeService();
         db.setImage("postgres:13");
         db.setContainerName("db");
         db.setEnvironments(new HashMap<>(){{put("POSTGRES_USER", "user"); put("POSTGRES_PASSWORD", "password");}});
-        db.setPorts(new HashMap<>(){{put("5432", "5432");}});
+        db.setPorts(new ArrayList<>(){{add(new Port("5432", "5432"));}});
         db.setVolumes(new ArrayList<>());
 
         services.put("backend", backend);
@@ -107,8 +107,8 @@ public class ParserTestParameters {
         backend.setEnvironments(new HashMap<>() {{
             put("NODE_ENV", "development");
         }});
-        backend.setPorts(new HashMap<>() {{
-            put("3000", "3000");
+        backend.setPorts(new ArrayList<>() {{
+            add(new Port("3000", "3000"));
         }});
         backend.setVolumes(new ArrayList<>() {{
             add(new Volume(null, VolumeType.BIND_MOUNT, "./app", "/usr/src/app"));
@@ -122,8 +122,8 @@ public class ParserTestParameters {
             put("MYSQL_ROOT_PASSWORD", "root");
             put("MYSQL_DATABASE", "testdb");
         }});
-        db.setPorts(new HashMap<>() {{
-            put("3306", "3306");
+        db.setPorts(new ArrayList<>() {{
+            add(new Port("3306", "3306"));
         }});
         db.setVolumes(new ArrayList<>() {{
             add(new Volume("db-data", VolumeType.VOLUME, null, "/var/lib/mysql"));
@@ -169,9 +169,9 @@ public class ParserTestParameters {
         backend.setEnvironments(new HashMap<>() {{
             put("FLASK_ENV", "production");
         }});
-        backend.setPorts(new HashMap<>() {{
-            put("5000", "5001");
-            put("5000", "5002");
+        backend.setPorts(new ArrayList<>() {{
+            add(new Port("5000", "5001", Port.ConnectionType.TCP));
+            add(new Port("5000", "5002", Port.ConnectionType.UDP));
         }});
         backend.setVolumes(new ArrayList<>());
 
@@ -182,8 +182,8 @@ public class ParserTestParameters {
             put("MYSQL_ROOT_PASSWORD", "rootpassword");
             put("MYSQL_DATABASE", "mydb");
         }});
-        db.setPorts(new HashMap<>() {{
-            put("3307", "3306");
+        db.setPorts(new ArrayList<>() {{
+            add(new Port("3307", "3306"));
         }});
         db.setVolumes(new ArrayList<>());
 
@@ -215,7 +215,7 @@ public class ParserTestParameters {
         backend.setImage("python:3.9");
         backend.setContainerName("backend");
         backend.setVolumes(new ArrayList<>());
-        backend.setPorts(new HashMap<>());
+        backend.setPorts(new ArrayList<>());
         backend.setEnvironments(new HashMap<>());
         backend.setEntrypoint(new Entrypoint(new ArrayList<>(){{ add("/bin/sh -c 'python app.py'"); }}, CommandType.SHELL));
         backend.setCommand(new Command(new ArrayList<>(){{
@@ -226,7 +226,7 @@ public class ParserTestParameters {
         db.setImage("mariadb:latest");
         db.setContainerName("db");
         db.setVolumes(new ArrayList<>());
-        db.setPorts(new HashMap<>());
+        db.setPorts(new ArrayList<>());
         db.setEnvironments(new HashMap<>());
         db.setEntrypoint(new Entrypoint(new ArrayList<>(){{ add("docker-entrypoint.sh"); }}, CommandType.EXEC));
         db.setCommand(new Command(new ArrayList<>(){{ add("mysqld"); }}, CommandType.EXEC));

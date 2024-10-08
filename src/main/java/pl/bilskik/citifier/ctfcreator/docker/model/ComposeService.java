@@ -15,7 +15,7 @@ public class ComposeService {
     private String image;
     private String containerName;
     private Map<String, String> environments;
-    private Map<String, String> ports;
+    private List<Port> ports;
     private List<Volume> volumes;
     private Entrypoint entrypoint;
     private Command command;
