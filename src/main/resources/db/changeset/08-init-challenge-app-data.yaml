@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11
+      author: bilskik
+      changes:
+        - createTable:
+            tableName: CHALLENGE_APP_DATA
+            schemaName: ctf
+            columns:
+              - column:
+                  name: CHALLENGE_APP_DATA_ID
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyConstraintName: PK_TOURNAMENT_ID
+              - column:
+                  name: START_EXPOSED_PORT
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: NUMBER_OF_APP
+                  type: INT
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 12
+      author: bilskik
+      changes:
+        - createSequence:
+            sequenceName: challenge_app_data_seq
+            incrementBy: 50
+            startValue: 1
+            minValue: 1
+            cacheSize: 100
+            schemaName: ctf
+
+
+
+
