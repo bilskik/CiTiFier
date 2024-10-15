@@ -14,4 +14,12 @@ public class Volume {
     private VolumeType volumeType;
     private String hostPath; //only in BIND_MOUNT mode
     private String containerPath;
+
+    public boolean isBindMount() {
+        return volumeType == VolumeType.BIND_MOUNT;
+    }
+
+    public boolean isVolume() {
+        return volumeType == VolumeType.VOLUME;
+    }
 }

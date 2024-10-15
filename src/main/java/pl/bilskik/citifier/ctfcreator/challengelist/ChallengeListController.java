@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pl.bilskik.citifier.ctfcreator.challenge.ChallengeDTO;
 import pl.bilskik.citifier.ctfcreator.docker.DockerComposeParserManager;
 import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
-import pl.bilskik.citifier.ctfcreator.kubernetes.K8sDeploymentManager;
+import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceContext;
+import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceManager;
 
 import java.util.List;
 
@@ -16,13 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChallengeListController {
 
-    private final ChallengeService challengeService;
-    private final K8sDeploymentManager k8sDeploymentManager;
-    private final DockerComposeParserManager dockerComposeParserManager;
+    private final ChallengeListService challengeListService;
+
 
     @GetMapping("/challenge-list")
     public String challengeList(Model model) {
-        List<ChallengeDTO> challengeList = challengeService.findAllChallenges();
+        List<ChallengeDTO> challengeList = challengeListService.findAllChallenges();
         model.addAttribute("challengeList", challengeList);
 
         return "ctfcreator/challenge/challenge-list";
@@ -30,9 +30,8 @@ public class ChallengeListController {
 
     @GetMapping("/ctr-creator/cluster-start")
     @ResponseBody
-    public void connectToCluster() {
-        DockerCompose compose = dockerComposeParserManager.parse("D:\\GitHubProjects\\secure-notes-app\\compose.yaml");
-        k8sDeploymentManager.deploy(compose);
+    public void parseComposeAndDeployApp() {
+        challengeListService.parseComposeAndDeployApp();
     }
 
 }

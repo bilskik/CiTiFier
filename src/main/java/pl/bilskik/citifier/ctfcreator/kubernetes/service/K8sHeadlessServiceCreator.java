@@ -7,7 +7,7 @@ import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import java.util.Map;
 
 @org.springframework.stereotype.Service("headlessService")
-public class K8sHeadlessService implements K8sServiceCreator {
+public class K8sHeadlessServiceCreator implements K8sServiceCreator {
 
     private final static String API_VERSION = "v1";
     private final static String NONE = "None";
