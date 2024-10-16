@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7
+      author: bilskik
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: CHALLENGE
+            baseColumnNames: FK_CHALLENGE_APP_DATA
+            referencedTableName: CHALLENGE_APP_DATA
+            referencedColumnNames: CHALLENGE_APP_DATA_ID
+            constraintName: FK_CHALLENGE_APP_DATA

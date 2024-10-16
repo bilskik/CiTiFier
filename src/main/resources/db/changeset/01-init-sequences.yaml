@@ -24,25 +24,13 @@ databaseChangeLog:
             schemaName: ctf
 
   - changeSet:
-      id: 3
-      author: bilskik
-      changes:
-        - createSequence:
-            sequenceName: team_seq
-            incrementBy: 50
-            startValue: 1
-            minValue: 1
-            cacheSize: 100
-            schemaName: ctf
-
-  - changeSet:
-      id: 4
-      author: bilskik
-      changes:
-        - createSequence:
-            sequenceName: tournament_seq
-            incrementBy: 50
-            startValue: 1
-            minValue: 1
-            cacheSize: 100
-            schemaName: ctf
+        id: 3
+        author: bilskik
+        changes:
+            - createSequence:
+                  sequenceName: challenge_app_data_seq
+                  incrementBy: 50
+                  startValue: 1
+                  minValue: 1
+                  cacheSize: 100
+                  schemaName: ctf

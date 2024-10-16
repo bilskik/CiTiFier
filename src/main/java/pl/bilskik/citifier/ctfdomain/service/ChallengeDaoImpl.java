@@ -33,15 +33,6 @@ public class ChallengeDaoImpl implements ChallengeDao {
     }
 
     @Override
-    public List<ChallengeDTO> findAllByLogin(String login) {
-        List<Challenge> challengeList = challengeRepository.findByStudentLogin(login);
-
-        return challengeList.parallelStream()
-                .map(mapper::toChallengeDTO)
-                .toList();
-    }
-
-    @Override
     public ChallengeAppDataDTO findChallengeAppDataDTOByChallengeId(Long id) {
         Optional<Challenge> optionalChallenge = challengeRepository.findById(id);
 
@@ -54,15 +45,6 @@ public class ChallengeDaoImpl implements ChallengeDao {
         }
 
        throw new ChallengeException("Challenge not found!");
-    }
-
-    @Override
-    public List<ChallengeDTO> findAllByTournamentCode(String tournamentCode) {
-        List<Challenge> challengeList = challengeRepository.findByTournamentCode(tournamentCode);
-
-        return challengeList.parallelStream()
-                .map(mapper::toChallengeDTO)
-                .toList();
     }
 
     @Override

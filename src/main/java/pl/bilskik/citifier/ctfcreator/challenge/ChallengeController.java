@@ -17,23 +17,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChallengeController {
 
-    private final static List<String> challengeTypes;
     private final static List<String> flagGenerationMethod;
-    private final static List<String> pointCalculationFunctions;
 
     static {
-        challengeTypes = ChallengeType.convertToList();
         flagGenerationMethod = FlagGenerationMethod.convertToList();
-        pointCalculationFunctions = PointCalculationFunction.convertToList();
     }
 
     private final ChallengeCreationService challengeCreationService;
 
     @ModelAttribute
     public void addCommonAttributes(Model model) {
-        model.addAttribute("challengeTypes", challengeTypes);
         model.addAttribute("flagGenerationMethods", flagGenerationMethod);
-        model.addAttribute("pointCalculationFunctions", pointCalculationFunctions);
     }
 
     @GetMapping(path = "/challenge")

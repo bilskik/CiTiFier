@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 11
+      id: 6
       author: bilskik
       changes:
         - createTable:
@@ -24,18 +24,6 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
-
-  - changeSet:
-      id: 12
-      author: bilskik
-      changes:
-        - createSequence:
-            sequenceName: challenge_app_data_seq
-            incrementBy: 50
-            startValue: 1
-            minValue: 1
-            cacheSize: 100
-            schemaName: ctf
 
 
 

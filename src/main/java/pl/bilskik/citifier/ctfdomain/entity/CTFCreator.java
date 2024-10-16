@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class CTFCreator extends User {
+public class CTFCreator {
 
     @Id
     @SequenceGenerator(name = "user_seq", sequenceName = "USER_SEQ")
@@ -21,9 +21,9 @@ public class CTFCreator extends User {
     @Column(name = "CTF_CREATOR_ID", nullable = false)
     private Long ctfCreatorId;
 
-    @OneToMany(
-            mappedBy = "ctfCreator"
-    )
-    private List<Tournament> tournamentList;
+    @Column(name = "LOGIN", nullable = false, unique = true)
+    private String login;
 
+    @Column(name = "PASSWORD", nullable = false)
+    private String password;
 }
