@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 11
+      id: 13
       author: bilskik
       changes:
         - addForeignKeyConstraint:
@@ -37,3 +37,10 @@ databaseChangeLog:
             referencedTableName: CTF_CREATOR
             referencedColumnNames: CTF_CREATOR_ID
             constraintName: FK_CTF_CREATOR_ID
+
+        - addForeignKeyConstraint:
+            baseTableName: CHALLENGE
+            baseColumnNames: FK_CHALLENGE_APP_DATA
+            referencedTableName: CHALLENGE_APP_DATA
+            referencedColumnNames: CHALLENGE_APP_DATA_ID
+            constraintName: FK_CHALLENGE_APP_DATA

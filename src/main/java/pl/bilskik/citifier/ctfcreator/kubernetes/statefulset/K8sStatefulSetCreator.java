@@ -6,6 +6,7 @@ import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.api.model.apps.StatefulSetBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ public class K8sStatefulSetCreator {
             Map<String,String> podLabel,
             String containerName,
             String containerImage,
+            Map<String, String> envMap,
             String configMapName,
             String secretName,
             List<Volume> volumes,
@@ -46,6 +48,7 @@ public class K8sStatefulSetCreator {
                                 .addNewContainer()
                                 .withName(containerName)
                                 .withImage(containerImage)
+                                .withEnv(convertFromMapToEnvVarList(envMap))
                                 .addNewEnvFrom()
                                     .withConfigMapRef(new ConfigMapEnvSourceBuilder().withName(configMapName).build())
                                 .endEnvFrom()
@@ -59,5 +62,14 @@ public class K8sStatefulSetCreator {
                     .endTemplate()
                 .endSpec()
                 .build();
+    }
+
+    public List<EnvVar> convertFromMapToEnvVarList(Map<String, String> envMap) {
+        List<EnvVar> envVarList = new ArrayList<>();
+        for(var entry: envMap.entrySet()) {
+            EnvVar envVar = new EnvVar(entry.getKey(), entry.getValue(), null);
+            envVarList.add(envVar);
+        }
+        return envVarList;
     }
 }

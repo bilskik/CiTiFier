@@ -73,6 +73,9 @@ databaseChangeLog:
               - column:
                   name: FK_TOURNAMENT_ID
                   type: BIGINT
+              - column:
+                  name: FK_CHALLENGE_APP_DATA
+                  type: BIGINT
 
 
 

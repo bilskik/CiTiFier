@@ -87,22 +87,7 @@ public class DockerComposeParser {
                 }
             };
             composeService.setEnvironments(genericMapListParser(serviceData.get(ENVIRONMENT), envFunc));
-            BiConsumer<String, Map<String, String>> portFunc = (val, map) -> {
-                if(val.contains(":") && val.contains("/")) { //TO DO implement advanced case
-                    String[] parts = val.split(":");
-                    if(parts.length == 2 && parts[1].contains("/")) {
-                        map.put(parts[0], parts[1].split("/")[0]);
-                    }
-                } else if(val.contains(":")){
-                    String[] parts = val.split(":");
-                    if(parts.length == 2) {
-                        map.put(parts[0], parts[1]);
-                    }
-                } else {
-                    map.put(val, val);
-                }
-            };
-            composeService.setPorts(genericMapListParser(serviceData.get(PORTS), portFunc));
+            composeService.setPorts(parsePortList(serviceData.get(PORTS)));
             composeService.setVolumes(parseServiceVolume(serviceData.get(VOLUMES), compose.getVolumes()));
             composeService.setEntrypoint(parseEntrypoint(serviceData.get(ENTRYPOINT)));
             composeService.setCommand(parseCommand(serviceData.get(COMMAND)));
@@ -110,6 +95,59 @@ public class DockerComposeParser {
             compose.getServices().put(serviceName, composeService);
         });
 
+    }
+
+    private List<Port> parsePortList(Object o) {
+        if(o instanceof List<?>) {
+            List<Port> portList = new ArrayList<>();
+            List<String> list = convertToStringList((List<?>)o);
+            for(var val: list) {
+                portList.add(parsePort(val));
+            }
+            return portList;
+        } else if(o instanceof Map<?,?>) {
+            List<Port> portList = new ArrayList<>();
+            Map<String,String> map = convertToMapString((Map<?,?>) o);
+            for(var val: map.entrySet()) {
+                portList.add(parsePort(val.getKey() + ":" + val.getValue()));
+            }
+            return portList;
+        }
+        return new ArrayList<>();
+    }
+
+    private Port parsePort(String val) {
+        if(val.contains(":") && val.contains("/")) {
+            String[] parts = val.split(":");
+            if(parts.length == 2 && parts[1].contains("/")) {
+                String targetPort = parts[1].split("/")[0];
+                String connectionType = parts[1].split("/")[1];
+                return createPort(parts[0], targetPort, connectionType);
+            }
+        } else if(val.contains(":")){
+            String[] parts = val.split(":");
+            if(parts.length == 2) {
+                return createPort(parts[0], parts[1]);
+            }
+        } else {
+            return createPort(val, val);
+        }
+        return null;
+    }
+
+    private Port createPort(String hostPort, String targetPort) {
+        Port port = new Port();
+        port.setHostPort(hostPort);
+        port.setTargetPort(targetPort);
+        return port;
+    }
+
+    private Port createPort(String hostPort, String targetPort, String connectionType) {
+        Port port = new Port();
+        port.setHostPort(hostPort);
+        port.setTargetPort(targetPort);
+        port.setConnectionType(Port.ConnectionType.fromString(connectionType));
+        return port;
     }
 
     private Entrypoint parseEntrypoint(Object o) {

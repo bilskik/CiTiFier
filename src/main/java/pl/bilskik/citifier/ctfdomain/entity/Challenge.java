@@ -72,4 +72,11 @@ public class Challenge {
     )
     private Tournament tournament;
 
+    @OneToOne
+    @JoinColumn(
+            name = "FK_CHALLENGE_APP_DATA",
+            referencedColumnName = "CHALLENGE_APP_DATA_ID"
+    )
+    private ChallengeAppData challengeAppData;
+
 }
