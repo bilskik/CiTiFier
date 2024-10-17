@@ -52,6 +52,15 @@ function handleAfterSwap(e) {
     }
 }
 
+function handleBeforeRequest(event) {
+    event.preventDefault();
+    const button = htmx.find('#challenge-save-in-session');
+    htmx.trigger(button, 'click');
+    setTimeout(() => {
+        window.location.href = event.target.href;
+    }, 500);
+}
+
 function handleAfterRequest(event) {
     const githubLinkInput = htmx.find('#github-link');
     if(!githubLinkInput) {

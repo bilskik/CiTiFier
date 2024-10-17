@@ -2,39 +2,51 @@ package pl.bilskik.citifier.ctfcreator.challenge.github;
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.annotation.Nullable;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-import pl.bilskik.citifier.ctfcreator.challenge.ChallengeController;
 import pl.bilskik.citifier.ctfcreator.challenge.ChallengeDTO;
+
+import static pl.bilskik.citifier.ctfcreator.challenge.ChallengeConstraints.CHALLENGE;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/ctf-creator/challenge")
 public class GithubController {
+
     private static final String SUCCESS_REPO_CLONED = "Repozytorium zostało sklonowane poprawnie!";
+    private static final String SUCCESS = "OK";
+    private static final String ERROR = "ERROR";
+
     private final GithubService githubService;
 
     @HxRequest
     @PostMapping("/github-link")
-    public ResponseEntity<String> loadGithubLink(@Nullable String githubLink) {
+    public View loadGithubLink(
+            ChallengeDTO challengeDTO,
+            @RequestParam String githubLink,
+            RedirectAttributes redirectAttributes,
+            HttpSession session
+    ) {
+        session.setAttribute(CHALLENGE, challengeDTO);
+        String info;
+        String githubLinkState = SUCCESS;
         try {
             githubService.clonePublicGithubRepo(githubLink);
+            updateChallengeRepoClonedStatus(session);
+            info = SUCCESS_REPO_CLONED;
         } catch(GithubException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            info = e.getMessage();
+            githubLinkState = ERROR;
         }
-
-        return new ResponseEntity<>(SUCCESS_REPO_CLONED, HttpStatus.OK);
+        redirectAttributes.addFlashAttribute("githubLinkState", githubLinkState);
+        redirectAttributes.addFlashAttribute("githubLinkInfo", info);
+        return new RedirectView("/challenge");
     }
 
     @HxRequest
@@ -52,19 +64,43 @@ public class GithubController {
         return "ctfcreator/challenge/github/github-public-repo-button";
     }
 
+    @PostMapping("/save-in-session")
+    @ResponseBody
+    public void saveInSession(ChallengeDTO challengeDTO, HttpSession httpSession) {
+        ChallengeDTO sessionChallengeDTO = (ChallengeDTO) httpSession.getAttribute(CHALLENGE);
+        if(sessionChallengeDTO == null || !sessionChallengeDTO.getIsRepoClonedSuccessfully()) {
+            httpSession.setAttribute(CHALLENGE, challengeDTO);
+        }
+    }
+
     @GetMapping("/github-link-redirect")
-    public View redirect(RedirectAttributes redirectAttributes, @RequestParam String code, @RequestParam(name = "state") String url) {
+    public View redirect(
+            RedirectAttributes redirectAttributes,
+            @RequestParam String code,
+            @RequestParam(name = "state") String url,
+            HttpSession httpSession
+    ) {
         String info;
-        String githubLinkState = "OK";
+        String githubLinkState = SUCCESS;
         try {
             githubService.clonePrivateGithubRepo(code, url);
             info = SUCCESS_REPO_CLONED;
+            updateChallengeRepoClonedStatus(httpSession);
         } catch(GithubException e) {
             info = e.getMessage();
-            githubLinkState = "ERROR";
+            githubLinkState = ERROR;
         }
         redirectAttributes.addFlashAttribute("githubLinkState", githubLinkState);
         redirectAttributes.addFlashAttribute("githubLinkInfo", info);
         return new RedirectView("/challenge");
+    }
+
+    private void updateChallengeRepoClonedStatus(HttpSession httpSession) {
+        ChallengeDTO challengeDTO = (ChallengeDTO) httpSession.getAttribute(CHALLENGE);
+        if(challengeDTO == null) {
+            challengeDTO = new ChallengeDTO();
+        }
+        challengeDTO.setRepoClonedSuccessfully(true);
+        httpSession.setAttribute(CHALLENGE, challengeDTO);
     }
 }

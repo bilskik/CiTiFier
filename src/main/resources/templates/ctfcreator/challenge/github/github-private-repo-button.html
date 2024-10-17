@@ -1,8 +1,10 @@
 <a
         th:text="#{common.submit}"
         th:href="${redirectUrl}"
+        th:disabled="*{isRepoClonedSuccessfully}"
         id="challenge-github-link-button"
         type="button"
         class="btn btn-primary border"
+        onclick="handleBeforeRequest(event);"
         hx-on::after-request="handleAfterRequest(event);"
 ></a>

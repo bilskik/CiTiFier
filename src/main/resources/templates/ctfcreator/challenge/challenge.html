@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml">
 <head th:replace="~{fragments/head :: head}">
     <title>Challenge</title>
 </head>
@@ -74,6 +74,7 @@
                             hx-include=".githubLink"
                             th:hx-swap="innerHTML"
                             th:hx-push-url="false"
+                            th:disabled="*{isRepoClonedSuccessfully}"
                             id="github-repo-visibility"
                             name="githubRepoPrivateVisibility"
                             type="checkbox"
@@ -83,6 +84,44 @@
                        <th:block th:insert="~{ctfcreator/challenge/github/github-public-repo-button.html}">
                         </th:block>
                     </div>
+                    <button
+                        id="challenge-save-in-session"
+                        th:hx-post="@{/ctf-creator/challenge/save-in-session}"
+                        th:hx-trigger="click"
+                        th:hx-include=".challenge"
+                        class="invisible"
+                    >
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.challenge.number-of-app}"
+                            for="github-link"
+                            class="form-label"
+                    ></label>
+                    <input
+                            id="number-of-app"
+                            th:field="*{numberOfApp}"
+                            th:classappend="${#fields.hasErrors('numberOfApp') ? 'is-invalid' : ''}"
+                            type="text"
+                            class="challenge numberOfApp form-control"
+                            required
+                    >
+                </div>
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.challenge.start-exposed-port}"
+                            for="start-exposed-port"
+                            class="form-label"
+                    ></label>
+                    <input
+                            id="start-exposed-port"
+                            th:field="*{startExposedPort}"
+                            th:classappend="${#fields.hasErrors('startExposedPort') ? 'is-invalid' : ''}"
+                            type="text"
+                            class="challenge startExposedPort form-control"
+                            required
+                    >
                 </div>
             </div>
             <div class="challenge-right col-sm">
