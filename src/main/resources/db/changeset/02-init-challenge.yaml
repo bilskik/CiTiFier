@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 5
+      id: 4
       author: bilskik
       changes:
         - createTable:
@@ -20,61 +20,20 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: DESCRIPTION
-                  type: NVARCHAR(1024)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: CHALLENGE_TYPE
-                  type: NVARCHAR(100)
-                  constraints:
-                    nullable: false
-              - column:
                   name: GITHUB_LINK
                   type: NVARCHAR(100)
                   constraints:
                     nullable: false
               - column:
-                  name: START
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: FINISH
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: SHARE_TASK_DETAILS_AT_START
-                  type: BOOLEAN #PostgreSQL specific
-              - column:
-                  name: IS_TEAMS_ENABLED
-                  type: BOOLEAN
-              - column:
-                  name: FLAG_GENERATION_METHOD
+                  name: REPO_NAME
                   type: NVARCHAR(100)
                   constraints:
                     nullable: false
-              - column:
-                  name: MIN_POINTS
-                  type: INTEGER
-                  constraints:
-                    nullable: false
-              - column:
-                  name: MAX_POINTS
-                  type: INTEGER
-                  constraints:
-                    nullable: false
-              - column:
-                  name: POINT_CALCULATION_FUNCTION
-                  type: NVARCHAR(100)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: FK_TOURNAMENT_ID
-                  type: BIGINT
               - column:
                   name: FK_CHALLENGE_APP_DATA
+                  type: BIGINT
+              - column:
+                  name: FK_CTF_CREATOR_ID
                   type: BIGINT
 
 

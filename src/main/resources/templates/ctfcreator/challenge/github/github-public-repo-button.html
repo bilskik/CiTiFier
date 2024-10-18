@@ -1,12 +1,7 @@
 <button
         th:text="#{common.submit}"
-        th:hx-post="@{/ctf-creator/challenge/github-link}"
-        th:hx-trigger="click"
-        th:hx-params="githubLink"
-        th:hx-swap="none"
-        th:hx-push-url="false"
-        hx-on::after-request="handleAfterRequest(event)"
+        th:disabled="*{isRepoClonedSuccessfully}"
         id="challenge-github-link-button"
-        type="button"
+        type="submit"
         class="btn btn-primary border"
 ></button>

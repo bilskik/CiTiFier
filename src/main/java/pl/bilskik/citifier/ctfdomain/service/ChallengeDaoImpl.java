@@ -2,6 +2,7 @@ package pl.bilskik.citifier.ctfdomain.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfcreator.challenge.ChallengeDTO;
 import pl.bilskik.citifier.ctfcreator.challengelist.ChallengeAppDataDTO;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChallengeDaoImpl implements ChallengeDao {
 
     private final ChallengeRepository challengeRepository;
@@ -26,15 +28,6 @@ public class ChallengeDaoImpl implements ChallengeDao {
     @Override
     public List<ChallengeDTO> findAll() {
         List<Challenge> challengeList = challengeRepository.findAll();
-
-        return challengeList.parallelStream()
-                .map(mapper::toChallengeDTO)
-                .toList();
-    }
-
-    @Override
-    public List<ChallengeDTO> findAllByLogin(String login) {
-        List<Challenge> challengeList = challengeRepository.findByStudentLogin(login);
 
         return challengeList.parallelStream()
                 .map(mapper::toChallengeDTO)
@@ -57,24 +50,15 @@ public class ChallengeDaoImpl implements ChallengeDao {
     }
 
     @Override
-    public List<ChallengeDTO> findAllByTournamentCode(String tournamentCode) {
-        List<Challenge> challengeList = challengeRepository.findByTournamentCode(tournamentCode);
-
-        return challengeList.parallelStream()
-                .map(mapper::toChallengeDTO)
-                .toList();
-    }
-
-    @Override
     @Transactional
     public ChallengeDTO createNewChallenge(ChallengeDTO challengeDTO) {
-        if(challengeDTO == null)  {
+        Challenge challenge = mapper.toChallenge(challengeDTO);
+        if(challenge == null)  {
+            log.info("Cannot create challenge because is null!");
             throw new ChallengeException("Cannot create new Challenge!");
         }
-
-        Challenge challenge = mapper.toChallenge(challengeDTO);
         challengeRepository.save(challenge);
-
+        log.info("Challenge was successfully created!");
         return challengeDTO;
     }
 }

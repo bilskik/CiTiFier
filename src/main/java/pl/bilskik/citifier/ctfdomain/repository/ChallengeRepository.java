@@ -9,23 +9,4 @@ import java.util.List;
 
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
-    @Query(
-            "SELECT C FROM Challenge C " +
-                    "WHERE C.tournament = (" +
-                        "SELECT S.tournament " +
-                        "FROM Student S " +
-                        "WHERE S.login = :login" +
-                    ")"
-    )
-    List<Challenge> findByStudentLogin(String login);
-
-    @Query(
-            "SELECT C FROM Challenge C " +
-                    "WHERE C.tournament = (" +
-                    "SELECT T " +
-                    "FROM Tournament T " +
-                    "WHERE T.tournamentCode = :tournamentCode" +
-                ")"
-    )
-    List<Challenge> findByTournamentCode(String tournamentCode);
 }

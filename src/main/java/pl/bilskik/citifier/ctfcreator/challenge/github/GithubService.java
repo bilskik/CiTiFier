@@ -1,6 +1,7 @@
 package pl.bilskik.citifier.ctfcreator.challenge.github;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GithubService {
     private final static List<String> DOCKER_COMPOSE = Arrays.asList("docker-compose.yml", "docker-compose.yaml");
     private final static String ACCESS_TOKEN_URI = "https://github.com/login/oauth/access_token";
@@ -41,16 +43,17 @@ public class GithubService {
     public void clonePublicGithubRepo(String url) throws GithubException {
         processor.validateGithubLink(url);
         String filepath = processor.buildClonePath(url);
+        log.info("I am cloning repo: {}", url);
         try {
             Git.cloneRepository()
                     .setURI(url)
                     .setDirectory(new File(filepath))
                     .call();
         } catch(Exception e) {
+            log.info("I can't clone repo: {}, reason: {}", url, e.getMessage());
             throw new GithubException(GITHUB_PUBLIC_REPO_ERROR);
         }
         boolean isDockerCompose = containsDockerCompose(filepath);
-        System.out.println("Docker Compose " + isDockerCompose);
     }
 
     public String buildRedirectUrl(String url) {
@@ -62,7 +65,7 @@ public class GithubService {
         processor.validateGithubLink(url);
         String accessToken = retrieveUserAccessToken(code);
         String filepath = processor.buildClonePath(url);
-
+        log.info("I am cloning repo: {}", url);
         try {
             Git.cloneRepository()
                     .setURI(url)
@@ -70,6 +73,7 @@ public class GithubService {
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(accessToken, ""))
                     .call();
         } catch(Exception e) {
+            log.info("I can't clone repo: {}, reason: {}", url, e.getMessage());
             throw new GithubException(GITHUB_PRIVATE_REPO_CLONE_ERROR);
         }
 

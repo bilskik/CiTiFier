@@ -1,6 +1,7 @@
 package pl.bilskik.citifier.ctfcreator.challenge;
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,57 +13,51 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
+import static pl.bilskik.citifier.ctfcreator.challenge.ChallengeConstraints.CHALLENGE;
+
 
 @Controller
 @RequiredArgsConstructor
 public class ChallengeController {
 
-    private final static List<String> challengeTypes;
     private final static List<String> flagGenerationMethod;
-    private final static List<String> pointCalculationFunctions;
 
     static {
-        challengeTypes = ChallengeType.convertToList();
         flagGenerationMethod = FlagGenerationMethod.convertToList();
-        pointCalculationFunctions = PointCalculationFunction.convertToList();
     }
-
-    private final ChallengeCreationService challengeCreationService;
 
     @ModelAttribute
     public void addCommonAttributes(Model model) {
-        model.addAttribute("challengeTypes", challengeTypes);
         model.addAttribute("flagGenerationMethods", flagGenerationMethod);
-        model.addAttribute("pointCalculationFunctions", pointCalculationFunctions);
     }
 
     @GetMapping(path = "/challenge")
-    public String challengePage(Model model) {
-        model.addAttribute("challengeDTO", new ChallengeDTO());
+    public String challengePage(Model model, HttpSession httpSession) {
+        ChallengeInputDTO challengeInputDTO = new ChallengeInputDTO();
+        if(httpSession.getAttribute(CHALLENGE) != null) {
+            challengeInputDTO = (ChallengeInputDTO) httpSession.getAttribute(CHALLENGE);
+        }
+        model.addAttribute("challengeInputDTO", challengeInputDTO);
         return "ctfcreator/challenge/challenge";
     }
 
     @HxRequest
     @PostMapping(value = "/ctf-creator/challenge")
     public String submitChallenge(
-            @ModelAttribute @Valid ChallengeDTO challengeDTO,
+            @ModelAttribute @Valid ChallengeInputDTO challengeInputDTO,
             BindingResult result,
-            Model model
+            Model model,
+            HttpSession httpSession
     ) {
-        if(challengeDTO != null) {
-            model.addAttribute("challengeDTO", challengeDTO);
+        if(challengeInputDTO != null) {
+            model.addAttribute("challengeInputDTO", challengeInputDTO);
         }
 
         if(result.hasErrors()) {
             return "ctfcreator/challenge/challenge";
         }
 
-        try {
-            challengeCreationService.createNewChallenge(challengeDTO);
-        } catch (Exception e) {
-            return "ctfcreator/challenge/challenge";
-        }
-
-        return "redirect:/challenge-list";
+        httpSession.setAttribute(CHALLENGE, challengeInputDTO);
+        return "redirect:/challenge-repo-link";
     }
 }

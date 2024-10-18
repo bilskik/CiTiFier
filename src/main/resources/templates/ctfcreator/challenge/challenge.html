@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml">
 <head th:replace="~{fragments/head :: head}">
     <title>Challenge</title>
 </head>
@@ -11,12 +11,12 @@
         th:hx-post="@{/ctf-creator/challenge}"
         th:hx-trigger="submit"
         th:hx-include=".challenge"
-        th:hx-target="body"
-        th:hx-swap="outerHTML"
-        th:hx-push-url="false"
+        hx-target="body"
+        hx-swap="outerHTML"
+        hx-push-url="true"
         id="challenge-form"
         class="container-fluid ps-5 pe-5 w-100 h-100"
-        th:object="${challengeDTO}"
+        th:object="${challengeInputDTO}"
     >
         <div class="row g-5">
             <div class="challenge-left col-sm">
@@ -42,150 +42,49 @@
                             class="invalid-feedback"
                     ></p>
                 </div>
+            </div>
                 <div class="form-group">
                     <label
-                            th:text="#{ctfcreator.challenge.description}"
-                            for="challenge-description"
+                            th:text="#{ctfcreator.challenge.number-of-app}"
+                            for="number-of-app"
                             class="form-label"
                     ></label>
-                    <textarea
-                            id="challenge-description"
-                            th:field="*{description}"
-                            type="text"
-                            class="challenge form-control"
-                            th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}"
-                            rows="20"
+                    <input
+                            id="number-of-app"
+                            th:field="*{numberOfApp}"
+                            th:classappend="${#fields.hasErrors('numberOfApp') ? 'is-invalid' : ''}"
+                            type="number"
+                            class="challenge numberOfApp form-control"
                             required
                     >
-                    </textarea>
                     <p
-                            th:if="${#fields.hasErrors('description')}"
-                            th:errors="*{description}"
+                            th:if="${#fields.hasErrors('numberOfApp')}"
+                            th:errors="*{numberOfApp}"
+                            class="invalid-feedback"
+                    ></p>
+                </div>
+                <div class="form-group">
+                    <label
+                            th:text="#{ctfcreator.challenge.start-exposed-port}"
+                            for="start-exposed-port"
+                            class="form-label"
+                    ></label>
+                    <input
+                            id="start-exposed-port"
+                            th:field="*{startExposedPort}"
+                            th:classappend="${#fields.hasErrors('startExposedPort') ? 'is-invalid' : ''}"
+                            type="number"
+                            class="challenge startExposedPort form-control"
+                            required
+                    >
+                    <p
+                            th:if="${#fields.hasErrors('startExposedPort')}"
+                            th:errors="*{startExposedPort}"
                             class="invalid-feedback"
                     ></p>
                 </div>
             </div>
-
-            <div class="challenge-middle col-sm">
-                <div class="challenge-type-container form-group">
-                    <label
-                            th:text="#{ctfcreator.challenge.challenge-type}"
-                            for="challenge-type"
-                            class="form-label"
-                    >
-                    </label>
-                    <select
-                            id="challenge-type"
-                            th:field="*{challengeType}"
-                            class="challenge form-control"
-                            required
-                    >
-                        <option th:each="type : ${challengeTypes}" th:text="${type}" th:value="${type}"></option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label
-                            th:text="#{ctfcreator.challenge.github-link}"
-                            for="github-link"
-                            class="form-label"
-                    ></label>
-                    <input
-                            id="github-link"
-                            th:field="*{githubLink}"
-                            type="text"
-                            class="challenge githubLink form-control"
-                            pattern="https:\/\/github\.com\/([^\/]+)\/([^\/]+)"
-                            required
-                    >
-                    <input id="private-github-clone-info" type="hidden" th:data-state="${githubLinkState}" th:data-info="${githubLinkInfo}" />
-                    <p
-                            id="htmx-github-link-error"
-                    ></p>
-                    <label
-                            th:text="#{ctfcreator.challenge.is-github-repo-visibility}"
-                            for="github-repo-visibility"
-                            class="form-check-label"
-                    >
-                    </label>
-                    <input
-                            th:hx-post="@{/ctf-creator/challenge/github-repo-visibility}"
-                            th:hx-trigger="change"
-                            hx-target="#challenge-github-button"
-                            hx-include=".githubLink"
-                            th:hx-swap="innerHTML"
-                            th:hx-push-url="false"
-                            id="github-repo-visibility"
-                            name="githubRepoPrivateVisibility"
-                            type="checkbox"
-                            class="form-check-input githubLink"
-                    />
-                    <div id="challenge-github-button" hx-on::after-swap="handleAfterSwap(event);">
-                       <th:block th:insert="~{ctfcreator/challenge/github/github-public-repo-button.html}">
-                        </th:block>
-                    </div>
-                </div>
-
-                <p th:text="#{ctfcreator.challenge.availability}"></p>
-
-                <div class="form-group">
-                    <label
-                            th:text="#{ctfcreator.challenge.challenge-start}"
-                            for="challenge-start"
-                            class="form-label"
-                    ></label>
-                    <input
-                            id="challenge-start"
-                            th:field="*{start}"
-                            type="datetime-local"
-                            class="challenge challenge-date form-control"
-<!--                            required-->
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label
-                            th:text="#{ctfcreator.challenge.challenge-finish}"
-                            for="challenge-finish"
-                    ></label>
-                    <input
-                            id="challenge-finish"
-                            th:field="*{finish}"
-                            type="datetime-local"
-                            class="challenge challenge-date form-control"
-<!--                            required-->
-                    >
-                </div>
-
-                <div class="form-check">
-                    <label
-                            th:text="#{ctfcreator.challenge.task-details-share-at-start}"
-                            for="challenge-share-task-details-at-start"
-                            class="form-check-label"
-                    ></label>
-                    <input
-                            id="challenge-share-task-details-at-start"
-                            th:field="*{shareTaskDetailsAtStart}"
-                            type="checkbox"
-                            class="challenge form-check-input"
-                    >
-                </div>
-            </div>
             <div class="challenge-right col-sm">
-                <div class="form-check">
-                    <label
-                            th:text="#{ctfcreator.challenge.teams-enabled}"
-                            for="challenge-teams"
-                            class="form-check-label"
-                    ></label>
-                    <input
-                            id="challenge-teams"
-                            th:field="*{isTeamsEnabled}"
-                            type="checkbox"
-                            class="challenge form-check-input"
-                    >
-                </div>
-
                 <div class="form-group">
                     <label
                             th:text="#{ctfcreator.challenge.flag-generation-method}"
@@ -197,66 +96,9 @@
                             class="challenge form-control"
                             required
                     >
-
                         <option th:each="method: ${flagGenerationMethods}" th:text="${method}" th:value="${method}"></option>
                     </select>
                 </div>
-
-                <div class="form-group">
-                    <label
-                            th:text="#{ctfcreator.challenge.min-points-for-challenge}"
-                            for="min-points-for-challenge"
-                            class="form-label"
-                    ></label>
-                    <input
-                            id="min-points-for-challenge"
-                            th:field="*{minPoints}"
-                            type="number"
-                            min="0"
-                            class="challenge challenge-points form-control"
-                            th:classappend="${#fields.hasErrors('minPoints') ? 'is-invalid' : ''}"
-                            required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label
-                            th:text="#{ctfcreator.challenge.max-points-for-challenge}"
-                            for="max-points-for-challenge"
-                            class="form-label"
-                    ></label>
-                    <input
-                            id="max-points-for-challenge"
-                            th:field="*{maxPoints}"
-                            type="number"
-                            min="0"
-                            class="challenge challenge-points form-control"
-                            th:classappend="${#fields.hasErrors('minPoints') ? 'is-invalid' : ''}"
-                            required
-                    >
-                    <p
-                            th:if="${#fields.hasErrors('minPoints')}"
-                            th:errors="*{minPoints}"
-                            class="invalid-feedback"
-                    ></p>
-                </div>
-
-                <div class="form-group">
-                    <label
-                            th:text="#{ctfcreator.challenge.point-calculation-function}"
-                            for="func-calculating-points-for-challenge"
-                            class="form-label"
-                    >
-                    </label>
-                    <select
-                            id="func-calculating-points-for-challenge"
-                            th:field="*{pointCalculationFunction}"
-                            type="text"
-                            class="challenge form-control"
-                            required
-                    >
-                        <option th:each="function : ${pointCalculationFunctions}" th:text="${function}" th:value="${function}"></option>
-                    </select>
                 </div>
             </div>
         </div>

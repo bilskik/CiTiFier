@@ -9,11 +9,7 @@ public interface ChallengeDao {
 
     List<ChallengeDTO> findAll();
 
-    List<ChallengeDTO> findAllByLogin(String login);
-
     ChallengeAppDataDTO findChallengeAppDataDTOByChallengeId(Long id);
-
-    List<ChallengeDTO> findAllByTournamentCode(String tournamentCode);
 
     ChallengeDTO createNewChallenge(ChallengeDTO challengeDTO);
 

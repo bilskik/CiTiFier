@@ -30,10 +30,6 @@ public class ChallengeListService {
     private final DockerComposeParserManager dockerComposeParserManager;
 
     public List<ChallengeDTO> findAllChallengesByTournamentCode(String tournamentCode) {
-        if(!EMPTY.equals(tournamentCode)) {
-            return challengeDao.findAllByTournamentCode(tournamentCode);
-        }
-
         return new ArrayList<>();
     }
 
