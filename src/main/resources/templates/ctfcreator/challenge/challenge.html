@@ -11,12 +11,12 @@
         th:hx-post="@{/ctf-creator/challenge}"
         th:hx-trigger="submit"
         th:hx-include=".challenge"
-        th:hx-target="body"
-        th:hx-swap="outerHTML"
-        th:hx-push-url="false"
+        hx-target="body"
+        hx-swap="outerHTML"
+        hx-push-url="true"
         id="challenge-form"
         class="container-fluid ps-5 pe-5 w-100 h-100"
-        th:object="${challengeDTO}"
+        th:object="${challengeInputDTO}"
     >
         <div class="row g-5">
             <div class="challenge-left col-sm">
@@ -45,68 +45,23 @@
             </div>
                 <div class="form-group">
                     <label
-                            th:text="#{ctfcreator.challenge.github-link}"
-                            for="github-link"
-                            class="form-label"
-                    ></label>
-                    <input
-                            id="github-link"
-                            th:field="*{githubLink}"
-                            type="text"
-                            class="challenge githubLink form-control"
-                            pattern="https:\/\/github\.com\/([^\/]+)\/([^\/]+)"
-                            required
-                    >
-                    <input id="private-github-clone-info" type="hidden" th:data-state="${githubLinkState}" th:data-info="${githubLinkInfo}" />
-                    <p
-                            id="htmx-github-link-error"
-                    ></p>
-                    <label
-                            th:text="#{ctfcreator.challenge.is-github-repo-visibility}"
-                            for="github-repo-visibility"
-                            class="form-check-label"
-                    >
-                    </label>
-                    <input
-                            th:hx-post="@{/ctf-creator/challenge/github-repo-visibility}"
-                            th:hx-trigger="change"
-                            hx-target="#challenge-github-button"
-                            hx-include=".githubLink"
-                            th:hx-swap="innerHTML"
-                            th:hx-push-url="false"
-                            th:disabled="*{isRepoClonedSuccessfully}"
-                            id="github-repo-visibility"
-                            name="githubRepoPrivateVisibility"
-                            type="checkbox"
-                            class="form-check-input githubLink"
-                    />
-                    <div id="challenge-github-button" hx-on::after-swap="handleAfterSwap(event);">
-                       <th:block th:insert="~{ctfcreator/challenge/github/github-public-repo-button.html}">
-                        </th:block>
-                    </div>
-                    <button
-                        id="challenge-save-in-session"
-                        th:hx-post="@{/ctf-creator/challenge/save-in-session}"
-                        th:hx-trigger="click"
-                        th:hx-include=".challenge"
-                        class="invisible"
-                    >
-                    </button>
-                </div>
-                <div class="form-group">
-                    <label
                             th:text="#{ctfcreator.challenge.number-of-app}"
-                            for="github-link"
+                            for="number-of-app"
                             class="form-label"
                     ></label>
                     <input
                             id="number-of-app"
                             th:field="*{numberOfApp}"
                             th:classappend="${#fields.hasErrors('numberOfApp') ? 'is-invalid' : ''}"
-                            type="text"
+                            type="number"
                             class="challenge numberOfApp form-control"
                             required
                     >
+                    <p
+                            th:if="${#fields.hasErrors('numberOfApp')}"
+                            th:errors="*{numberOfApp}"
+                            class="invalid-feedback"
+                    ></p>
                 </div>
                 <div class="form-group">
                     <label
@@ -118,10 +73,15 @@
                             id="start-exposed-port"
                             th:field="*{startExposedPort}"
                             th:classappend="${#fields.hasErrors('startExposedPort') ? 'is-invalid' : ''}"
-                            type="text"
+                            type="number"
                             class="challenge startExposedPort form-control"
                             required
                     >
+                    <p
+                            th:if="${#fields.hasErrors('startExposedPort')}"
+                            th:errors="*{startExposedPort}"
+                            class="invalid-feedback"
+                    ></p>
                 </div>
             </div>
             <div class="challenge-right col-sm">
@@ -136,7 +96,6 @@
                             class="challenge form-control"
                             required
                     >
-
                         <option th:each="method: ${flagGenerationMethods}" th:text="${method}" th:value="${method}"></option>
                     </select>
                 </div>

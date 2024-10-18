@@ -26,8 +26,6 @@ public class ChallengeController {
         flagGenerationMethod = FlagGenerationMethod.convertToList();
     }
 
-    private final ChallengeCreationService challengeCreationService;
-
     @ModelAttribute
     public void addCommonAttributes(Model model) {
         model.addAttribute("flagGenerationMethods", flagGenerationMethod);
@@ -35,45 +33,31 @@ public class ChallengeController {
 
     @GetMapping(path = "/challenge")
     public String challengePage(Model model, HttpSession httpSession) {
-        ChallengeDTO challengeDTO = new ChallengeDTO();
+        ChallengeInputDTO challengeInputDTO = new ChallengeInputDTO();
         if(httpSession.getAttribute(CHALLENGE) != null) {
-            challengeDTO = (ChallengeDTO) httpSession.getAttribute(CHALLENGE);
+            challengeInputDTO = (ChallengeInputDTO) httpSession.getAttribute(CHALLENGE);
         }
-        model.addAttribute("challengeDTO", challengeDTO);
+        model.addAttribute("challengeInputDTO", challengeInputDTO);
         return "ctfcreator/challenge/challenge";
     }
 
     @HxRequest
     @PostMapping(value = "/ctf-creator/challenge")
     public String submitChallenge(
-            @ModelAttribute @Valid ChallengeDTO challengeDTO,
+            @ModelAttribute @Valid ChallengeInputDTO challengeInputDTO,
             BindingResult result,
             Model model,
             HttpSession httpSession
     ) {
-        if(challengeDTO != null) {
-            updateChallengeRepoClonedStatusInChallengeDTO(httpSession, challengeDTO);
-            model.addAttribute("challengeDTO", challengeDTO);
+        if(challengeInputDTO != null) {
+            model.addAttribute("challengeInputDTO", challengeInputDTO);
         }
 
         if(result.hasErrors()) {
             return "ctfcreator/challenge/challenge";
         }
 
-        try {
-            challengeCreationService.createNewChallenge(challengeDTO);
-        } catch (Exception e) {
-            return "ctfcreator/challenge/challenge";
-        }
-
-        return "redirect:/challenge-list";
-    }
-
-    private void updateChallengeRepoClonedStatusInChallengeDTO(HttpSession httpSession, ChallengeDTO challengeDTO) {
-        ChallengeDTO sessionChallengeDTO = (ChallengeDTO) httpSession.getAttribute(CHALLENGE);
-        if(sessionChallengeDTO != null) {
-            boolean isRepoClonedSuccessfully = sessionChallengeDTO.getIsRepoClonedSuccessfully();
-            challengeDTO.setRepoClonedSuccessfully(isRepoClonedSuccessfully);
-        }
+        httpSession.setAttribute(CHALLENGE, challengeInputDTO);
+        return "redirect:/challenge-repo-link";
     }
 }
