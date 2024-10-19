@@ -31,7 +31,7 @@ public class ChallengeListController {
     @GetMapping("/ctr-creator/cluster-start")
     @ResponseBody
     public void parseComposeAndDeployApp() {
-        challengeListService.parseComposeAndDeployApp();
+        challengeListService.parseComposeAndDeployApp(1L);
     }
 
 }
