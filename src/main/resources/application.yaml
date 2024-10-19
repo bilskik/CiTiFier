@@ -26,6 +26,10 @@ spring:
 preliquibase:
   sql-script-references: classpath:/db/preliquibase/schema-creation.sql
 
+logging:
+  level:
+    org:
+      springframework.security: TRACE
 
 db:
   schemaName: ctf

@@ -15,6 +15,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(x -> x.disable())
+                .formLogin((login) -> { login
+                        .loginPage("/login")
+                        .loginProcessingUrl("/ctf-core/login")
+                        .usernameParameter("login")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/challenge-list", true)
+                        .failureUrl("/login?loginError=true")
+                        .permitAll();
+                })
                 .authorizeHttpRequests((auth) -> {
                     auth
                         .requestMatchers(
@@ -27,6 +36,13 @@ public class SecurityConfig {
                         .authenticated();
                 })
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .logout((logout) -> { logout
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .deleteCookies("JSESSIONID");
+                })
                 .build();
     }
 }

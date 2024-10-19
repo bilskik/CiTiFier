@@ -3,6 +3,8 @@ package pl.bilskik.citifier.ctfdomain.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfdomain.dto.CTFCreatorDTO;
 import pl.bilskik.citifier.ctfdomain.entity.CTFCreator;
@@ -41,7 +43,8 @@ public class CTFCreatorDaoImpl implements CTFCreatorDao {
     public CTFCreatorDTO findByLogin(String login) {
         Optional<CTFCreator> optionalCTFCreatorDTO = ctfCreatorRepository.findByLogin(login);
 
-        return optionalCTFCreatorDTO.map(mapper::toCTFCreatorDTO).orElse(null);
+        return optionalCTFCreatorDTO.map(mapper::toCTFCreatorDTO)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
     }
 
     @Override

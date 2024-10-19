@@ -23,26 +23,6 @@
                         </h1>
                         <p th:text="#{ctfcore.login-register.sub-title}"></p>
                     </div>
-                    <div
-                            th:if="${loginDTO?.isCtfCreator == null || !loginDTO.isCtfCreator}"
-                            class="form-group mt-2 mb-2 tournament-code"
-                    >
-                        <label
-                                th:text="#{ctfcore.login.tournament-code}"
-                                for="tournament-code"
-                                class="form-label"
-                        >
-                        </label>
-                        <input
-                                th:value="${loginDTO?.tournamentCode}"
-                                id="tournament-code"
-                                name="tournamentCode"
-                                type="text"
-                                class="form-control"
-                                required
-                                autocomplete="off"
-                        />
-                    </div>
                     <div class="form-group mt-2 mb-2">
                         <label
                                 th:text="#{ctfcore.login-register.login}"
@@ -51,7 +31,6 @@
                         >
                         </label>
                         <input
-                                th:value="${loginDTO?.login}"
                                 id="login"
                                 name="login"
                                 type="text"
@@ -68,7 +47,6 @@
                         >
                         </label>
                         <input
-                                th:value="${loginDTO?.password}"
                                 id="password"
                                 name="password"
                                 type="password"
@@ -77,32 +55,11 @@
                                 autocomplete="off"
                         />
                     </div>
-                    <div class="form-group mt-2 mb-2">
-                        <label
-                                th:text="#{ctfcore.login-register.ctf-creator}"
-                                for="is-ctf-creator"
-                                class="form-check-label"
-                        >
-                        </label>
-                        <input
-                                th:checked="${loginDTO?.isCtfCreator}"
-                                th:hx-post="@{/ctf-core/login/tournament-code}"
-                                th:hx-trigger="change"
-                                th:hx-target=".tournament-code"
-                                th:hx-swap="innerHTML"
-                                th:hx-push-url="false"
-                                id="is-ctf-creator"
-                                name="ctfCreator"
-                                type="checkbox"
-                                class="form-check-input"
-                                autocomplete="off"
-                        />
-                    </div>
                     <div
-                            th:if="${loginExceptionMessage != null && !loginExceptionMessage.isEmpty()}"
+                            th:if="${param.loginError != null && !param.loginError.isEmpty()}"
                             class="text-danger fw-bold mt-2 mb-2"
                     >
-                        <span th:text="${loginExceptionMessage}"></span>
+                        <span th:text="#{ctf-core.login.error}"></span>
                     </div>
                     <button
                         th:text="#{common.login}"
