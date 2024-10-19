@@ -25,15 +25,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class GithubService {
+    private final static List<String> DOCKER_COMPOSE = Arrays.asList("docker-compose.yml", "docker-compose.yaml", "compose.yaml", "compose.yml");
     private final static String ACCESS_TOKEN_URI = "https://github.com/login/oauth/access_token";
     private final static String AUTHORIZE_URI = "https://github.com/login/oauth/authorize";
     private final static String GITHUB_PUBLIC_REPO_ERROR = "Nie można pobrać repozytorium. Sprawdź, czy link jest poprawny i czy repozytorium nie jest prywatne";
     private final static String GITHUB_PRIVATE_REPO_ACCESS_ERROR = "Nie można uzyskać dostępu! Sprawdź poprawność danych!";
     private final static String GITHUB_PRIVATE_REPO_CLONE_ERROR = "Nie można pobrać repozytorium. Sprawdź czy link jest poprawny!";
     private final static String GITHUB_DOCKER_COMPOSE_ERROR = "Repozytorium nie posiada pliku docker compose!";
-
-    @Value("${repo.allowed-docker-compose-file-names}")
-    private List<String> DOCKER_COMPOSE;
 
     @Value("${oauth2.github.client-id}")
     private String CLIENT_ID;

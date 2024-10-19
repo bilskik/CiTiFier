@@ -14,6 +14,7 @@ import pl.bilskik.citifier.ctfdomain.service.ChallengeDao;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -24,12 +25,10 @@ import java.util.regex.Pattern;
 public class ChallengeListService {
 
     private final static String K8S_LABEL_REGEX = "^([A-Za-z0-9]([-A-Za-z0-9_.]{0,55}[A-Za-z0-9])?)?$"; //max 55 characters long for additional values
+    private final static List<String> DOCKER_COMPOSE = Arrays.asList("docker-compose.yml", "docker-compose.yaml", "compose.yaml", "compose.yml");
 
     @Value("${repo.base-file-path}")
     private String baseFilePath;
-
-    @Value("${repo.allowed-docker-compose-file-names}")
-    private List<String> DOCKER_COMPOSE;
 
     private final ChallengeDao challengeDao;
     private final K8sResourceManager k8SResourceManager;

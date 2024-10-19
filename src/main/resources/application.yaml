@@ -41,11 +41,6 @@ oauth2:
 
 repo:
     base-file-path: D:\\CLONED_REPO_CITIFIER
-    allowed-docker-compose-file-names:
-      - docker-compose.yml
-      - docker-compose.yaml
-      - compose.yaml
-      - compose.yml
 
 docker:
   build:
