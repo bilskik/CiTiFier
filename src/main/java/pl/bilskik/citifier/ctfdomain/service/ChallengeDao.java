@@ -13,4 +13,5 @@ public interface ChallengeDao {
 
     ChallengeDTO createNewChallenge(ChallengeDTO challengeDTO);
 
+    String findRepoNameByChallengeId(Long challengeId);
 }

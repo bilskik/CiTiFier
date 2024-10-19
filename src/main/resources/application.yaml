@@ -38,4 +38,12 @@ oauth2:
     client-id:
     client-secret:
     app-id:
-    file-path: D:\\CLONED_REPO_CITIFIER
+
+repo:
+    base-file-path: D:\\CLONED_REPO_CITIFIER
+
+docker:
+  build:
+    shell:
+      name: powershell.exe
+      config: -Command

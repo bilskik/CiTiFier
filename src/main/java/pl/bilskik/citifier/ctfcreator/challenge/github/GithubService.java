@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestClient;
 
 import java.io.File;
@@ -24,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class GithubService {
-    private final static List<String> DOCKER_COMPOSE = Arrays.asList("docker-compose.yml", "docker-compose.yaml");
+    private final static List<String> DOCKER_COMPOSE = Arrays.asList("docker-compose.yml", "docker-compose.yaml", "compose.yaml", "compose.yml");
     private final static String ACCESS_TOKEN_URI = "https://github.com/login/oauth/access_token";
     private final static String AUTHORIZE_URI = "https://github.com/login/oauth/authorize";
     private final static String GITHUB_PUBLIC_REPO_ERROR = "Nie można pobrać repozytorium. Sprawdź, czy link jest poprawny i czy repozytorium nie jest prywatne";
@@ -53,13 +54,12 @@ public class GithubService {
             log.info("I can't clone repo: {}, reason: {}", url, e.getMessage());
             throw new GithubException(GITHUB_PUBLIC_REPO_ERROR);
         }
-        boolean isDockerCompose = containsDockerCompose(filepath);
+        validateDockerComposeInRepo(filepath);
     }
 
     public String buildRedirectUrl(String url) {
         return AUTHORIZE_URI + "?client_id=" + CLIENT_ID + "&state=" + url;
     }
-
 
     public void clonePrivateGithubRepo(String code, String url) {
         processor.validateGithubLink(url);
@@ -76,14 +76,12 @@ public class GithubService {
             log.info("I can't clone repo: {}, reason: {}", url, e.getMessage());
             throw new GithubException(GITHUB_PRIVATE_REPO_CLONE_ERROR);
         }
-
-        boolean isDockerCompose = containsDockerCompose(filepath);
-        System.out.println("Docker Compose " + isDockerCompose);
+        validateDockerComposeInRepo(filepath);
     }
 
     private String retrieveUserAccessToken(String code) {
         String uri = buildAccessTokenUri(code);
-
+        log.info("Retrieving user access token");
         RestClient restClient = RestClient.create();
         ResponseEntity<GithubAccessTokenResponse> response = restClient.post()
                 .uri(uri)
@@ -91,13 +89,18 @@ public class GithubService {
                 .body("")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
+                    log.info("Client error, fail to retrieve user access token, code: {}, reason: {}"
+                            ,res.getStatusCode(), res.getBody());
                     throw new GithubException(GITHUB_PRIVATE_REPO_ACCESS_ERROR);
                 })
                 .onStatus(HttpStatusCode::is5xxServerError, ((req, res) -> {
+                    log.info("Server error, fail to retrieve user access token, code: {}, reason: {}"
+                            , res.getStatusCode(), res.getBody());
                     throw new GithubException(GITHUB_PRIVATE_REPO_ACCESS_ERROR);
                 }))
                 .toEntity(GithubAccessTokenResponse.class);
 
+        log.info("Retrieved user access token");
         return response.getBody() != null ? response.getBody().getAccess_token() : null;
     }
 
@@ -105,10 +108,18 @@ public class GithubService {
         return ACCESS_TOKEN_URI + "?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&code=" + code;
     }
 
+    private void validateDockerComposeInRepo(String filepath) {
+        log.info("Checking if docker compose is available in repo");
+        boolean isDockerComposeAvailable = containsDockerCompose(filepath);
+        if(!isDockerComposeAvailable) {
+            deleteRepository(filepath);
+            throw new GithubException(GITHUB_DOCKER_COMPOSE_ERROR);
+        }
+        log.info("Docker compose is available in repo");
+    }
 
-    private boolean containsDockerCompose(String filepath) { //to be changed
-        try {
-            Git git = Git.open(new File(filepath));
+    private boolean containsDockerCompose(String filepath) {
+        try(Git git = Git.open(new File(filepath))) {
             Repository repository = git.getRepository();
             ObjectId lastCommitId = repository.resolve("HEAD");
             RevWalk revWalk = new RevWalk(repository);
@@ -121,12 +132,29 @@ public class GithubService {
                     return true;
                 }
             }
-
+            repository.close();
+            revWalk.close();
+            treeWalk.close();
         } catch(IOException e) {
-            throw new GithubException(GITHUB_DOCKER_COMPOSE_ERROR);
+           return false;
         }
-
         return false;
+    }
+
+    private void deleteRepository(String filepath) {
+        log.info("Deleting repository because it doesn't contain docker-compose file!");
+        File file = new File(filepath);
+
+        if(file.exists() && file.canWrite()) {
+            boolean result = FileSystemUtils.deleteRecursively(file); //TO DO: it doesn't work on windows
+            if(result) {
+                log.info("Repo on filepath: {} deleted properly!", filepath);
+            } else {
+                log.info("Cannot delete properly!");
+            }
+        } else {
+            log.info("No permission to delete this repository!");
+        }
     }
 
 }

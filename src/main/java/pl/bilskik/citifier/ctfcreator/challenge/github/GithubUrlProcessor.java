@@ -11,12 +11,12 @@ public class GithubUrlProcessor {
     private final static int MINIMUM_URL_LENGTH = 5;
     private final static String GITHUB_LINK_FORMAT = "https://github.com/{użytkownik}/{repozytorium}";
 
-    @Value("${oauth2.github.file-path}")
-    private String filePath;
+    @Value("${repo.base-file-path}")
+    private String baseFilePath;
 
     public String buildClonePath(String url) {
         String[] tokens = splitUrl(url);
-        return filePath + "\\" + tokens[tokens.length - 1];
+        return baseFilePath + "\\" + tokens[tokens.length - 1];
     }
 
     public void validateGithubLink(String url) {

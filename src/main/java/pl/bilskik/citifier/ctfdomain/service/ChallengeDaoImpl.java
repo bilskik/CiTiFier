@@ -61,4 +61,11 @@ public class ChallengeDaoImpl implements ChallengeDao {
         log.info("Challenge was successfully created!");
         return challengeDTO;
     }
+
+    @Override
+    public String findRepoNameByChallengeId(Long challengeId) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new ChallengeException("Challenge not found!"));
+        return challenge.getRepoName();
+    }
 }
