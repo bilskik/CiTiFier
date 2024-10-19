@@ -4,17 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfcreator.challenge.ChallengeDTO;
+import pl.bilskik.citifier.ctfcreator.dockebuilder.BuildDockerContainers;
 import pl.bilskik.citifier.ctfcreator.docker.DockerComposeParserManager;
 import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
 import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceContext;
 import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceManager;
-import pl.bilskik.citifier.ctfdomain.entity.ChallengeAppData;
 import pl.bilskik.citifier.ctfdomain.service.ChallengeDao;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
@@ -28,6 +27,7 @@ public class ChallengeListService {
     private final ChallengeDao challengeDao;
     private final K8sResourceManager k8SResourceManager;
     private final DockerComposeParserManager dockerComposeParserManager;
+    private final BuildDockerContainers dockerContainers;
 
     public List<ChallengeDTO> findAllChallengesByTournamentCode(String tournamentCode) {
         return new ArrayList<>();
@@ -38,8 +38,9 @@ public class ChallengeListService {
     }
 
     public void parseComposeAndDeployApp() {
+        dockerContainers.build("D:\\CLONED_REPO_CITIFIER\\secure-notes-app");
         K8sResourceContext resourceContext = loadAppDataToK8sResourceContext();
-        DockerCompose compose = dockerComposeParserManager.parse("D:\\GitHubProjects\\secure-notes-app\\compose.yaml");
+        DockerCompose compose = dockerComposeParserManager.parse("D:\\CLONED_REPO_CITIFIER\\secure-notes-app\\compose.yaml");
         resourceContext.setDockerCompose(compose);
 
         k8SResourceManager.deploy(resourceContext);
