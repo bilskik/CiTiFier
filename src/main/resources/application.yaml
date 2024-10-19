@@ -38,7 +38,14 @@ oauth2:
     client-id:
     client-secret:
     app-id:
-    file-path: D:\\CLONED_REPO_CITIFIER
+
+repo:
+    base-file-path: D:\\CLONED_REPO_CITIFIER
+    allowed-docker-compose-file-names:
+      - docker-compose.yml
+      - docker-compose.yaml
+      - compose.yaml
+      - compose.yml
 
 docker:
   build:
