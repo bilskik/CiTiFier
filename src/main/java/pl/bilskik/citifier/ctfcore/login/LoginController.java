@@ -49,10 +49,6 @@ public class LoginController {
             return "ctfcore/login/login";
         }
 
-        if(loginDTO.isCtfCreator()) {
-            return "redirect:/tournament-list";
-        }
-
         return "redirect:/challenge";
     }
 

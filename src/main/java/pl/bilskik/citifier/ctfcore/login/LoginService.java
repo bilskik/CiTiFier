@@ -16,16 +16,5 @@ public class LoginService {
         if(loginDTO == null) {
             throw new LoginException("Oops cos poszlo nie tak :(");
         }
-
-        if(loginDTO.isCtfCreator()) {
-            CTFCreatorDTO ctfCreatorDTO = ctfCreatorDao.findByLogin(loginDTO.getLogin());
-
-            if(ctfCreatorDTO == null) {
-                throw new LoginException(
-                        String.format("Nie mogę znależć CTFCreator'a z loginem: %s !", loginDTO.getLogin())
-                );
-            }
-
-        }
     }
 }

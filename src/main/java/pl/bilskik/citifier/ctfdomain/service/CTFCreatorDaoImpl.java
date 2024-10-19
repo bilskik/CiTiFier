@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfdomain.dto.CTFCreatorDTO;
 import pl.bilskik.citifier.ctfdomain.entity.CTFCreator;
+import pl.bilskik.citifier.ctfdomain.exception.CTFCreatorException;
 import pl.bilskik.citifier.ctfdomain.mapper.CTFCreatorMapper;
 import pl.bilskik.citifier.ctfdomain.repository.CTFCreatorRepository;
 
@@ -46,13 +47,13 @@ public class CTFCreatorDaoImpl implements CTFCreatorDao {
     @Override
     @Transactional
     public CTFCreatorDTO createCTFCreator(CTFCreatorDTO ctfCreatorDTO) {
-        if(ctfCreatorDTO == null) {
-            throw new IllegalArgumentException("CTFCreatorDTO cannot be null");
+        log.info("Creating new CTF user");
+        CTFCreator ctfCreator = mapper.toCTFCreator(ctfCreatorDTO);
+        if(ctfCreator == null) {
+            throw new CTFCreatorException("CTFCreatorDTO cannot be null");
         }
 
-        CTFCreator ctfCreator = mapper.toCTFCreator(ctfCreatorDTO);
         ctfCreatorRepository.save(ctfCreator);
-
         log.info("CTFCreator has been saved!");
 
         return ctfCreatorDTO;

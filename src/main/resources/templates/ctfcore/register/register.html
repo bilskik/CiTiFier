@@ -16,7 +16,8 @@
                         th:hx-boost="true"
                         th:hx-target="body"
                         th:hx-swap="outerHTML"
-                        th:hx-push-url="true"
+                        th:hx-push-url="false"
+                        th:object="${registerDTO}"
                 >
                     <div>
                         <h1
@@ -34,12 +35,19 @@
                         >
                         </label>
                         <input
+                                th:field="*{login}"
+                                th:classappend="${#fields.hasErrors('login') ? 'is-invalid' : ''}"
                                 id="login"
                                 name="login"
                                 type="text"
                                 class="form-control"
                                 required
                         />
+                        <p
+                                th:if="${#fields.hasErrors('login')}"
+                                th:errors="*{login}"
+                                class="invalid-feedback"
+                        ></p>
                     </div>
                     <div class="form-group mt-2 mb-2">
                         <label
@@ -49,28 +57,21 @@
                         >
                         </label>
                         <input
+                                th:field="*{password}"
+                                th:classappend="${#fields.hasErrors('password') ? 'is-invalid' : ''}"
                                 th:title="#{ctfcore.register.password-regex-message}"
                                 id="password"
                                 name="password"
                                 type="password"
                                 class="form-control"
-                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{7,}$"
                                 required
                         />
-                    </div>
-                    <div class="form-group mt-2 mb-2">
-                        <label
-                                th:text="#{ctfcore.login-register.ctf-creator}"
-                                for="is-ctf-creator"
-                                class="form-check-label"
-                        >
-                        </label>
-                        <input
-                                id="is-ctf-creator"
-                                name="ctfCreator"
-                                type="checkbox"
-                                class="form-check-input"
-                        />
+                        <!--                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{7,}$"-->
+                        <p
+                                th:if="${#fields.hasErrors('password')}"
+                                th:errors="*{password}"
+                                class="invalid-feedback"
+                        ></p>
                     </div>
                     <div
                             th:if="${registerExceptionMessage != null && !registerExceptionMessage.isEmpty()}"
@@ -87,7 +88,7 @@
                 </form>
                 <hr>
                 <a
-                        th:href="@{/ctf-core/redirect-to-login}"
+                        th:href="@{/ctf-core/register/redirect-to-login}"
                         th:text="#{common.login}"
                         th:hx-boost="true"
                         th:hx-push-url="true"
