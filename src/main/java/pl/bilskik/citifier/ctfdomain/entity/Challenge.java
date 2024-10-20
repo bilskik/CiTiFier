@@ -27,7 +27,7 @@ public class Challenge {
     @Column(name = "REPO_NAME", nullable = false)
     private String repoName;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(
             name = "FK_CHALLENGE_APP_DATA",
             referencedColumnName = "CHALLENGE_APP_DATA_ID"

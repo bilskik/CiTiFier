@@ -15,6 +15,11 @@ databaseChangeLog:
                     nullable: false
                     primaryKeyConstraintName: PK_TOURNAMENT_ID
               - column:
+                  name: CHALLENGE_APP_NAME
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
                   name: START_EXPOSED_PORT
                   type: INT
                   constraints:

@@ -9,6 +9,7 @@ import lombok.*;
 @ToString
 @Builder
 public class ChallengeDTO {
+    private Long challengeId;
     private String name;
     private Integer numberOfApp;
     private Integer startExposedPort;

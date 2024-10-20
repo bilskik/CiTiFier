@@ -3,7 +3,6 @@ package pl.bilskik.citifier.ctfdomain.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfdomain.dto.CTFCreatorDTO;

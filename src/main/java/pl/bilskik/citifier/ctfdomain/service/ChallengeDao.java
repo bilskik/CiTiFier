@@ -9,6 +9,8 @@ public interface ChallengeDao {
 
     List<ChallengeDTO> findAll();
 
+    List<ChallengeDTO> findAllByLogin(String login);
+
     ChallengeAppDataDTO findChallengeAppDataDTOByChallengeId(Long id);
 
     ChallengeDTO createNewChallenge(ChallengeDTO challengeDTO);

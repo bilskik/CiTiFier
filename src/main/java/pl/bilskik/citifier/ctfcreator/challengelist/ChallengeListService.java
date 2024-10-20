@@ -35,17 +35,13 @@ public class ChallengeListService {
     private final DockerComposeParserManager dockerComposeParserManager;
     private final BuildDockerContainers dockerContainers;
 
-    public List<ChallengeDTO> findAllChallengesByTournamentCode(String tournamentCode) {
-        return new ArrayList<>();
-    }
-
-    public List<ChallengeDTO> findAllChallenges() {
-        return challengeDao.findAll();
+    public List<ChallengeDTO> findAllChallenges(String login) {
+        return challengeDao.findAllByLogin(login);
     }
 
     public void parseComposeAndDeployApp(Long challengeId) {
-        String repoName = challengeDao.findRepoNameByChallengeId(challengeId);
-        String baseFilePathWithRepo = baseFilePath + "\\" + repoName;
+        String baseFilePathWithRepo = buildBaseFilePathWithRepo(challengeId);
+
         K8sResourceContext resourceContext = loadAppDataToK8sResourceContext(challengeId);
         DockerCompose compose = dockerComposeParserManager.parse(baseFilePathWithRepo + provideDockerComposeYamlName(baseFilePathWithRepo));
         resourceContext.setDockerCompose(compose);
@@ -53,6 +49,11 @@ public class ChallengeListService {
         dockerContainers.build(baseFilePathWithRepo);
 
         k8SResourceManager.deploy(resourceContext);
+    }
+
+    private String buildBaseFilePathWithRepo(Long challengeId) {
+        String repoName = challengeDao.findRepoNameByChallengeId(challengeId);
+        return baseFilePath + "\\" + repoName;
     }
 
     private K8sResourceContext loadAppDataToK8sResourceContext(Long challengeId) {
