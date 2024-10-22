@@ -8,10 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDTO {
-    private String tournamentCode;
     @NotNull
     private String login;
     @NotNull
     private String password;
-    private boolean isCtfCreator;
 }

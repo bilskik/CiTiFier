@@ -15,10 +15,34 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(x -> x.disable())
-                .authorizeHttpRequests((request) -> {
-                    request.anyRequest().permitAll();
+                .formLogin((login) -> { login
+                        .loginPage("/login")
+                        .loginProcessingUrl("/ctf-core/login")
+                        .usernameParameter("login")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/challenge-list", true)
+                        .failureUrl("/login?loginError=true")
+                        .permitAll();
+                })
+                .authorizeHttpRequests((auth) -> {
+                    auth
+                        .requestMatchers(
+                                "/register", "/ctf-core/register", "/ctf-core/register/redirect-to-login",
+                                "/login", "/ctf-core/login/redirect-to-register",
+                                "/css/**", "/js/**", "/webjars/**"
+                        )
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated();
                 })
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .logout((logout) -> { logout
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .deleteCookies("JSESSIONID");
+                })
                 .build();
     }
 }

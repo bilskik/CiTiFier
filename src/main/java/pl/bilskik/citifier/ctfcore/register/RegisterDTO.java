@@ -1,5 +1,6 @@
 package pl.bilskik.citifier.ctfcore.register;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -9,12 +10,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@NotNull
 public class RegisterDTO {
 
-    @NotNull
-    @Pattern(regexp = "^.{5,}$")
+    @NotBlank(message = "Login nie może być pusty!")
     private String login;
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{7,}$")
+    @NotBlank(message = "Hasło nie może być puste!")
     private String password;
-    private boolean isCtfCreator;
 }

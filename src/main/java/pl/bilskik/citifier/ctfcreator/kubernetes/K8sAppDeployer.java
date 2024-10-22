@@ -4,6 +4,7 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import pl.bilskik.citifier.ctfcreator.docker.model.ComposeService;
 import pl.bilskik.citifier.ctfcreator.kubernetes.deployment.K8sDeploymentCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sHeadlessServiceCreator;
@@ -17,13 +18,12 @@ import static pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceUtils.provide
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
+@Slf4j
 public class K8sAppDeployer {
-
 
     private static final String APP = "app";
     private static final String DEPLOYMENT_NAME = "deployment";
     private static final String SERVICE_NAME = "service";
-
 
     private final K8sDeploymentCreator deploymentCreator;
     private final K8sNodePortCreator nodePortCreator;
@@ -47,8 +47,8 @@ public class K8sAppDeployer {
                     buildServiceName(i),
                     Collections.singletonMap(APP, context.getServiceLabel()),
                     Collections.singletonMap(APP, context.getDeploymentLabel() + i),
-                    3344,
-                    providePortToApplication(composeService.getPorts()) + i,
+                    3344 + i,
+                    3443,
                     context.getStartExposedPort() + i
             );
 

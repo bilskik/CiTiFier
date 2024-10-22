@@ -7,34 +7,40 @@
     <th:block th:insert="~{common/navbar.html}">
     </th:block>
     <div>
-<!--        <table id="challenge-list" class="table">-->
-<!--            <thead>-->
-<!--                <tr>-->
-<!--                    <th th:value="#{ctfcreator.challenge-list.id}"></th>-->
-<!--                    <th th:value="#{ctfcreator.challenge-list.challenge-name}"></th>-->
-<!--                    <th th:value="#{ctfcreator.challenge-list.challenge-type}"></th>-->
-<!--                </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--                <th:block th:each="challenge, iteration: ${challengeList}">-->
-<!--                    <tr>-->
-<!--                        <td th:text="${iteration.index}"></td>-->
-<!--                        <td th:text="${challenge.name}"></td>-->
-<!--                        <td th:text="${challenge.challengeType}"></td>-->
-<!--                        <td>-->
-<!--                            <button-->
-<!--                                    th:text="#{common.start}"-->
-<!--                                    th:hx-get="@{/ctf-creator/challenge-start}"-->
-<!--                                    class="btn btn-primary"-->
-<!--                            >-->
-<!--                            </button>-->
-<!--                        </td>-->
-<!--                        <td th:text="${challenge.status}"></td>-->
-<!--&lt;!&ndash;                    do translacji + zielon/czerwony kolorek&ndash;&gt;-->
-<!--                    </tr>-->
-<!--                </th:block>-->
-<!--            </tbody>-->
-<!--        </table>-->
+        <table id="challenge-list" class="table">
+            <thead>
+                <tr>
+                    <th th:value="#{ctfcreator.challenge-list.id}"></th>
+                    <th th:value="#{ctfcreator.challenge-list.challenge-name}"></th>
+                    <th th:value="#{ctfcreator.challenge-list.challenge-type}"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <th:block th:each="challenge, iteration: ${challengeList}">
+                    <tr>
+                        <td th:text="${iteration.index}"></td>
+                        <td th:text="${challenge.name}"></td>
+                        <td>
+                            <input
+                                    th:id="|challenge-id-${challenge.challengeId}|"
+                                    type="hidden"
+                                    th:name="challengeId"
+                                    th:class="|${challenge.name}-${challenge.challengeId}|"
+                                    th:value="${challenge.challengeId}"
+                            />
+                            <button
+                                    th:text="#{common.start}"
+                                    th:hx-post="@{/ctf-creator/challenge-start}"
+                                    th:hx-include="|.${challenge.name}-${challenge.challengeId}|"
+                                    th:hx-trigger="click"
+                                    class="btn btn-primary"
+                            >
+                            </button>
+                        </td>
+                    </tr>
+                </th:block>
+            </tbody>
+        </table>
         <button th:hx-get="@{/ctr-creator/cluster-start}">Polacz z minikube</button>
     </div>
 </body>

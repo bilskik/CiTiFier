@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class ChallengeAppDataDTO {
     private String challengeAppName;
+    private String namespace;
     private Integer startExposedPort;
     private Integer numberOfApp;
 }

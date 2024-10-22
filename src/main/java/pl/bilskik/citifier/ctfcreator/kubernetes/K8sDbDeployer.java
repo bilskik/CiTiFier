@@ -64,9 +64,9 @@ public class K8sDbDeployer {
             if(volume.isBindMount()) { //only bind mount supported
                 Volume hostPathVolume = volumeCreator.createVolume(
                         HOST_PATH,
-                        "volume-script-mount",
+                        "init-script",
                         null,
-                        volume.getHostPath()
+                        provideFullPath(context.getFullRepoFilePath(), volume.getHostPath())
                 );
 
                 VolumeMount volumeMount = volumeMountCreator.createVolumeMount(
@@ -81,7 +81,7 @@ public class K8sDbDeployer {
 
         StatefulSet statefulSet = statefulSetCreator.createStatefulSet(
                 provideStatefulSetName(),
-                Collections.singletonMap(APP, "postgres-statefulset"),
+                Collections.singletonMap(APP, "postgresStatefulset"),
                 Collections.singletonMap(APP, "db"),
                 composeService.getContainerName(),
                 composeService.getImage(),
@@ -103,6 +103,17 @@ public class K8sDbDeployer {
 
         client.apps().statefulSets().inNamespace(context.getNamespace()).resource(statefulSet).create();
         client.services().inNamespace(context.getNamespace()).resource(headlessService).create();
+    }
+
+    private String provideFullPath(String fullRepoFilePath, String hostPath) {
+        if(hostPath.startsWith(".")) {
+            if(hostPath.contains("/")) {
+                hostPath = hostPath.replace("/", "\\");
+            }
+            hostPath = fullRepoFilePath + hostPath.substring(1);
+            return "/home/docker/postgres";
+        }
+        return "";
     }
 
     private Secret createSecret(String passwordKey, String passwordValue) {

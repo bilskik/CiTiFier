@@ -17,9 +17,12 @@ public class ChallengeAppData {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "challenge_app_data_seq")
     @Column(name = "CHALLENGE_APP_DATA_ID", nullable = false)
     private Long challengeAppDataId;
-    
-    @Column(name = "CHALLENGE_APP_NAME")
+
+    @Column(name = "CHALLENGE_APP_NAME", nullable = false)
     private String challengeAppName;
+    
+    @Column(name = "NAMESPACE", nullable = false)
+    private String namespace;
 
     @Column(name = "START_EXPOSED_PORT", nullable = false)
     private Integer startExposedPort;
