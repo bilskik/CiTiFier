@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.challenge.github;
+package pl.bilskik.citifier.ctfcreator.github;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

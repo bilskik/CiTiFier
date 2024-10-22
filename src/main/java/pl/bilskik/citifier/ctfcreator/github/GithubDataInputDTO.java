@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.challenge.github;
+package pl.bilskik.citifier.ctfcreator.github;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;

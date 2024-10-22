@@ -3,7 +3,7 @@ package pl.bilskik.citifier.ctfcreator.challenge;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.bilskik.citifier.ctfcreator.challenge.github.GithubDataInputDTO;
+import pl.bilskik.citifier.ctfcreator.github.GithubDataInputDTO;
 import pl.bilskik.citifier.ctfdomain.service.ChallengeDao;
 
 @Service

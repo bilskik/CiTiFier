@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.challenge.github;
+package pl.bilskik.citifier.ctfcreator.github;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

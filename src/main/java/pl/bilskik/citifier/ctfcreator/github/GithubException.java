@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.challenge.github;
+package pl.bilskik.citifier.ctfcreator.github;
 
 public class GithubException extends RuntimeException {
     public GithubException(String message) {
