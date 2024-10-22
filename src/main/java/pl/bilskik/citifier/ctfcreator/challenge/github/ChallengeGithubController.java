@@ -42,13 +42,14 @@ public class ChallengeGithubController {
     }
 
     @PostMapping("/ctf-creator/challenge-creation")
-    public String createChallenge(HttpSession session) {
+    public String createChallenge(Model model, HttpSession session) {
         ChallengeInputDTO challengeInputDTO = (ChallengeInputDTO) session.getAttribute(CHALLENGE);
         GithubDataInputDTO githubDataInputDTO = (GithubDataInputDTO) session.getAttribute(GITHUB_DATA);
 
         try {
             challengeCreationService.createNewChallenge(challengeInputDTO, githubDataInputDTO);
         } catch(Exception e) {
+            model.addAttribute("githubDataInputDTO", githubDataInputDTO);
             return "ctfcreator/challenge/github/challenge-github-repo";
         }
         session.removeAttribute(CHALLENGE);

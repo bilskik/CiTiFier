@@ -20,6 +20,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: NAMESPACE
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
                   name: START_EXPOSED_PORT
                   type: INT
                   constraints:

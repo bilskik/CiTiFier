@@ -13,7 +13,6 @@ import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceManager;
 import pl.bilskik.citifier.ctfdomain.service.ChallengeDao;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -40,13 +39,13 @@ public class ChallengeListService {
     }
 
     public void parseComposeAndDeployApp(Long challengeId) {
-        String baseFilePathWithRepo = buildBaseFilePathWithRepo(challengeId);
+        String fullRepoFilePath = buildBaseFilePathWithRepo(challengeId);
 
-        K8sResourceContext resourceContext = loadAppDataToK8sResourceContext(challengeId);
-        DockerCompose compose = dockerComposeParserManager.parse(baseFilePathWithRepo + provideDockerComposeYamlName(baseFilePathWithRepo));
+        K8sResourceContext resourceContext = loadAppDataToK8sResourceContext(challengeId, fullRepoFilePath);
+        DockerCompose compose = dockerComposeParserManager.parse(fullRepoFilePath + "\\" + provideDockerComposeYamlName(fullRepoFilePath));
         resourceContext.setDockerCompose(compose);
 
-        dockerContainers.build(baseFilePathWithRepo);
+        dockerContainers.build(fullRepoFilePath);
 
         k8SResourceManager.deploy(resourceContext);
     }
@@ -56,22 +55,17 @@ public class ChallengeListService {
         return baseFilePath + "\\" + repoName;
     }
 
-    private K8sResourceContext loadAppDataToK8sResourceContext(Long challengeId) {
-//        ChallengeAppDataDTO appData = challengeDao.findChallengeAppDataDTOByChallengeId(1L);
+    private K8sResourceContext loadAppDataToK8sResourceContext(Long challengeId, String fullRepoFilePath) {
+        ChallengeAppDataDTO appData = challengeDao.findChallengeAppDataDTOByChallengeId(challengeId);
 
-//        return K8sResourceContext.builder()
-//                .namespace("DEFAULT")
-//                .deploymentLabel(provideLabelValue(appData.getChallengeAppName()))
-//                .serviceLabel(provideLabelValue(appData.getChallengeAppName()))
-//                .startExposedPort(appData.getStartExposedPort())
-//                .numberOfApp(appData.getNumberOfApp())
-//                .build();
         return K8sResourceContext.builder()
-                .namespace("default")
-                .deploymentLabel("secure-notes-app")
-                .serviceLabel("secure-notes-app")
-                .startExposedPort(32100)
-                .numberOfApp(2)
+                .appName(appData.getChallengeAppName())
+                .namespace(appData.getNamespace())
+                .deploymentLabel("deploymentLabel")
+                .serviceLabel("serviceLabel")
+                .fullRepoFilePath(fullRepoFilePath)
+                .startExposedPort(appData.getStartExposedPort())
+                .numberOfApp(appData.getNumberOfApp())
                 .build();
     }
 
@@ -92,11 +86,11 @@ public class ChallengeListService {
 
     private String provideDockerComposeYamlName(String baseFilePath) {
         for(var fileName: DOCKER_COMPOSE) {
-            File file = new File(baseFilePath + fileName);
+            File file = new File(baseFilePath + "\\" + fileName);
             if(file.exists()) {
                 return fileName;
             }
         }
-        throw new IllegalArgumentException("NIE MAAAA");
+        throw new IllegalArgumentException("Docker compose not found!");
     }
 }

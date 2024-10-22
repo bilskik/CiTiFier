@@ -20,6 +20,7 @@ import pl.bilskik.citifier.ctfdomain.repository.ChallengeRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -72,13 +73,19 @@ public class ChallengeDaoImpl implements ChallengeDao {
             throw new ChallengeException("Cannot create new Challenge!");
         }
 
+        CTFCreator ctfCreator = provideCTFCreator();
+        String appName = buildAppNameFromRepoName(challenge.getRepoName());
+        String namespace = buildNamespace(appName);
+
         ChallengeAppData challengeAppData = ChallengeAppData.builder()
-                .challengeAppName("EXAMPLE TO CHANGE")
+                .challengeAppName(appName)
+                .namespace(namespace)
                 .startExposedPort(challengeDTO.getStartExposedPort())
                 .numberOfApp(challengeDTO.getNumberOfApp())
                 .build();
+
         challenge.setChallengeAppData(challengeAppData);
-        challenge.setCtfCreator(provideCTFCreator());
+        challenge.setCtfCreator(ctfCreator);
 
         challengeRepository.save(challenge);
         log.info("Challenge was successfully created!");
@@ -96,6 +103,21 @@ public class ChallengeDaoImpl implements ChallengeDao {
             return ((UserDetails) authentication.getPrincipal()).getUsername();
         }
         return "";
+    }
+
+    private String buildAppNameFromRepoName(String repoName) {
+        if(repoName.length() > 30) {
+            repoName = repoName.substring(0,30);
+        }
+        return repoName
+                .toLowerCase()
+                .replace(".", "")
+                .replace("_", "");
+    }
+
+    private String buildNamespace(String appName) {
+        String uuid = UUID.randomUUID().toString();
+        return appName + "-" + uuid.substring(0, 30);
     }
 
     @Override
