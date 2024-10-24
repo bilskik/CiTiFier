@@ -2,6 +2,7 @@ package pl.bilskik.citifier.ctfcreator.github;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,17 +44,35 @@ public class GithubService {
     private final GithubUrlProcessor processor;
 
     public void clonePublicGithubRepo(String url) throws GithubException {
+        validateAndCloneRepo(url, null, false);
+    }
+
+    public void clonePrivateGithubRepo(String code, String url) {
+        String accessToken = retrieveUserAccessToken(code)
+                .orElseThrow(() -> new GithubException(GITHUB_PRIVATE_REPO_ACCESS_ERROR));
+        validateAndCloneRepo(url, accessToken, true);
+    }
+
+    private void validateAndCloneRepo(String url, String accessToken, boolean isPrivate) {
         processor.validateGithubLink(url);
         String filepath = processor.buildClonePath(url);
+
         log.info("I am cloning repo: {}", url);
+
         try {
-            Git.cloneRepository()
+            CloneCommand clone = Git.cloneRepository()
                     .setURI(url)
-                    .setDirectory(new File(filepath))
-                    .call();
+                    .setDirectory(new File(filepath));
+
+            if(isPrivate && accessToken != null) {
+                clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider(accessToken, ""));
+            }
+
+            clone.call();
+            log.info("Succesfully cloned repo: {}", url);
         } catch(Exception e) {
             log.info("I can't clone repo: {}, reason: {}", url, e.getMessage());
-            throw new GithubException(GITHUB_PUBLIC_REPO_ERROR);
+            throw new GithubException(isPrivate ? GITHUB_PRIVATE_REPO_CLONE_ERROR : GITHUB_PUBLIC_REPO_ERROR);
         }
         validateDockerComposeInRepo(filepath);
     }
@@ -61,70 +81,49 @@ public class GithubService {
         return AUTHORIZE_URI + "?client_id=" + CLIENT_ID + "&state=" + url;
     }
 
-    public void clonePrivateGithubRepo(String code, String url) {
-        processor.validateGithubLink(url);
-        String accessToken = retrieveUserAccessToken(code);
-        String filepath = processor.buildClonePath(url);
-        log.info("I am cloning repo: {}", url);
-        try {
-            Git.cloneRepository()
-                    .setURI(url)
-                    .setDirectory(new File(filepath))
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(accessToken, ""))
-                    .call();
-        } catch(Exception e) {
-            log.info("I can't clone repo: {}, reason: {}", url, e.getMessage());
-            throw new GithubException(GITHUB_PRIVATE_REPO_CLONE_ERROR);
-        }
-        validateDockerComposeInRepo(filepath);
-    }
-
-    private String retrieveUserAccessToken(String code) {
+    private Optional<String> retrieveUserAccessToken(String code) {
         String uri = buildAccessTokenUri(code);
         log.info("Retrieving user access token");
+
         RestClient restClient = RestClient.create();
         ResponseEntity<GithubAccessTokenResponse> response = restClient.post()
                 .uri(uri)
                 .header("Accept", "application/json")
                 .body("")
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
-                    log.info("Client error, fail to retrieve user access token, code: {}, reason: {}"
-                            ,res.getStatusCode(), res.getBody());
-                    throw new GithubException(GITHUB_PRIVATE_REPO_ACCESS_ERROR);
-                })
-                .onStatus(HttpStatusCode::is5xxServerError, ((req, res) -> {
-                    log.info("Server error, fail to retrieve user access token, code: {}, reason: {}"
-                            , res.getStatusCode(), res.getBody());
-                    throw new GithubException(GITHUB_PRIVATE_REPO_ACCESS_ERROR);
-                }))
                 .toEntity(GithubAccessTokenResponse.class);
 
-        log.info("Retrieved user access token");
-        return response.getBody() != null ? response.getBody().getAccess_token() : null;
+        if(response.getStatusCode().is2xxSuccessful()) {
+            log.info("Retrieved user access token succesfully!");
+            return Optional.ofNullable(response.getBody()).map(GithubAccessTokenResponse::getAccess_token);
+        }
+
+        log.error("Failed to retrieve access token. Status: {}, Body: {}", response.getStatusCode(), response.getBody());
+        return Optional.empty();
     }
 
     private String buildAccessTokenUri(String code) {
-        return ACCESS_TOKEN_URI + "?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&code=" + code;
+        return String.format("%s?client_id=%s&client_secret=%s&code=%s", ACCESS_TOKEN_URI, CLIENT_ID, CLIENT_SECRET, code);
     }
 
     private void validateDockerComposeInRepo(String filepath) {
-        log.info("Checking if docker compose is available in repo");
+        log.info("Validating Docker Compose file in repo: {}", filepath);
         boolean isDockerComposeAvailable = containsDockerCompose(filepath);
         if(!isDockerComposeAvailable) {
             deleteRepository(filepath);
             throw new GithubException(GITHUB_DOCKER_COMPOSE_ERROR);
         }
-        log.info("Docker compose is available in repo");
+        log.info("Docker compose file found");
     }
 
     private boolean containsDockerCompose(String filepath) {
         try(Git git = Git.open(new File(filepath))) {
             Repository repository = git.getRepository();
-            ObjectId lastCommitId = repository.resolve("HEAD");
             RevWalk revWalk = new RevWalk(repository);
-            RevCommit lastCommit = revWalk.parseCommit(lastCommitId);
             TreeWalk treeWalk = new TreeWalk(repository);
+
+            ObjectId lastCommitId = repository.resolve("HEAD");
+            RevCommit lastCommit = revWalk.parseCommit(lastCommitId);
             treeWalk.addTree(lastCommit.getTree());
             treeWalk.setRecursive(false);
             while(treeWalk.next()) {
@@ -132,29 +131,25 @@ public class GithubService {
                     return true;
                 }
             }
-            repository.close();
-            revWalk.close();
-            treeWalk.close();
+
         } catch(IOException e) {
+            log.error("Error while checking for Docker Compose file in repo: {}", e.getMessage());
            return false;
         }
         return false;
     }
 
-    private void deleteRepository(String filepath) {
-        log.info("Deleting repository because it doesn't contain docker-compose file!");
-        File file = new File(filepath);
+    private void deleteRepository(String filepath) { //TO DO
+        log.info("Deleting repository at: {}", filepath);
 
-        if(file.exists() && file.canWrite()) {
-            boolean result = FileSystemUtils.deleteRecursively(file); //TO DO: it doesn't work on windows
-            if(result) {
+        File file = new File(filepath);
+        if (file.exists()) {
+            boolean result = FileSystemUtils.deleteRecursively(file);
+            if (result) {
                 log.info("Repo on filepath: {} deleted properly!", filepath);
             } else {
-                log.info("Cannot delete properly!");
+                log.error("Failed to delete repository! Filepath: {}", filepath);
             }
-        } else {
-            log.info("No permission to delete this repository!");
         }
     }
-
 }
