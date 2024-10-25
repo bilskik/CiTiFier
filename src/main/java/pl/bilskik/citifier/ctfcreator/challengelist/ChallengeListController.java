@@ -11,10 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pl.bilskik.citifier.ctfcreator.challenge.ChallengeDTO;
-import pl.bilskik.citifier.ctfcreator.docker.DockerComposeParserManager;
-import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
-import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceContext;
-import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceManager;
 
 import java.util.List;
 
@@ -22,9 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChallengeListController {
 
-    private static final Logger log = LoggerFactory.getLogger(ChallengeListController.class);
     private final ChallengeListService challengeListService;
-
 
     @GetMapping("/challenge-list")
     public String challengeList(Model model, Authentication auth) {

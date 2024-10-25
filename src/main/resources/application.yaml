@@ -34,26 +34,8 @@ logging:
 db:
   schemaName: ctf
 
-kubernetess:
-  cluster-config-path:
-  docker-context:
-    minikube-context: true
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_HOST: tcp://127.0.0.1:52452
-    DOCKER_CERT_PATH: C:\Users\kamil\.minikube\certs
-    MINIKUBE_ACTIVE_DOCKERD: minikube
-
 oauth2:
   github:
     client-id:
     client-secret:
     app-id:
-
-repo:
-    base-file-path: D:\\CLONED_REPO_CITIFIER
-
-docker:
-  build:
-    shell:
-      name: powershell.exe
-      config: -Command

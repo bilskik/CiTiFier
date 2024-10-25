@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfcreator.challenge.ChallengeDTO;
-import pl.bilskik.citifier.ctfcreator.dockebuilder.BuildDockerContainers;
-import pl.bilskik.citifier.ctfcreator.docker.DockerComposeParserManager;
-import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
-import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceContext;
-import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceManager;
+import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
+import pl.bilskik.citifier.ctfcreator.docker.service.DockerComposeParserManager;
+import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.DockerImageBuilder;
+import pl.bilskik.citifier.ctfcreator.kubernetes.context.K8sResourceContext;
+import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sResourceManager;
 import pl.bilskik.citifier.ctfdomain.service.ChallengeDao;
 
 import java.io.File;
@@ -32,7 +32,7 @@ public class ChallengeListService {
     private final ChallengeDao challengeDao;
     private final K8sResourceManager k8SResourceManager;
     private final DockerComposeParserManager dockerComposeParserManager;
-    private final BuildDockerContainers dockerContainers;
+    private final DockerImageBuilder dockerImageBuilder;
 
     public List<ChallengeDTO> findAllChallenges(String login) {
         return challengeDao.findAllByLogin(login);
@@ -45,7 +45,7 @@ public class ChallengeListService {
         DockerCompose compose = dockerComposeParserManager.parse(fullRepoFilePath + "\\" + provideDockerComposeYamlName(fullRepoFilePath));
         resourceContext.setDockerCompose(compose);
 
-        dockerContainers.build(fullRepoFilePath);
+        dockerImageBuilder.build(fullRepoFilePath);
 
         k8SResourceManager.deploy(resourceContext);
     }

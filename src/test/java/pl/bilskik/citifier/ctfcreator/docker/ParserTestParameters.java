@@ -1,8 +1,8 @@
 package pl.bilskik.citifier.ctfcreator.docker;
 
-import pl.bilskik.citifier.ctfcreator.docker.model.*;
-import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.CommandType;
-import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.VolumeType;
+import pl.bilskik.citifier.ctfcreator.docker.entity.*;
+import pl.bilskik.citifier.ctfcreator.docker.enumeration.CommandType;
+import pl.bilskik.citifier.ctfcreator.docker.enumeration.VolumeType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
