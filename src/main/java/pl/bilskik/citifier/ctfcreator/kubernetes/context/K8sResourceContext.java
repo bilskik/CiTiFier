@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.kubernetes;
+package pl.bilskik.citifier.ctfcreator.kubernetes.context;
 
 import lombok.*;
 import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;

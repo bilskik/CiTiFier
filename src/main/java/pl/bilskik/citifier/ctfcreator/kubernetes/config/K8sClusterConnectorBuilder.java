@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.kubernetes;
+package pl.bilskik.citifier.ctfcreator.kubernetes.config;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;

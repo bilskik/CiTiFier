@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.kubernetes.config;
+package pl.bilskik.citifier.ctfcreator.kubernetes.factory.config;
 
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;
@@ -8,8 +8,10 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sFactoryUtils.convertValueToBase64Format;
+
 @Service
-public class K8sSecretCreator {
+public class K8sSecretFactory {
 
     private final static String API_VERSION = "v1";
 
@@ -30,13 +32,5 @@ public class K8sSecretCreator {
                 .build();
     }
 
-    public Map<String, String> convertValueToBase64Format(Map<String, String> secretData) {
-        Map<String, String> result = new HashMap<>();
-        for(var entry : secretData.entrySet()) {
-            String base64Val = Base64.getEncoder().encodeToString(entry.getValue().getBytes());
-            result.put(entry.getKey(), base64Val);
-        }
-        return result;
-    }
 }
 

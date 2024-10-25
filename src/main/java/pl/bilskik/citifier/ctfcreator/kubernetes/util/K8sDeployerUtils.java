@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.kubernetes;
+package pl.bilskik.citifier.ctfcreator.kubernetes.util;
 
 import org.apache.commons.lang3.StringUtils;
 import pl.bilskik.citifier.ctfcreator.docker.entity.Port;
@@ -6,7 +6,7 @@ import pl.bilskik.citifier.ctfcreator.docker.entity.Port;
 import java.util.List;
 import java.util.UUID;
 
-public class K8sResourceUtils {
+public class K8sDeployerUtils {
 
     private static final Integer MAX_LENGTH = 20;
     private static final Integer MIN_PORT_RANGE = 1024;

@@ -18,9 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChallengeListController {
 
-    private static final Logger log = LoggerFactory.getLogger(ChallengeListController.class);
     private final ChallengeListService challengeListService;
-
 
     @GetMapping("/challenge-list")
     public String challengeList(Model model, Authentication auth) {

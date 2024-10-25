@@ -8,8 +8,8 @@ import pl.bilskik.citifier.ctfcreator.challenge.ChallengeDTO;
 import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
 import pl.bilskik.citifier.ctfcreator.docker.service.DockerComposeParserManager;
 import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.DockerImageBuilder;
-import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceContext;
-import pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceManager;
+import pl.bilskik.citifier.ctfcreator.kubernetes.context.K8sResourceContext;
+import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sResourceManager;
 import pl.bilskik.citifier.ctfdomain.service.ChallengeDao;
 
 import java.io.File;

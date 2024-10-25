@@ -1,19 +1,22 @@
-package pl.bilskik.citifier.ctfcreator.kubernetes;
+package pl.bilskik.citifier.ctfcreator.kubernetes.service;
 
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
-import pl.bilskik.citifier.ctfcreator.kubernetes.deployment.K8sDeploymentCreator;
-import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sHeadlessServiceCreator;
-import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sNodePortCreator;
+import pl.bilskik.citifier.ctfcreator.docker.entity.Port;
+import pl.bilskik.citifier.ctfcreator.kubernetes.context.K8sResourceContext;
+import pl.bilskik.citifier.ctfcreator.kubernetes.factory.deployment.K8sDeploymentFactory;
+import pl.bilskik.citifier.ctfcreator.kubernetes.factory.service.K8sNodePortFactory;
+import pl.bilskik.citifier.ctfcreator.kubernetes.exception.K8sResourceCreationException;
 
 import java.util.Collections;
 import java.util.Map;
 
-import static pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceUtils.provideRandomCharacters;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.provideRandomCharacters;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
@@ -24,13 +27,15 @@ public class K8sAppDeployer {
     private static final String DEPLOYMENT_NAME = "deployment";
     private static final String SERVICE_NAME = "service";
 
-    private final K8sDeploymentCreator deploymentCreator;
-    private final K8sNodePortCreator nodePortCreator;
-    private final K8sHeadlessServiceCreator headlessServiceCreator;
+    private static final int INTERNAL_SERVICE_PORT = 3998;
+
+    private final K8sDeploymentFactory deploymentCreator;
+    private final K8sNodePortFactory nodePortCreator;
 
     public void deployApp(KubernetesClient client, K8sResourceContext context, ComposeService composeService) {
         String namespace = context.getNamespace();
         Map<String, String> envMap = composeService.getEnvironments();
+        Port port = composeService.getPorts().getFirst();
 
         for(int i=0; i<context.getNumberOfApp(); i++) {
             Deployment deployment = deploymentCreator.createDeployment(
@@ -39,6 +44,7 @@ public class K8sAppDeployer {
                     Collections.singletonMap(APP, context.getDeploymentLabel() + i),
                     composeService.getContainerName() + i,
                     composeService.getImage(),
+                    parsePort(port.getTargetPort()),
                     envMap
             );
 
@@ -46,8 +52,8 @@ public class K8sAppDeployer {
                     buildServiceName(i),
                     Collections.singletonMap(APP, context.getServiceLabel()),
                     Collections.singletonMap(APP, context.getDeploymentLabel() + i),
-                    3344 + i,
-                    3443,
+                    parsePort(port.getHostPort()) + i,
+                    INTERNAL_SERVICE_PORT,
                     context.getStartExposedPort() + i
             );
 
@@ -62,5 +68,13 @@ public class K8sAppDeployer {
 
     private String buildServiceName(int i) {
         return SERVICE_NAME + "-" + provideRandomCharacters() + "-" + i;
+    }
+
+    private int parsePort(String port) {
+        if(StringUtils.isNumeric(port)) {
+            return Integer.parseInt(port);
+        }
+
+        throw new K8sResourceCreationException(String.format("Cannot parse port! Invalid port: %s", port));
     }
 }

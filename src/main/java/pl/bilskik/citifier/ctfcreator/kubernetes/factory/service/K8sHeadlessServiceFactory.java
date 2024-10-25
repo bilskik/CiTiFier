@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.kubernetes.service;
+package pl.bilskik.citifier.ctfcreator.kubernetes.factory.service;
 
 import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.Service;
@@ -7,7 +7,7 @@ import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import java.util.Map;
 
 @org.springframework.stereotype.Service("headlessService")
-public class K8sHeadlessServiceCreator implements K8sServiceCreator {
+public class K8sHeadlessServiceFactory implements K8sServiceFactory {
 
     private final static String API_VERSION = "v1";
     private final static String NONE = "None";
