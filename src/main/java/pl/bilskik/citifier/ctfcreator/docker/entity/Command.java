@@ -1,7 +1,7 @@
-package pl.bilskik.citifier.ctfcreator.docker.model;
+package pl.bilskik.citifier.ctfcreator.docker.entity;
 
 import lombok.EqualsAndHashCode;
-import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.CommandType;
+import pl.bilskik.citifier.ctfcreator.docker.enumeration.CommandType;
 
 import java.util.List;
 

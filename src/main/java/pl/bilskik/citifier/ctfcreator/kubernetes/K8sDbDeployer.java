@@ -8,7 +8,7 @@ import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.util.StringUtils;
-import pl.bilskik.citifier.ctfcreator.docker.model.ComposeService;
+import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
 import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sSecretCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sHeadlessServiceCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.statefulset.K8sStatefulSetCreator;
@@ -55,7 +55,7 @@ public class K8sDbDeployer {
             isSecretApplied = true;
         }
 
-        List<pl.bilskik.citifier.ctfcreator.docker.model.Volume> dockerVolumeList = composeService.getVolumes();
+        List<pl.bilskik.citifier.ctfcreator.docker.entity.Volume> dockerVolumeList = composeService.getVolumes();
 
         List<Volume> volumeList = new ArrayList<>();
         List<VolumeMount> volumeMountList = new ArrayList<>();

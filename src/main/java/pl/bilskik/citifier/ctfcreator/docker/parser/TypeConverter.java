@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.docker;
+package pl.bilskik.citifier.ctfcreator.docker.parser;
 
 import java.util.List;
 import java.util.Map;

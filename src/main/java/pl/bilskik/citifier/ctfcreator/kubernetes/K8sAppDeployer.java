@@ -5,7 +5,7 @@ import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pl.bilskik.citifier.ctfcreator.docker.model.ComposeService;
+import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
 import pl.bilskik.citifier.ctfcreator.kubernetes.deployment.K8sDeploymentCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sHeadlessServiceCreator;
 import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sNodePortCreator;
@@ -13,7 +13,6 @@ import pl.bilskik.citifier.ctfcreator.kubernetes.service.K8sNodePortCreator;
 import java.util.Collections;
 import java.util.Map;
 
-import static pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceUtils.providePortToApplication;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.K8sResourceUtils.provideRandomCharacters;
 
 @org.springframework.stereotype.Service

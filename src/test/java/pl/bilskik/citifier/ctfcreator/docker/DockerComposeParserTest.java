@@ -1,15 +1,18 @@
 package pl.bilskik.citifier.ctfcreator.docker;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
-import pl.bilskik.citifier.ctfcreator.docker.model.ComposeService;
-import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
+import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
+import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
+import pl.bilskik.citifier.ctfcreator.docker.parser.*;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -17,15 +20,12 @@ import java.util.stream.Stream;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+@SpringBootTest
+@ContextConfiguration(classes = {CommandEntrypointParser.class, DockerComposeParser.class, PortParser.class, ServiceParser.class, VolumeParser.class})
 class DockerComposeParserTest extends ParserTestParameters {
 
+    @Autowired
     private DockerComposeParser parser;
-
-    @BeforeEach
-    public void setup() {
-        this.parser = new DockerComposeParser();
-    }
 
     @ParameterizedTest
     @MethodSource

@@ -1,7 +1,7 @@
-package pl.bilskik.citifier.ctfcreator.docker.model;
+package pl.bilskik.citifier.ctfcreator.docker.entity;
 
 import lombok.*;
-import pl.bilskik.citifier.ctfcreator.docker.model.enumeration.VolumeType;
+import pl.bilskik.citifier.ctfcreator.docker.enumeration.VolumeType;
 
 @Getter
 @Setter

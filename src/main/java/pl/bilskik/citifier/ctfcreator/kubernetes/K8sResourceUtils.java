@@ -1,11 +1,10 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes;
 
 import org.apache.commons.lang3.StringUtils;
-import pl.bilskik.citifier.ctfcreator.docker.model.Port;
+import pl.bilskik.citifier.ctfcreator.docker.entity.Port;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class K8sResourceUtils {
 

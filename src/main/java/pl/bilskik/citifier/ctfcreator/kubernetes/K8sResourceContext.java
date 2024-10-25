@@ -1,7 +1,7 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes;
 
 import lombok.*;
-import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
+import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
 
 @Getter
 @Setter

@@ -4,8 +4,8 @@ import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pl.bilskik.citifier.ctfcreator.docker.model.ComposeService;
-import pl.bilskik.citifier.ctfcreator.docker.model.DockerCompose;
+import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
+import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
 import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sNamespaceCreator;
 
 

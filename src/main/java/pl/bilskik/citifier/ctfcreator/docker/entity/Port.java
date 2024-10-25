@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.docker.model;
+package pl.bilskik.citifier.ctfcreator.docker.entity;
 
 import lombok.*;
 
