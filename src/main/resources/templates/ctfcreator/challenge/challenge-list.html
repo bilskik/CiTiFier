@@ -6,13 +6,15 @@
 <body>
     <th:block th:insert="~{common/navbar.html}">
     </th:block>
-    <div>
-        <table id="challenge-list" class="table">
+    <div class="m-4">
+        <table id="challenge-list" class="table table-bordered">
             <thead>
                 <tr>
-                    <th th:value="#{ctfcreator.challenge-list.id}"></th>
-                    <th th:value="#{ctfcreator.challenge-list.challenge-name}"></th>
-                    <th th:value="#{ctfcreator.challenge-list.challenge-type}"></th>
+                    <th th:text="#{ctfcreator.challenge-list.id}"></th>
+                    <th th:text="#{ctfcreator.challenge-list.challenge-name}"></th>
+                    <th th:text="#{ctfcreator.challenge-list.repo-name}"></th>
+                    <th th:text="#{ctfcreator.challenge-list.challenge-status}"></th>
+                    <th th:text="#{ctfcreator.challenge-list.challenge-details}"></th>
                 </tr>
             </thead>
             <tbody>
@@ -20,6 +22,29 @@
                     <tr>
                         <td th:text="${iteration.index}"></td>
                         <td th:text="${challenge.name}"></td>
+                        <td th:text="${challenge.repoName}"></td>
+                        <td th:switch="${challenge.status.name()}">
+                            <span
+                                    th:case="'NEW'"
+                                    th:text="${challenge.status}"
+                                    class="badge bg-primary"
+                            ></span>
+                            <span
+                                    th:case="'RUNNING'"
+                                    th:text="${challenge.status}"
+                                    class="badge bg-success"
+                            ></span>
+                            <span
+                                    th:case="'STOPPED'"
+                                    th:text="${challenge.status}"
+                                    class="badge bg-warning"
+                            ></span>
+                            <p
+                                    th:case="'REMOVED'"
+                                    th:text="${challenge.status}"
+                                    class="badge bg-danger"
+                            ></p>
+                        </td>
                         <td>
                             <input
                                     th:id="|challenge-id-${challenge.challengeId}|"
@@ -29,14 +54,15 @@
                                     th:value="${challenge.challengeId}"
                             />
                             <button
-                                    th:text="#{common.start}"
                                     th:hx-post="@{/ctf-creator/challenge-details}"
                                     th:hx-include="|.${challenge.name}-${challenge.challengeId}|"
                                     th:hx-trigger="click"
                                     th:hx-target="body"
                                     th:hx-swap="outerHTML"
-                                    class="btn btn-primary"
+                                    th:hx-push-url="true"
+                                    class="btn btn-outline-primary"
                             >
+                                <img src="/img/arrow.svg" alt="Szczegóły" style="width: 20px; height: 20px;"/>
                             </button>
                         </td>
                     </tr>
