@@ -1,0 +1,20 @@
+<p
+        th:case="'NEW'"
+        th:text="${challenge.status}"
+        class="badge bg-primary"
+></p>
+<p
+        th:case="'RUNNING'"
+        th:text="${challenge.status}"
+        class="badge bg-success"
+></p>
+<p
+        th:case="'STOPPED'"
+        th:text="${challenge.status}"
+        class="badge bg-warning"
+></p>
+<p
+        th:case="'REMOVED'"
+        th:text="${challenge.status}"
+        class="badge bg-danger"
+></p>

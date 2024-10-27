@@ -44,15 +44,21 @@ public class ChallengeDetailsService {
     }
 
     public void startAndDeployApp(Long challengeId) {
+        log.info("Deploying app!");
     }
 
     public void startApp(Long challengeId) {
+        log.info("starting app!");
+
     }
 
     public void stopApp(Long challengeId) {
+        log.info("stopping app!");
+
     }
 
     public void deleteApp(Long challengeId) {
+        log.info("deleting app!");
     }
 
     public void deployApp(Long challengeId) {
