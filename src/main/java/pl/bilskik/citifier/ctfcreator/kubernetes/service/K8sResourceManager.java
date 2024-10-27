@@ -1,53 +1,10 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes.service;
 
-import io.fabric8.kubernetes.api.model.Namespace;
-import io.fabric8.kubernetes.client.KubernetesClient;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
-import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
-import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sClusterConnectorBuilder;
-import pl.bilskik.citifier.ctfcreator.kubernetes.context.K8sResourceContext;
-import pl.bilskik.citifier.ctfcreator.kubernetes.factory.config.K8sNamespaceFactory;
-import pl.bilskik.citifier.ctfcreator.kubernetes.exception.K8sResourceCreationException;
+import pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sResourceContext;
 
-
-@org.springframework.stereotype.Service
-@RequiredArgsConstructor
-@Slf4j
-public class K8sResourceManager {
-
-    private final K8sClusterConnectorBuilder connectorBuilder;
-    private final K8sNamespaceFactory namespaceCreator;
-    private final K8sAppDeployer appDeployer;
-    private final K8sDbDeployer dbDeployer;
-
-    public void deploy(K8sResourceContext context) {
-        DockerCompose dockerCompose = context.getDockerCompose();
-        if(dockerCompose == null) {
-            log.error("Cannot deploy app! DockerCompose is null!");
-            throw new K8sResourceCreationException("Docker compose cannot be null");
-        }
-
-        log.info("Start deploying app");
-
-        try (KubernetesClient client = connectorBuilder.buildClient()) {
-            Namespace namespace = namespaceCreator.create(context.getNamespace()); //TO DO -> only for the 1st time
-            client.namespaces().resource(namespace).create();
-
-            for(var entry: dockerCompose.getServices().entrySet()) {
-                String serviceName = entry.getKey();
-                ComposeService service = entry.getValue();
-
-                if(serviceName.equalsIgnoreCase("postgres")) {
-                    log.info("Deploying database: {}", serviceName);
-                    dbDeployer.deployDb(client, context, service);
-                } else {
-                    log.info("Deploying app: {}", serviceName);
-                    appDeployer.deployApp(client, context, service);
-                }
-
-            }
-        }
-    }
+public interface K8sResourceManager {
+    void deployAndStart(K8sResourceContext context);
+    void start(K8sResourceContext context);
+    void stop(String namespace);
+    void delete(String namespace);
 }

@@ -7,7 +7,7 @@ import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.RequiredArgsConstructor;
 import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
-import pl.bilskik.citifier.ctfcreator.kubernetes.context.K8sResourceContext;
+import pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sResourceContext;
 import pl.bilskik.citifier.ctfcreator.kubernetes.factory.service.K8sHeadlessServiceFactory;
 import pl.bilskik.citifier.ctfcreator.kubernetes.factory.statefulset.K8sStatefulSetFactory;
 
@@ -15,8 +15,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.providePortToApplication;
-import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.provideRandomCharacters;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sLabelConstants.*;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.*;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sEnvironmentExtractor.extractNonPasswordEnv;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sEnvironmentExtractor.extractPasswordEnv;
 
@@ -25,6 +25,7 @@ import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sEnvironmentExtra
 public class K8sDbDeployer {
 
     private final static String STATEFULSET_NAME = "statefulset";
+    private final static String DB = "db";
     private final static String APP = "app";
 
     private final K8sHeadlessServiceFactory headlessServiceFactory;
@@ -47,22 +48,22 @@ public class K8sDbDeployer {
         List<VolumeMount> volumeMountList = volumeDeployer.createVolumeMounts(composeService.getVolumes());
 
         StatefulSet statefulSet = statefulSetFactory.createStatefulSet(
-                provideStatefulSetName(),
-                Collections.singletonMap(APP, "postgresStatefulset"),
-                Collections.singletonMap(APP, "db"),
+                buildName(STATEFULSET_NAME),
+                Collections.singletonMap(APP, STATEFUL_SET_LABEL),
+                Collections.singletonMap(APP, DB_LABEL),
                 composeService.getContainerName(),
                 composeService.getImage(),
                 env,
                 "",
-                isSecretApplied ? "postgres-secret" : "",
+                isSecretApplied ? "secret" : "",
                 volumeList,
                 volumeMountList
         );
 
         Service headlessService = headlessServiceFactory.createService(
-                "db",
-                Collections.singletonMap("app", "headlessService"),
-                Collections.singletonMap("app", "db"),
+                DB,
+                Collections.singletonMap(APP, HEADLESS_SERVICE_LABEL),
+                Collections.singletonMap(APP, DB_LABEL),
                 providePortToApplication(composeService.getPorts()),
                 providePortToApplication(composeService.getPorts()),
                 null
@@ -70,10 +71,6 @@ public class K8sDbDeployer {
 
         client.apps().statefulSets().inNamespace(context.getNamespace()).resource(statefulSet).create();
         client.services().inNamespace(context.getNamespace()).resource(headlessService).create();
-    }
-
-    private String provideStatefulSetName() {
-        return STATEFULSET_NAME + "-" + provideRandomCharacters();
     }
 
 }

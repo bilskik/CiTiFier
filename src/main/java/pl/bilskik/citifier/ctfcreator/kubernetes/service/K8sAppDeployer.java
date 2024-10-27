@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
 import pl.bilskik.citifier.ctfcreator.docker.entity.Port;
-import pl.bilskik.citifier.ctfcreator.kubernetes.context.K8sResourceContext;
+import pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sResourceContext;
 import pl.bilskik.citifier.ctfcreator.kubernetes.factory.deployment.K8sDeploymentFactory;
 import pl.bilskik.citifier.ctfcreator.kubernetes.factory.service.K8sNodePortFactory;
 import pl.bilskik.citifier.ctfcreator.kubernetes.exception.K8sResourceCreationException;
@@ -16,6 +16,8 @@ import pl.bilskik.citifier.ctfcreator.kubernetes.exception.K8sResourceCreationEx
 import java.util.Collections;
 import java.util.Map;
 
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sLabelConstants.*;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.buildName;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.provideRandomCharacters;
 
 @org.springframework.stereotype.Service
@@ -23,11 +25,8 @@ import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.pr
 @Slf4j
 public class K8sAppDeployer {
 
-    private static final String APP = "app";
     private static final String DEPLOYMENT_NAME = "deployment";
     private static final String SERVICE_NAME = "service";
-
-    private static final int INTERNAL_SERVICE_PORT = 3998;
 
     private final K8sDeploymentFactory deploymentCreator;
     private final K8sNodePortFactory nodePortCreator;
@@ -39,9 +38,9 @@ public class K8sAppDeployer {
 
         for(int i=0; i<context.getNumberOfApp(); i++) {
             Deployment deployment = deploymentCreator.createDeployment(
-                    buildDeploymentName(i),
-                    Collections.singletonMap(APP, context.getDeploymentLabel()),
-                    Collections.singletonMap(APP, context.getDeploymentLabel() + i),
+                    buildName(DEPLOYMENT_NAME, i),
+                    Collections.singletonMap(APP, DEPLOYMENT_LABEL),
+                    Collections.singletonMap(APP, POD_LABEL + "-" + i),
                     composeService.getContainerName() + i,
                     composeService.getImage(),
                     parsePort(port.getTargetPort()),
@@ -49,11 +48,11 @@ public class K8sAppDeployer {
             );
 
             Service service = nodePortCreator.createService(
-                    buildServiceName(i),
-                    Collections.singletonMap(APP, context.getServiceLabel()),
-                    Collections.singletonMap(APP, context.getDeploymentLabel() + i),
-                    parsePort(port.getHostPort()) + i,
-                    INTERNAL_SERVICE_PORT,
+                    buildName(SERVICE_NAME, i),
+                    Collections.singletonMap(APP, NODE_PORT_LABEL),
+                    Collections.singletonMap(APP, POD_LABEL + "-" + i),
+                    parsePort(port.getHostPort()),
+                    parsePort(port.getTargetPort()),
                     context.getStartExposedPort() + i
             );
 
@@ -61,13 +60,6 @@ public class K8sAppDeployer {
             client.services().inNamespace(namespace).resource(service).create();
         }
 
-    }
-    private String buildDeploymentName(int i) {
-        return DEPLOYMENT_NAME + "-" + provideRandomCharacters() + "-" + i;
-    }
-
-    private String buildServiceName(int i) {
-        return SERVICE_NAME + "-" + provideRandomCharacters() + "-" + i;
     }
 
     private int parsePort(String port) {

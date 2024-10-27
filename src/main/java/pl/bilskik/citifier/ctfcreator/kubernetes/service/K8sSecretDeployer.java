@@ -4,19 +4,19 @@ import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.bilskik.citifier.ctfcreator.kubernetes.context.K8sResourceContext;
+import pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sResourceContext;
 import pl.bilskik.citifier.ctfcreator.kubernetes.factory.config.K8sSecretFactory;
 
 import java.util.Collections;
 import java.util.Map;
 
-import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.provideRandomCharacters;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sLabelConstants.APP;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sLabelConstants.SECRET_LABEL;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sEnvironmentExtractor.getFirstKey;
 
 @Service
 @RequiredArgsConstructor
 public class K8sSecretDeployer {
-
     private final static String SECRET = "secret";
     private final static String OPAQUE = "Opaque";
 
@@ -37,14 +37,10 @@ public class K8sSecretDeployer {
     private Secret createSecret(String passwordKey, String passwordValue) {
         return secretFactory.createSecret(
                 SECRET,
-                Collections.singletonMap("app", "secret"),
+                Collections.singletonMap(APP, SECRET_LABEL),
                 OPAQUE,
                 Collections.singletonMap(passwordKey, passwordValue)
         );
-    }
-
-    private String buildSecretName() {
-        return SECRET + "-" + provideRandomCharacters();
     }
 
 }

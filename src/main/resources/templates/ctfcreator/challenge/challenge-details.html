@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title>ChallengeDetails</title>
+</head>
+<body>
+<th:block th:insert="~{common/navbar.html}">
+</th:block>
+    <div class="m-3">
+        <p th:text="#{ctfcreator.challenge-details.id}">
+        </p>
+        <p th:text="${challenge.challengeId}"
+        >
+        </p>
+        <p th:text="#{ctfcreator.challenge-details.name}">
+        </p>
+        <p th:text="${challenge.name}"
+        >
+        </p>
+        <button
+                th:text="#{ctfcreator.challenge-details.deploy}"
+                th:hx-post="@{/ctf-creator/challenge-deploy}"
+                hx-include="#challenge-id"
+                th:hx-trigger="click"
+                class="btn btn-primary"
+        >
+        </button>
+        <button
+                th:text="#{ctfcreator.challenge-details.finish-app}"
+                th:hx-post="@{/ctf-creator/challenge-finish}"
+                hx-include="#challenge-id"
+                th:hx-trigger="click"
+                class="btn btn-danger"
+        >
+        </button>
+        <input
+                id="challenge-id"
+                name="challengeId"
+                type="hidden"
+                th:value="${challenge.challengeId}"
+        />
+    </div>
+</body>

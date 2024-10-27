@@ -30,6 +30,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: STATUS
+                  type: NVARCHAR(15)
+                  constraints:
+                    nullable: false
+              - column:
                   name: FK_CHALLENGE_APP_DATA
                   type: BIGINT
               - column:

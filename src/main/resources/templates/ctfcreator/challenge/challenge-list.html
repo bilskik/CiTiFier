@@ -30,9 +30,11 @@
                             />
                             <button
                                     th:text="#{common.start}"
-                                    th:hx-post="@{/ctf-creator/challenge-start}"
+                                    th:hx-post="@{/ctf-creator/challenge-details}"
                                     th:hx-include="|.${challenge.name}-${challenge.challengeId}|"
                                     th:hx-trigger="click"
+                                    th:hx-target="body"
+                                    th:hx-swap="outerHTML"
                                     class="btn btn-primary"
                             >
                             </button>
@@ -41,6 +43,5 @@
                 </th:block>
             </tbody>
         </table>
-        <button th:hx-get="@{/ctr-creator/cluster-start}">Polacz z minikube</button>
     </div>
 </body>

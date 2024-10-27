@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.challengelist;
+package pl.bilskik.citifier.ctfcreator.challengedetails;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
