@@ -18,3 +18,8 @@
         th:text="${challenge.status}"
         class="badge bg-danger"
 ></p>
+<p
+        th:case="'ERROR'"
+        th:text="${challenge.status}"
+        class="badge bg-danger"
+></p>

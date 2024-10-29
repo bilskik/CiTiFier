@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/register", "/ctf-core/register", "/ctf-core/register/redirect-to-login",
                                 "/login", "/ctf-core/login/redirect-to-register",
-                                "/css/**", "/js/**", "/webjars/**"
+                                "/css/**", "/js/**","/img/**", "/webjars/**"
                         )
                         .permitAll()
                         .anyRequest()

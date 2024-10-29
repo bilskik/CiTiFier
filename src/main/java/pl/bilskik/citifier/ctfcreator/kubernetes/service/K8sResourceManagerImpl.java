@@ -26,15 +26,15 @@ public class K8sResourceManagerImpl implements K8sResourceManager {
 
     @Override
     public void deployAndStart(K8sResourceContext context) {
-        deploy(context, false);
+        deploy(context);
     }
 
     @Override
     public void start(K8sResourceContext context) {
-        deploy(context, true);
+        deploy(context);
     }
 
-    private void deploy(K8sResourceContext context, boolean isNamespaceCreated) {
+    private void deploy(K8sResourceContext context) {
         String namespace = context.getNamespace();
         DockerCompose dockerCompose = context.getDockerCompose();
         if(dockerCompose == null) {
@@ -47,7 +47,7 @@ public class K8sResourceManagerImpl implements K8sResourceManager {
         KubernetesClient client = null;
         try {
             client = connectorBuilder.buildClient();
-            if(!isNamespaceCreated) {
+            if(!context.isNamespaceCreated()) {
                 Namespace namespaceResource = namespaceCreator.create(namespace);
                 client.namespaces().resource(namespaceResource).create();
             }

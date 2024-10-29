@@ -11,6 +11,7 @@ import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
 public class K8sResourceContext {
     private DockerCompose dockerCompose;
     private String appName;
+    private boolean isNamespaceCreated;
     private String namespace;
     private String fullRepoFilePath;
     private Integer startExposedPort;

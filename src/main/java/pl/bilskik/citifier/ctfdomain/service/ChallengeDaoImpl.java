@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import pl.bilskik.citifier.ctfcreator.challengedetails.ChallengeAppDataDTO;
+import pl.bilskik.citifier.ctfdomain.dto.ChallengeAppDataDTO;
 import pl.bilskik.citifier.ctfdomain.dto.ChallengeDTO;
 import pl.bilskik.citifier.ctfdomain.entity.CTFCreator;
 import pl.bilskik.citifier.ctfdomain.entity.Challenge;
@@ -29,7 +29,6 @@ public class ChallengeDaoImpl implements ChallengeDao {
     private final ChallengeRepository challengeRepository;
     private final CTFCreatorRepository ctfCreatorRepository;
     private final ChallengeMapper mapper;
-    private final ChallengeAppDataMapper appDataMapper;
 
     @Override
     public List<ChallengeDTO> findAllByLogin(String login) {
@@ -43,39 +42,10 @@ public class ChallengeDaoImpl implements ChallengeDao {
     public ChallengeDTO findById(Long id) {
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> new ChallengeException("Challenge not found!"));
+        if(challenge.getChallengeAppData() == null) {
+            throw new ChallengeException("ChallengeAppData is null!");
+        }
         return mapper.toChallengeDTO(challenge);
-    }
-
-    @Override
-    public ChallengeAppDataDTO findChallengeAppDataDTOByChallengeId(Long id) {
-        Challenge challenge = challengeRepository.findById(id)
-                .orElseThrow(() -> new ChallengeException("Challenge not found!"));
-
-        ChallengeAppData challengeAppData = challenge.getChallengeAppData();
-        if(challengeAppData == null) {
-            throw new ChallengeException("Challenge app data not found!");
-        }
-        return appDataMapper.toChallengeAppDataDTO(challengeAppData);
-    }
-
-    @Override
-    public String findRepoNameByChallengeId(Long challengeId) {
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ChallengeException("Challenge not found!"));
-        return challenge.getRepoName();
-    }
-
-    @Override
-    public String findNamespaceByChallengeId(Long challengeId) {
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ChallengeException("Challenge not found!"));
-
-        ChallengeAppData challengeAppData = challenge.getChallengeAppData();
-        if(challengeAppData == null) {
-            throw new ChallengeException("Challenge app data not found!");
-        }
-
-        return challengeAppData.getNamespace();
     }
 
     @Override

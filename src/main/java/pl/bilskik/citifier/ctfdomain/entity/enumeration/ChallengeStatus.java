@@ -4,5 +4,6 @@ public enum ChallengeStatus {
     NEW,
     RUNNING,
     STOPPED,
+    ERROR,
     REMOVED
 }

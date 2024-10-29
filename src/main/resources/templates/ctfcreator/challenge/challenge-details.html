@@ -78,57 +78,67 @@
                     >
                 </div>
             </div>
-            <div class="col-6 d-flex justify-content-between align-items-start">
-                <button
-                        th:text="#{ctfcreator.challenge-details.deploy-start}"
-                        th:hx-post="@{/ctf-creator/challenge-deploy-start}"
-                        hx-include="#challenge-id"
-                        th:hx-trigger="click"
-                        hx-target="body"
-                        hx-swap="outerHTML"
-                        class="btn btn-success ms-3"
-                        th:disabled="${challenge.status.name() != 'NEW'}"
-                >
-                </button>
-                <button
-                        th:text="#{ctfcreator.challenge-details.start-again}"
-                        th:hx-post="@{/ctf-creator/challenge-start}"
-                        hx-include="#challenge-id"
-                        th:hx-trigger="click"
-                        hx-target="body"
-                        hx-swap="outerHTML"
-                        class="btn btn-success"
-                        th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'RUNNING'}"
-                >
-                </button>
-                <button
-                        th:text="#{ctfcreator.challenge-details.stop}"
-                        th:hx-post="@{/ctf-creator/challenge-stop}"
-                        hx-include="#challenge-id"
-                        th:hx-trigger="click"
-                        hx-target="body"
-                        hx-swap="outerHTML"
-                        class="btn btn-warning"
-                        th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'STOPPED'}"
-                >
-                </button>
-                <button
-                        th:text="#{ctfcreator.challenge-details.finish}"
-                        th:hx-post="@{/ctf-creator/challenge-finish}"
-                        hx-include="#challenge-id"
-                        th:hx-trigger="click"
-                        hx-target="body"
-                        hx-swap="outerHTML"
-                        class="btn btn-danger me-3"
-                        th:disabled="${challenge.status.name() == 'NEW'}"
-                >
-                </button>
-                <input
-                        id="challenge-id"
-                        name="challengeId"
-                        type="hidden"
-                        th:value="${challenge.challengeId}"
-                />
+            <div class="w-100">
+                <div class="col-6 d-flex justify-content-between align-items-start w-100">
+                    <button
+                            th:text="#{ctfcreator.challenge-details.deploy-start}"
+                            th:hx-post="@{/ctf-creator/challenge-deploy-start}"
+                            hx-include="#challenge-id"
+                            th:hx-trigger="click"
+                            hx-target="body"
+                            hx-swap="outerHTML"
+                            class="btn btn-success ms-3"
+                            th:disabled="${challenge.status.name() != 'NEW' && challenge.status.name() != 'ERROR'}"
+                    >
+                    </button>
+                    <button
+                            th:text="#{ctfcreator.challenge-details.start-again}"
+                            th:hx-post="@{/ctf-creator/challenge-start}"
+                            hx-include="#challenge-id"
+                            th:hx-trigger="click"
+                            hx-target="body"
+                            hx-swap="outerHTML"
+                            class="btn btn-success"
+                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'RUNNING'}"
+                    >
+                    </button>
+                    <button
+                            th:text="#{ctfcreator.challenge-details.stop}"
+                            th:hx-post="@{/ctf-creator/challenge-stop}"
+                            hx-include="#challenge-id"
+                            th:hx-trigger="click"
+                            hx-target="body"
+                            hx-swap="outerHTML"
+                            class="btn btn-warning"
+                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'STOPPED'}"
+                    >
+                    </button>
+                    <button
+                            th:text="#{ctfcreator.challenge-details.finish}"
+                            th:hx-post="@{/ctf-creator/challenge-finish}"
+                            hx-include="#challenge-id"
+                            th:hx-trigger="click"
+                            hx-target="body"
+                            hx-swap="outerHTML"
+                            class="btn btn-danger me-3"
+                            th:disabled="${challenge.status.name() == 'NEW'}"
+                    >
+                    </button>
+                    <input
+                            id="challenge-id"
+                            name="challengeId"
+                            type="hidden"
+                            th:value="${challenge.challengeId}"
+                    />
+                </div>
+                <div>
+                    <div
+                            th:if="${applicationError != null && !applicationError.isEmpty()}"
+                            class="text-danger fw-bold mt-2 mb-2"
+                    >
+                        <span th:text="${applicationError}"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
