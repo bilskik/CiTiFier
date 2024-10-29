@@ -4,14 +4,12 @@ import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.api.model.VolumeMount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.bilskik.citifier.ctfcreator.kubernetes.context.K8sResourceContext;
+import pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sResourceContext;
 import pl.bilskik.citifier.ctfcreator.kubernetes.factory.statefulset.volume.K8sVolumeFactory;
 import pl.bilskik.citifier.ctfcreator.kubernetes.factory.statefulset.volume.K8sVolumeMountFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.provideRandomCharacters;
 
 @Service
 @RequiredArgsConstructor

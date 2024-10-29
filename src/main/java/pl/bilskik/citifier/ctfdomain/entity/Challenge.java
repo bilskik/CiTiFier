@@ -2,6 +2,7 @@ package pl.bilskik.citifier.ctfdomain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import pl.bilskik.citifier.ctfdomain.entity.enumeration.ChallengeStatus;
 
 @Entity
 @Table(name = "CHALLENGE")
@@ -26,6 +27,10 @@ public class Challenge {
 
     @Column(name = "REPO_NAME", nullable = false)
     private String repoName;
+
+    @Column(name = "STATUS")
+    @Enumerated(EnumType.STRING)
+    private ChallengeStatus status;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(

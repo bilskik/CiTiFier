@@ -7,11 +7,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import pl.bilskik.citifier.ctfcreator.challenge.ChallengeDTO;
-import pl.bilskik.citifier.ctfcreator.challengelist.ChallengeAppDataDTO;
+import pl.bilskik.citifier.ctfdomain.dto.ChallengeAppDataDTO;
+import pl.bilskik.citifier.ctfdomain.dto.ChallengeDTO;
 import pl.bilskik.citifier.ctfdomain.entity.CTFCreator;
 import pl.bilskik.citifier.ctfdomain.entity.Challenge;
 import pl.bilskik.citifier.ctfdomain.entity.ChallengeAppData;
+import pl.bilskik.citifier.ctfdomain.entity.enumeration.ChallengeStatus;
 import pl.bilskik.citifier.ctfdomain.exception.ChallengeException;
 import pl.bilskik.citifier.ctfdomain.mapper.ChallengeAppDataMapper;
 import pl.bilskik.citifier.ctfdomain.mapper.ChallengeMapper;
@@ -19,8 +20,6 @@ import pl.bilskik.citifier.ctfdomain.repository.CTFCreatorRepository;
 import pl.bilskik.citifier.ctfdomain.repository.ChallengeRepository;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,38 +29,23 @@ public class ChallengeDaoImpl implements ChallengeDao {
     private final ChallengeRepository challengeRepository;
     private final CTFCreatorRepository ctfCreatorRepository;
     private final ChallengeMapper mapper;
-    private final ChallengeAppDataMapper appDataMapper;
-
-    @Override
-    public List<ChallengeDTO> findAll() {
-        List<Challenge> challengeList = challengeRepository.findAll();
-
-        return challengeList.parallelStream()
-                .map(mapper::toChallengeDTO)
-                .toList();
-    }
 
     @Override
     public List<ChallengeDTO> findAllByLogin(String login) {
-        List<Challenge> challengeList = challengeRepository.findChallengesByCtfCreator_Login(login);
+        List<Challenge> challengeList = challengeRepository.findChallengesByCtfCreatorLogin(login);
         return challengeList.parallelStream()
                 .map(mapper::toChallengeDTO)
                 .toList();
     }
 
     @Override
-    public ChallengeAppDataDTO findChallengeAppDataDTOByChallengeId(Long id) {
-        Optional<Challenge> optionalChallenge = challengeRepository.findById(id);
-
-        if(optionalChallenge.isPresent()) {
-            ChallengeAppData challengeAppData = optionalChallenge.get().getChallengeAppData();
-            if(challengeAppData == null) {
-                throw new ChallengeException("Challenge app data not found!");
-            }
-            return appDataMapper.toChallengeAppDataDTO(challengeAppData);
+    public ChallengeDTO findById(Long id) {
+        Challenge challenge = challengeRepository.findById(id)
+                .orElseThrow(() -> new ChallengeException("Challenge not found!"));
+        if(challenge.getChallengeAppData() == null) {
+            throw new ChallengeException("ChallengeAppData is null!");
         }
-
-       throw new ChallengeException("Challenge not found!");
+        return mapper.toChallengeDTO(challenge);
     }
 
     @Override
@@ -72,19 +56,7 @@ public class ChallengeDaoImpl implements ChallengeDao {
             log.info("Cannot create challenge because is null!");
             throw new ChallengeException("Cannot create new Challenge!");
         }
-
         CTFCreator ctfCreator = provideCTFCreator();
-        String appName = buildAppNameFromRepoName(challenge.getRepoName());
-        String namespace = buildNamespace(appName);
-
-        ChallengeAppData challengeAppData = ChallengeAppData.builder()
-                .challengeAppName(appName)
-                .namespace(namespace)
-                .startExposedPort(challengeDTO.getStartExposedPort())
-                .numberOfApp(challengeDTO.getNumberOfApp())
-                .build();
-
-        challenge.setChallengeAppData(challengeAppData);
         challenge.setCtfCreator(ctfCreator);
 
         challengeRepository.save(challenge);
@@ -102,28 +74,14 @@ public class ChallengeDaoImpl implements ChallengeDao {
         if(authentication.getPrincipal() instanceof UserDetails) {
             return ((UserDetails) authentication.getPrincipal()).getUsername();
         }
-        return "";
-    }
-
-    private String buildAppNameFromRepoName(String repoName) {
-        if(repoName.length() > 30) {
-            repoName = repoName.substring(0,30);
-        }
-        return repoName
-                .toLowerCase()
-                .replace(".", "")
-                .replace("_", "");
-    }
-
-    private String buildNamespace(String appName) {
-        String uuid = UUID.randomUUID().toString();
-        return appName + "-" + uuid.substring(0, 30);
+        log.error("Cannot find current logged user! Challenge cannot be created!");
+        throw new ChallengeException("Cannot create new Challenge! Cannot find current logged user!");
     }
 
     @Override
-    public String findRepoNameByChallengeId(Long challengeId) {
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ChallengeException("Challenge not found!"));
-        return challenge.getRepoName();
+    @Transactional
+    public void updateChallengeStatus(ChallengeStatus status, Long challengeId) {
+        challengeRepository.updateChallengeStatus(status, challengeId);
     }
+
 }

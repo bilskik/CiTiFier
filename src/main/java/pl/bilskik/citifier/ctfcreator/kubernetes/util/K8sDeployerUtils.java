@@ -12,6 +12,13 @@ public class K8sDeployerUtils {
     private static final Integer MIN_PORT_RANGE = 1024;
     private static final Integer MAX_PORT_RANGE = 65536;
 
+    public static String buildName(String constName) {
+        return constName + "-" + provideRandomCharacters();
+    }
+    public static String buildName(String constName, int i) {
+        return constName + "-" + provideRandomCharacters() + "-" + i;
+    }
+
     public static String provideRandomCharacters() {
         return UUID.randomUUID().toString().replace("-", "").substring(MAX_LENGTH);
     }
