@@ -13,6 +13,7 @@ import lombok.Setter;
 public class GithubDataInputDTO {
     @Pattern(regexp = "https:\\/\\/github\\.com\\/([^\\/]+)\\/([^\\/]+)", message = "Link do repozytorium powinien być w formacie: https://github.com/{użytkownik}/{repozytorium}")
     private String githubLink;
+    private String relativePathToRepo;
     private boolean isPrivateRepo;
     private boolean isRepoClonedSuccessfully;
 

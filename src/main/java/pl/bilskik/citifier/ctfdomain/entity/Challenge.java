@@ -25,6 +25,9 @@ public class Challenge {
     @Column(name = "GITHUB_LINK", nullable = false)
     private String githubLink;
 
+    @Column(name = "RELATIVE_PATH_TO_REPO", nullable = false)
+    private String relativePathToRepo;
+
     @Column(name = "REPO_NAME", nullable = false)
     private String repoName;
 

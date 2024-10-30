@@ -13,6 +13,7 @@ public class ChallengeDTO {
     private Long challengeId;
     private String name;
     private String githubLink;
+    private String relativePathToRepo;
     private String repoName;
     private ChallengeStatus status;
     private ChallengeAppDataDTO challengeAppDataDTO;

@@ -36,9 +36,10 @@ public class GithubController {
     ) {
         session.setAttribute(GITHUB_DATA, githubDataInputDTO);
         try {
-            githubService.clonePublicGithubRepo(githubLink);
-            updateGithubInputData(session, githubLink, false);
+            String relativeFilePathToRepo = githubService.clonePublicGithubRepo(githubLink);
+            saveGithubInputDataIntoSession(session, githubLink, relativeFilePathToRepo, false);
         } catch(GithubException e) {
+            saveErrorGithubInputDataIntoSession(session, githubLink);
             bindingResult.rejectValue("githubLink","error.githubLink", e.getMessage());
             return "ctfcreator/challenge/github/challenge-github-repo";
         }
@@ -66,36 +67,42 @@ public class GithubController {
             RedirectAttributes redirectAttributes,
             @RequestParam String code,
             @RequestParam(name = "state") String url,
-            HttpSession httpSession
+            HttpSession session
     ) {
         try {
-            githubService.clonePrivateGithubRepo(code, url);
-            updateGithubInputData(httpSession, url, true);
+            String relativeFilePathToRepo = githubService.clonePrivateGithubRepo(code, url);
+            saveGithubInputDataIntoSession(session, url, relativeFilePathToRepo, true);
         } catch(GithubException e) {
-            updateGithubInputDataError(httpSession, url);
+            saveErrorGithubInputDataIntoSession(session, url);
             redirectAttributes.addFlashAttribute(CLONE_ERROR, e.getMessage());
         }
         return new RedirectView("/challenge-repo-link");
     }
 
-    private void updateGithubInputData(HttpSession httpSession, String githubLink, boolean isPrivateRepo) {
-        GithubDataInputDTO githubDataInputDTO = (GithubDataInputDTO) httpSession.getAttribute(GITHUB_DATA);
+    private void saveGithubInputDataIntoSession(
+            HttpSession session,
+            String githubLink,
+            String relativeFilePathToRepo,
+            boolean isPrivateRepo
+    ) {
+        GithubDataInputDTO githubDataInputDTO = (GithubDataInputDTO) session.getAttribute(GITHUB_DATA);
         if(githubDataInputDTO == null) {
             githubDataInputDTO = new GithubDataInputDTO();
         }
         githubDataInputDTO.setGithubLink(githubLink);
+        githubDataInputDTO.setRelativePathToRepo(relativeFilePathToRepo);
         githubDataInputDTO.setRepoClonedSuccessfully(true);
         githubDataInputDTO.setPrivateRepo(isPrivateRepo);
-        httpSession.setAttribute(GITHUB_DATA, githubDataInputDTO);
+        session.setAttribute(GITHUB_DATA, githubDataInputDTO);
     }
 
-    private void updateGithubInputDataError(HttpSession httpSession, String githubLink) {
-        GithubDataInputDTO githubDataInputDTO = (GithubDataInputDTO) httpSession.getAttribute(GITHUB_DATA);
+    private void saveErrorGithubInputDataIntoSession(HttpSession session, String githubLink) {
+        GithubDataInputDTO githubDataInputDTO = (GithubDataInputDTO) session.getAttribute(GITHUB_DATA);
         if(githubDataInputDTO == null) {
             githubDataInputDTO = new GithubDataInputDTO();
         }
         githubDataInputDTO.setGithubLink(githubLink);
         githubDataInputDTO.setRepoClonedSuccessfully(false);
-        httpSession.setAttribute(GITHUB_DATA, githubDataInputDTO);
+        session.setAttribute(GITHUB_DATA, githubDataInputDTO);
     }
 }
