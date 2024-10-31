@@ -4,15 +4,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -29,21 +26,16 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
+@SpringBootTest
 @Testcontainers
 class DockerImageBuilderImplTest extends DockerImageDataProvider {
     private static final int PORT = 2375;
 
-    @Mock
+    @MockBean
     private DockerEnvironmentStrategy environmentStrategy;
 
-    @Mock
-    private DockerShellProperties shellProperties;
-
-    @InjectMocks
+    @Autowired
     private DockerImageBuilderImpl dockerImageBuilder;
-
 
     @Container
     public static GenericContainer<?> container =
@@ -55,15 +47,13 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
     @BeforeAll
     static void init() {
         container.start();
+        String logs = container.getLogs();
+        System.out.println(logs);
     }
 
     @BeforeEach
     void setUp() {
-        when(shellProperties.getShell()).thenReturn("powershell.exe");
-        when(shellProperties.getConfig()).thenReturn("-Command");
-        when(shellProperties.getCommand()).thenReturn("docker-compose build");
-
-        String dockerHost = "tcp://" + container.getHost() + ":" + container.getMappedPort(PORT);
+        String dockerHost = String.format("tcp://%s:%d", container.getHost(), container.getMappedPort(PORT));
         Map<String, String> envMap = new HashMap<>(){{ put("DOCKER_HOST", dockerHost); }};
         when(environmentStrategy.configure()).thenReturn(envMap);
     }
@@ -76,6 +66,7 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
     @ParameterizedTest
     @MethodSource("dataProvider")
     public void build(String dockerfile, String dockerCompose) throws IOException {
+
         String dockerComposeFilepath = setupDirectory(dockerfile, dockerCompose);
 
         dockerImageBuilder.build(dockerComposeFilepath);
