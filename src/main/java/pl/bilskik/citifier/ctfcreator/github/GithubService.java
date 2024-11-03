@@ -11,11 +11,11 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestClient;
+import pl.bilskik.citifier.ctfcreator.filemanager.FileManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,21 +41,26 @@ public class GithubService {
     @Value("${oauth2.github.client-secret}")
     private String CLIENT_SECRET;
 
-    private final GithubUrlProcessor processor;
+    @Value("${repo.base-file-path}")
+    private String baseFilePath;
 
-    public void clonePublicGithubRepo(String url) throws GithubException {
-        validateAndCloneRepo(url, null, false);
+    private final GithubUrlValidator validator;
+    private final FileManager fileManager;
+
+    public String clonePublicGithubRepo(String url) throws GithubException {
+        return validateAndCloneRepo(url, null, false);
     }
 
-    public void clonePrivateGithubRepo(String code, String url) {
+    public String clonePrivateGithubRepo(String code, String url) {
         String accessToken = retrieveUserAccessToken(code)
                 .orElseThrow(() -> new GithubException(GITHUB_PRIVATE_REPO_ACCESS_ERROR));
-        validateAndCloneRepo(url, accessToken, true);
+        return validateAndCloneRepo(url, accessToken, true);
     }
 
-    private void validateAndCloneRepo(String url, String accessToken, boolean isPrivate) {
-        processor.validateGithubLink(url);
-        String filepath = processor.buildClonePath(url);
+    private String validateAndCloneRepo(String url, String accessToken, boolean isPrivate) {
+        validator.validateGithubLink(url);
+        String relativePath = fileManager.buildRelativeClonePathRepo(url);
+        String filepath = buildFilePath(relativePath);
 
         log.info("I am cloning repo: {}", url);
 
@@ -75,6 +80,12 @@ public class GithubService {
             throw new GithubException(isPrivate ? GITHUB_PRIVATE_REPO_CLONE_ERROR : GITHUB_PUBLIC_REPO_ERROR);
         }
         validateDockerComposeInRepo(filepath);
+
+        return relativePath;
+    }
+
+    private String buildFilePath(String relativeFilePath) {
+        return baseFilePath + File.separator + relativeFilePath;
     }
 
     public String buildRedirectUrl(String url) {
@@ -110,7 +121,7 @@ public class GithubService {
         log.info("Validating Docker Compose file in repo: {}", filepath);
         boolean isDockerComposeAvailable = containsDockerCompose(filepath);
         if(!isDockerComposeAvailable) {
-            deleteRepository(filepath);
+            fileManager.deleteDirAndRepo(filepath);
             throw new GithubException(GITHUB_DOCKER_COMPOSE_ERROR);
         }
         log.info("Docker compose file found");
@@ -139,17 +150,4 @@ public class GithubService {
         return false;
     }
 
-    private void deleteRepository(String filepath) { //TO DO
-        log.info("Deleting repository at: {}", filepath);
-
-        File file = new File(filepath);
-        if (file.exists()) {
-            boolean result = FileSystemUtils.deleteRecursively(file);
-            if (result) {
-                log.info("Repo on filepath: {} deleted properly!", filepath);
-            } else {
-                log.error("Failed to delete repository! Filepath: {}", filepath);
-            }
-        }
-    }
 }

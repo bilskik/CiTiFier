@@ -1,23 +1,14 @@
 package pl.bilskik.citifier.ctfcreator.github;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GithubUrlProcessor {
+public class GithubUrlValidator {
 
     private final static String PROTOCOL = "https:";
     private final static String DOMAIN = "github.com";
     private final static int MINIMUM_URL_LENGTH = 5;
     private final static String GITHUB_LINK_FORMAT = "https://github.com/{użytkownik}/{repozytorium}";
-
-    @Value("${repo.base-file-path}")
-    private String baseFilePath;
-
-    public String buildClonePath(String url) {
-        String[] tokens = splitUrl(url);
-        return baseFilePath + "\\" + tokens[tokens.length - 1];
-    }
 
     public void validateGithubLink(String url) {
         if(url == null || url.isEmpty()) {

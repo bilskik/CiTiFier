@@ -19,10 +19,6 @@ public class ChallengeDetailsService {
     private final ChallengeDeployerPreparator challengeDeployerPreparator;
 
     public ChallengeDTO findChallengeById(Long challengeId) {
-        if(challengeId == null) {
-            return new ChallengeDTO(); // ?
-        }
-
         return challengeDao.findById(challengeId);
     }
 

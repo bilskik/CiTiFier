@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +40,9 @@ public class DockerImageBuilderImpl implements DockerImageBuilder {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(file);
 
-        environmentStrategy.configure(processBuilder.environment());
+        Map<String, String> env = processBuilder.environment();
+        Map<String, String> additionalEnv = environmentStrategy.configure();
+        env.putAll(additionalEnv);
 
         processBuilder.command(shellProperties.getShell(), shellProperties.getConfig(), shellProperties.getCommand());
         processBuilder.redirectErrorStream(true);

@@ -49,6 +49,7 @@ class ChallengeCreationServiceTest {
 
         githubInput = new GithubDataInputDTO();
         githubInput.setGithubLink("https://github.com/sample/repo_name");
+        githubInput.setRelativePathToRepo("10601679-9cc7-4d2a-aa0d-ecb7c62f85a2//repo_name");
     }
 
     @Test
@@ -67,6 +68,7 @@ class ChallengeCreationServiceTest {
         assertEquals(challengeInput.getName(), challengeDTO.getName());
         assertEquals(ChallengeStatus.NEW, challengeDTO.getStatus());
         assertEquals(githubInput.getGithubLink(), challengeDTO.getGithubLink());
+        assertEquals(githubInput.getRelativePathToRepo(), challengeDTO.getRelativePathToRepo());
         assertEquals(repoName, challengeDTO.getRepoName());
 
         ChallengeAppDataDTO appDataDTO = challengeDTO.getChallengeAppDataDTO();
@@ -94,6 +96,7 @@ class ChallengeCreationServiceTest {
         assertEquals(challengeInput.getName(), challengeDTO.getName());
         assertEquals(ChallengeStatus.NEW, challengeDTO.getStatus());
         assertEquals(githubInput.getGithubLink(), challengeDTO.getGithubLink());
+        assertEquals(githubInput.getRelativePathToRepo(), challengeDTO.getRelativePathToRepo());
         assertEquals(repoName, challengeDTO.getRepoName());
 
         ChallengeAppDataDTO appDataDTO = challengeDTO.getChallengeAppDataDTO();
@@ -107,7 +110,6 @@ class ChallengeCreationServiceTest {
     @ParameterizedTest
     @MethodSource("provideChallengeCreationNullInput")
     public void createNewChallenge_WhenInputIsNull(ChallengeInputDTO challengeInput, GithubDataInputDTO githubInput) {
-
         assertThrows(ChallengeCreationException.class, () -> {
             challengeCreationService.createNewChallenge(challengeInput, githubInput);
         });

@@ -31,6 +31,7 @@ public class ChallengeCreationService {
         ChallengeDTO challengeDTO = ChallengeDTO.builder()
                 .name(challengeInput.getName())
                 .githubLink(githubInput.getGithubLink())
+                .relativePathToRepo(githubInput.getRelativePathToRepo())
                 .repoName(provideGithubRepoName(githubInput.getGithubLink()))
                 .status(ChallengeStatus.NEW)
                 .build();

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
 import pl.bilskik.citifier.ctfcreator.docker.service.DockerComposeParserManager;
 import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.DockerImageBuilder;
+import pl.bilskik.citifier.ctfcreator.filemanager.FileManager;
 import pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sResourceContext;
 import pl.bilskik.citifier.ctfdomain.dto.ChallengeAppDataDTO;
 import pl.bilskik.citifier.ctfdomain.dto.ChallengeDTO;
@@ -14,36 +15,30 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static pl.bilskik.citifier.ctfcreator.challengedetails.FilePathBuilder.baseFilePathToRepo;
-import static pl.bilskik.citifier.ctfcreator.challengedetails.FilePathBuilder.dockerComposeFilePath;
+import static pl.bilskik.citifier.ctfcreator.filemanager.FilePathBuilder.*;
 
 @Service
 @RequiredArgsConstructor
 public class ChallengeDeployerPreparator {
 
-    private final static List<String> DOCKER_COMPOSE = Arrays.asList("docker-compose.yml", "docker-compose.yaml", "compose.yaml", "compose.yml");
-
     @Value("${repo.base-file-path}")
     private String baseFilePath;
 
+    private final FileManager fileManager;
     private final DockerComposeParserManager dockerComposeParserManager;
     private final DockerImageBuilder dockerImageBuilder;
 
     public K8sResourceContext parseDockerComposeAndBuildImage(ChallengeDTO challengeDTO, boolean isNamespaceCreated) {
-        String repoFilePath = buildBaseFilePathWithRepo(challengeDTO.getRepoName());
-        String composeFilePath = provideDockerComposeYamlName(repoFilePath);
+        String repoAbsolutePath = buildAbsolutePath(baseFilePath, challengeDTO.getRelativePathToRepo());
+        String dockerComposeAbsolutePath = fileManager.provideDockerComposeAbsolutePath(repoAbsolutePath);
 
-        DockerCompose compose = dockerComposeParserManager.parse(dockerComposeFilePath(repoFilePath, composeFilePath));
-        dockerImageBuilder.build(repoFilePath);
+        DockerCompose compose = dockerComposeParserManager.parse(dockerComposeAbsolutePath);
+        dockerImageBuilder.build(repoAbsolutePath);
 
-        K8sResourceContext resourceContext = initK8sResourceContext(challengeDTO.getChallengeAppDataDTO(), repoFilePath, isNamespaceCreated);
+        K8sResourceContext resourceContext = initK8sResourceContext(challengeDTO.getChallengeAppDataDTO(), repoAbsolutePath, isNamespaceCreated);
         resourceContext.setDockerCompose(compose);
 
         return resourceContext;
-    }
-
-    private String buildBaseFilePathWithRepo(String repoName) {
-        return baseFilePathToRepo(baseFilePath, repoName);
     }
 
     private K8sResourceContext initK8sResourceContext(ChallengeAppDataDTO appData, String fullRepoFilePath, boolean isNamespaceCreated) {
@@ -57,13 +52,4 @@ public class ChallengeDeployerPreparator {
                 .build();
     }
 
-    private String provideDockerComposeYamlName(String baseFilePath) {
-        for(var fileName: DOCKER_COMPOSE) {
-            File file = new File(dockerComposeFilePath(baseFilePath, fileName));
-            if(file.exists()) {
-                return fileName;
-            }
-        }
-        throw new IllegalArgumentException("Docker compose not found!"); //TO DO change it
-    }
 }

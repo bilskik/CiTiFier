@@ -1,7 +1,8 @@
 spring:
   application:
     name: CiTiFier
-
+  profiles:
+    active: dev
   jpa:
     hibernate:
       ddl-auto: none
