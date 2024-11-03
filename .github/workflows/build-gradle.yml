@@ -37,5 +37,5 @@ jobs:
     - name: Run and build
       env:
         SPRING_PROFILES_ACTIVE: ci
-      run: ./gradlew clean build
+      run: ./gradlew clean build -s -d
 
