@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 @Testcontainers
 class DockerImageBuilderImplTest extends DockerImageDataProvider {
     private static final int PORT = 2375;
-    private static String OS = System.getProperty("os.name").toLowerCase();
+    private static OperatingSystem currentOS;
 
     @MockBean
     private DockerEnvironmentStrategy environmentStrategy;
@@ -46,20 +46,23 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
 
     @BeforeAll
     static void init() {
-        if(OS.contains("win")) {
-            container = new GenericContainer<>(DockerImageName.parse("docker:dind"))
-                    .withPrivilegedMode(true)
-                    .withExposedPorts(PORT)
-                    .withCommand("dockerd", "--host=tcp://0.0.0.0:2375", "--iptables=false"); //windows related
-
-
-        } else {
-            container = new GenericContainer<>(DockerImageName.parse("docker:dind"))
-                    .withPrivilegedMode(true)
-                    .withExposedPorts(PORT)
-                    .withCommand("dockerd", "--host=tcp://0.0.0.0:2375");
+        currentOS = OperatingSystem.getCurrentOS();
+        if(currentOS == OperatingSystem.UNKNOWN) {
+            throw new IllegalStateException("Cannot determine current operating system!");
         }
+        configureContainer();
         container.start();
+    }
+
+    private static void configureContainer() {
+        String command = "dockerd --host=tcp://0.0.0.0:2375";
+        if (currentOS == OperatingSystem.WINDOWS) {
+            command += " --iptables=false";
+        }
+        container = new GenericContainer<>(DockerImageName.parse("docker:dind"))
+                .withPrivilegedMode(true)
+                .withExposedPorts(PORT)
+                .withCommand(command);
     }
 
     @BeforeEach
@@ -68,15 +71,19 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
         Map<String, String> envMap = new HashMap<>(){{ put("DOCKER_HOST", dockerHost); }};
         when(environmentStrategy.configure()).thenReturn(envMap);
 
-        if(OS.contains("win")) {
+        configureShellProperties();
+    }
+
+    private void configureShellProperties() {
+        if(currentOS == OperatingSystem.WINDOWS) {
             when(dockerShellProperties.getShell()).thenReturn("powershell.exe");
             when(dockerShellProperties.getConfig()).thenReturn("-Command");
-            when(dockerShellProperties.getCommand()).thenReturn("docker-compose build");
         } else {
             when(dockerShellProperties.getShell()).thenReturn("sh");
             when(dockerShellProperties.getConfig()).thenReturn("-c");
-            when(dockerShellProperties.getCommand()).thenReturn("docker-compose build");
         }
+
+        when(dockerShellProperties.getCommand()).thenReturn("docker-compose build");
     }
 
     @AfterAll
@@ -87,7 +94,6 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
     @ParameterizedTest
     @MethodSource("dataProvider")
     public void build(String dockerfile, String dockerCompose) throws IOException {
-
         String dockerComposeFilepath = setupDirectory(dockerfile, dockerCompose);
 
         dockerImageBuilder.build(dockerComposeFilepath);

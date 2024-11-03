@@ -39,7 +39,5 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./gradlew
     - name: Run and build
-      env:
-        SPRING_PROFILES_ACTIVE: ci
-      run: ./gradlew clean build -s -d
+      run: ./gradlew clean build
 
