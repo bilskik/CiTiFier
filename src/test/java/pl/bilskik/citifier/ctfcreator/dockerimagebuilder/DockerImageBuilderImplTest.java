@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
@@ -32,25 +31,35 @@ import static org.mockito.Mockito.when;
 @Testcontainers
 class DockerImageBuilderImplTest extends DockerImageDataProvider {
     private static final int PORT = 2375;
+    private static String OS = System.getProperty("os.name").toLowerCase();
 
     @MockBean
     private DockerEnvironmentStrategy environmentStrategy;
 
+    @MockBean
+    private DockerShellProperties dockerShellProperties;
+
     @Autowired
     private DockerImageBuilderImpl dockerImageBuilder;
 
-    @Container
-    public static GenericContainer<?> container =
-            new GenericContainer<>(DockerImageName.parse("docker:dind"))
+    public static GenericContainer<?> container;
+
+    @BeforeAll
+    static void init() {
+        if(OS.contains("win")) {
+            container = new GenericContainer<>(DockerImageName.parse("docker:dind"))
                     .withPrivilegedMode(true)
                     .withExposedPorts(PORT)
                     .withCommand("dockerd", "--host=tcp://0.0.0.0:2375", "--iptables=false"); //windows related
 
-    @BeforeAll
-    static void init() {
+
+        } else {
+            container = new GenericContainer<>(DockerImageName.parse("docker:dind"))
+                    .withPrivilegedMode(true)
+                    .withExposedPorts(PORT)
+                    .withCommand("dockerd", "--host=tcp://0.0.0.0:2375");
+        }
         container.start();
-        String logs = container.getLogs();
-        System.out.println(logs);
     }
 
     @BeforeEach
@@ -58,6 +67,16 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
         String dockerHost = String.format("tcp://%s:%d", container.getHost(), container.getMappedPort(PORT));
         Map<String, String> envMap = new HashMap<>(){{ put("DOCKER_HOST", dockerHost); }};
         when(environmentStrategy.configure()).thenReturn(envMap);
+
+        if(OS.contains("win")) {
+            when(dockerShellProperties.getShell()).thenReturn("powershell.exe");
+            when(dockerShellProperties.getConfig()).thenReturn("-Command");
+            when(dockerShellProperties.getCommand()).thenReturn("docker-compose build");
+        } else {
+            when(dockerShellProperties.getShell()).thenReturn("sh");
+            when(dockerShellProperties.getConfig()).thenReturn("-c");
+            when(dockerShellProperties.getCommand()).thenReturn("docker-compose build");
+        }
     }
 
     @AfterAll
