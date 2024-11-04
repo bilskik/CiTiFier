@@ -10,8 +10,8 @@ import pl.bilskik.citifier.ctfcreator.kubernetes.factory.config.K8sSecretFactory
 import java.util.Collections;
 import java.util.Map;
 
-import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sLabelConstants.APP;
-import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sLabelConstants.SECRET_LABEL;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sConstants.APP;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sConstants.SECRET_LABEL;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sEnvironmentExtractor.getFirstKey;
 
 @Service

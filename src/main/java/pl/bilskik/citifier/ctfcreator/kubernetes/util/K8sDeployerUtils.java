@@ -2,9 +2,14 @@ package pl.bilskik.citifier.ctfcreator.kubernetes.util;
 
 import org.apache.commons.lang3.StringUtils;
 import pl.bilskik.citifier.ctfcreator.docker.entity.Port;
+import pl.bilskik.citifier.ctfcreator.kubernetes.exception.K8sResourceCreationException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sConstants.DB_ENV_NAME;
 
 public class K8sDeployerUtils {
 
@@ -36,5 +41,17 @@ public class K8sDeployerUtils {
 
     private static boolean isValidPort(String value) {
         return StringUtils.isNumeric(value);
+    }
+
+    public static Map<String, String> updateDbEnvNameWithIndex(Map<String, String> envMap, int i) {
+        if(!envMap.containsKey(DB_ENV_NAME)) {
+            throw new K8sResourceCreationException("Environment variable doesn't contain DB!");
+        }
+
+        Map<String, String> target = new HashMap<>(envMap);
+        String envValue = envMap.get(DB_ENV_NAME);
+        envValue = envValue + "-" + i;
+        target.put(DB_ENV_NAME, envValue);
+        return target;
     }
 }

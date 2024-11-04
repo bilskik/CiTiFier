@@ -28,6 +28,8 @@ public class ServiceParser {
     private final static String COMMAND = "command";
     private final static String ENTRYPOINT = "entrypoint";
 
+    private final static String DB = "db";
+
     private final BiConsumer<String, Map<String, String>> envFunc = (val, map) -> {
         String[] parts = val.split("=");
         if(parts.length == 2) {
@@ -47,19 +49,29 @@ public class ServiceParser {
             log.info("No services found in the Docker Compose configuration");
             throw new DockerComposeParserException("Services doesn't exist in docker-compose file!");
         }
+        if(services.size() != 2) {
+            log.info("Expected exactly 2 services in Docker Compose configuration!");
+            throw new DockerComposeParserException("Expected exactly 2 services in docker-compose file!");
+        }
+        if(!services.containsKey(DB)) {
+            log.info("Invalid service name: One of the service name must include 'db'!");
+            throw new DockerComposeParserException("Invalid service name: One of the service name must include 'db'!");
+        }
 
         Map<String, ComposeService> composeServices = new HashMap<>();
         services.forEach((serviceName, serviceData) -> {
-            if(serviceData == null || serviceData.isEmpty()) {
+            if(serviceName != null && serviceData == null || serviceData.isEmpty()) {
                 log.error("Skipping service {}: No data found!", serviceName);
                 throw new DockerComposeParserException(String.format("Service (%s) is empty!", serviceName));
             }
             log.info("Parsing service: {} ", serviceName);
 
+            boolean isAppService = !DB.equals(serviceName);
+
             ComposeService composeService = new ComposeService();
-            composeService.setImage((String) serviceData.get(IMAGE));
-            composeService.setContainerName((String) serviceData.get(CONTAINER_NAME));
-            composeService.setEnvironments(genericMapListParser(serviceData.get(ENVIRONMENT), envFunc));
+            composeService.setImage(validateAndReturnField((String) serviceData.get(IMAGE), IMAGE));
+            composeService.setContainerName(sanitize(validateAndReturnField((String) serviceData.get(CONTAINER_NAME), CONTAINER_NAME)));
+            composeService.setEnvironments(validateEnv(genericMapListParser(serviceData.get(ENVIRONMENT), envFunc), isAppService));
             composeService.setPorts(portParser.parsePortList(serviceData.get(PORTS)));
             composeService.setVolumes(volumeParser.parseServiceVolume(serviceData.get(VOLUMES), volumes));
             composeService.setEntrypoint(commandEntrypointParser.parseEntrypoint(serviceData.get(ENTRYPOINT)));
@@ -69,6 +81,34 @@ public class ServiceParser {
         });
 
         return composeServices;
+    }
+
+    private String validateAndReturnField(String field, String fieldName) {
+        if(field == null || field.isEmpty()) {
+            throw new DockerComposeParserException(String.format("Docker compose must contain field: %s",fieldName));
+        }
+        return field;
+    }
+
+    private String sanitize(String name) {
+        name = name.toLowerCase();
+        name = name.replaceAll("[^a-z0-9-]", "");
+        name = name.replaceAll("^-+|-+$", "");
+        if (name.length() > 253) {
+            name = name.substring(0, 253);
+        }
+        return name;
+    }
+
+    private Map<String, String> validateEnv(Map<String, String> envMap, boolean isAppService) {
+        if(!isAppService) {
+            return envMap;
+        }
+
+        if(!envMap.containsKey(DB)) {
+            throw new DockerComposeParserException("Application service must include DB in environment variables!");
+        }
+        return envMap;
     }
 
     private Map<String, String> genericMapListParser(Object values, BiConsumer<String, Map<String, String>> callback) {

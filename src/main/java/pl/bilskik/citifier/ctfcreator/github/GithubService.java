@@ -54,6 +54,7 @@ public class GithubService {
     public String clonePrivateGithubRepo(String code, String url) {
         String accessToken = retrieveUserAccessToken(code)
                 .orElseThrow(() -> new GithubException(GITHUB_PRIVATE_REPO_ACCESS_ERROR));
+        log.info("Access token: {}", accessToken);
         return validateAndCloneRepo(url, accessToken, true);
     }
 

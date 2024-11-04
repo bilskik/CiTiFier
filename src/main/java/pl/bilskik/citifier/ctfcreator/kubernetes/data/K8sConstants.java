@@ -1,6 +1,7 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes.data;
 
-public class K8sLabelConstants {
+public class K8sConstants {
+    //labels
     public final static String APP = "app";
     public final static String NODE_PORT_LABEL = "node-port";
     public final static String HEADLESS_SERVICE_LABEL = "headless-service";
@@ -10,4 +11,10 @@ public class K8sLabelConstants {
     public final static String DB_LABEL = "db";
     public final static String SECRET_LABEL = "secret";
     public final static String CONFIG_MAP_LABEL = "config-map";
+
+    //services
+    public final static String DB_SERVICE_NAME = "db";
+
+    //env
+    public final static String DB_ENV_NAME = "DB";
 }

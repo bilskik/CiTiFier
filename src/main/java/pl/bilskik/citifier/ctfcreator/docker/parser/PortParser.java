@@ -3,6 +3,7 @@ package pl.bilskik.citifier.ctfcreator.docker.parser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfcreator.docker.entity.Port;
+import pl.bilskik.citifier.ctfcreator.docker.exception.DockerComposeParserException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,9 @@ public class PortParser {
         if(o instanceof List<?>) {
             List<Port> portList = new ArrayList<>();
             List<String> list = convertToStringList((List<?>)o);
+            if(list.size() != 1) {
+                throw new DockerComposeParserException("Each docker-compose service should contain only one port mapping!");
+            }
             for(var val: list) {
                 portList.add(parsePort(val));
             }
