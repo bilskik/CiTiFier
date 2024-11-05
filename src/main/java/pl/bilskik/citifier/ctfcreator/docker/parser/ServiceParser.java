@@ -28,7 +28,8 @@ public class ServiceParser {
     private final static String COMMAND = "command";
     private final static String ENTRYPOINT = "entrypoint";
 
-    private final static String DB = "db";
+    private final static String DB_SERVICE_NAME = "db";
+    private final static String DB_ENV = "DB";
 
     private final BiConsumer<String, Map<String, String>> envFunc = (val, map) -> {
         String[] parts = val.split("=");
@@ -53,7 +54,7 @@ public class ServiceParser {
             log.info("Expected exactly 2 services in Docker Compose configuration!");
             throw new DockerComposeParserException("Expected exactly 2 services in docker-compose file!");
         }
-        if(!services.containsKey(DB)) {
+        if(!services.containsKey(DB_SERVICE_NAME)) {
             log.info("Invalid service name: One of the service name must include 'db'!");
             throw new DockerComposeParserException("Invalid service name: One of the service name must include 'db'!");
         }
@@ -66,7 +67,7 @@ public class ServiceParser {
             }
             log.info("Parsing service: {} ", serviceName);
 
-            boolean isAppService = !DB.equals(serviceName);
+            boolean isAppService = !DB_SERVICE_NAME.equals(serviceName);
 
             ComposeService composeService = new ComposeService();
             composeService.setImage(validateAndReturnField((String) serviceData.get(IMAGE), IMAGE));
@@ -105,7 +106,7 @@ public class ServiceParser {
             return envMap;
         }
 
-        if(!envMap.containsKey(DB)) {
+        if(!envMap.containsKey(DB_ENV)) {
             throw new DockerComposeParserException("Application service must include DB in environment variables!");
         }
         return envMap;

@@ -32,6 +32,7 @@ public class ParserTestParameters {
                     "    container_name: backend\n" +
                     "    environment:\n" +
                     "      - NODE_ENV=production\n" +
+                    "      - DB=db-1\n" +
                     "    ports:\n" +
                     "      - \"3000:3000\"\n" +
                     "    depends_on:\n" +
@@ -51,8 +52,13 @@ public class ParserTestParameters {
         ComposeService backend = new ComposeService();
         backend.setImage("node:14");
         backend.setContainerName("backend");
-        backend.setEnvironments(new HashMap<>(){{put("NODE_ENV", "production");}});
-        backend.setPorts(new ArrayList<>(){{add(new Port("3000", "3000"));}});
+        backend.setEnvironments(new HashMap<>(){{
+            put("NODE_ENV", "production");
+            put("DB", "db-1");
+        }});
+        backend.setPorts(new ArrayList<>(){{
+            add(new Port("3000", "3000"));
+        }});
         backend.setVolumes(new ArrayList<>());
 
         ComposeService db = new ComposeService();
@@ -76,6 +82,7 @@ public class ParserTestParameters {
                     "    container_name: backend\n" +
                     "    environment:\n" +
                     "      - NODE_ENV=development\n" +
+                    "      - DB=db-1\n" +
                     "    ports:\n" +
                     "      - \"3000\"\n" +
                     "    depends_on:\n" +
@@ -101,19 +108,7 @@ public class ParserTestParameters {
     protected static DockerCompose buildDockerCompose2() {
         Map<String, ComposeService> services = new HashMap<>();
 
-        ComposeService backend = new ComposeService();
-        backend.setImage("node:14");
-        backend.setContainerName("backend");
-        backend.setEnvironments(new HashMap<>() {{
-            put("NODE_ENV", "development");
-        }});
-        backend.setPorts(new ArrayList<>() {{
-            add(new Port("3000", "3000"));
-        }});
-        backend.setVolumes(new ArrayList<>() {{
-            add(new Volume(null, VolumeType.BIND_MOUNT, "./app", "/usr/src/app"));
-            add(new Volume(null, VolumeType.BIND_MOUNT, "./config", "/usr/src/config"));
-        }});
+        ComposeService backend = getService();
 
         ComposeService db = new ComposeService();
         db.setImage("mysql:8");
@@ -138,6 +133,24 @@ public class ParserTestParameters {
         return generalDockerComposeBuilder("3.8", services, volumes);
     }
 
+    private static ComposeService getService() {
+        ComposeService backend = new ComposeService();
+        backend.setImage("node:14");
+        backend.setContainerName("backend");
+        backend.setEnvironments(new HashMap<>() {{
+            put("NODE_ENV", "development");
+            put("DB", "db-1");
+        }});
+        backend.setPorts(new ArrayList<>() {{
+            add(new Port("3000", "3000"));
+        }});
+        backend.setVolumes(new ArrayList<>() {{
+            add(new Volume(null, VolumeType.BIND_MOUNT, "./app", "/usr/src/app"));
+            add(new Volume(null, VolumeType.BIND_MOUNT, "./config", "/usr/src/config"));
+        }});
+        return backend;
+    }
+
     protected static final String DOCKER_COMPOSE_3 =
             "version: '3.8'\n" +
                     "services:\n" +
@@ -146,9 +159,9 @@ public class ParserTestParameters {
                     "    container_name: backend\n" +
                     "    environment:\n" +
                     "      - FLASK_ENV=production\n" +
+                    "      - DB=db-1\n" +
                     "    ports:\n" +
                     "      - \"5000:5001/tcp\"\n" +
-                    "      - \"5000:5002/udp\"\n" +
                     "    depends_on:\n" +
                     "      - db\n" +
                     "\n" +
@@ -168,10 +181,10 @@ public class ParserTestParameters {
         backend.setContainerName("backend");
         backend.setEnvironments(new HashMap<>() {{
             put("FLASK_ENV", "production");
+            put("DB", "db-1");
         }});
         backend.setPorts(new ArrayList<>() {{
             add(new Port("5000", "5001", Port.ConnectionType.TCP));
-            add(new Port("5000", "5002", Port.ConnectionType.UDP));
         }});
         backend.setVolumes(new ArrayList<>());
 
@@ -199,34 +212,34 @@ public class ParserTestParameters {
                     "  backend:\n" +
                     "    image: python:3.9\n" +
                     "    container_name: backend\n" +
-                    "    entrypoint: /bin/sh -c 'python app.py'\n" + 
+                    "    entrypoint: /bin/sh -c 'python app.py'\n" +
+                    "    ports:\n" +
+                    "      - \"8080\"\n" +
                     "    command: [\"flask\", \"run\", \"--host=0.0.0.0\", \"--port=5001\"]\n" +
+                    "    environment:\n" +
+                    "      - DB=db-1\n" +
                     "\n" +
                     "  db:\n" +
                     "    image: mariadb:latest\n" +
                     "    container_name: db\n" +
-                    "    entrypoint: [\"docker-entrypoint.sh\"]\n" + 
+                    "    ports:\n" +
+                    "      - \"3307:3306\"\n" +
+                    "    entrypoint: [\"docker-entrypoint.sh\"]\n" +
                     "    command: [\"mysqld\"]";
+
 
 
     protected static DockerCompose buildDockerCompose4() {
         Map<String, ComposeService> services = new HashMap<>();
-        ComposeService backend = new ComposeService();
-        backend.setImage("python:3.9");
-        backend.setContainerName("backend");
-        backend.setVolumes(new ArrayList<>());
-        backend.setPorts(new ArrayList<>());
-        backend.setEnvironments(new HashMap<>());
-        backend.setEntrypoint(new Entrypoint(new ArrayList<>(){{ add("/bin/sh -c 'python app.py'"); }}, CommandType.SHELL));
-        backend.setCommand(new Command(new ArrayList<>(){{
-            add("flask"); add("run"); add("--host=0.0.0.0"); add("--port=5001");
-        }}, CommandType.EXEC));
+        ComposeService backend = getComposeService();
 
         ComposeService db = new ComposeService();
         db.setImage("mariadb:latest");
         db.setContainerName("db");
         db.setVolumes(new ArrayList<>());
-        db.setPorts(new ArrayList<>());
+        db.setPorts(new ArrayList<>(){{
+            add(new Port("3307", "3306", Port.ConnectionType.TCP));
+        }});
         db.setEnvironments(new HashMap<>());
         db.setEntrypoint(new Entrypoint(new ArrayList<>(){{ add("docker-entrypoint.sh"); }}, CommandType.EXEC));
         db.setCommand(new Command(new ArrayList<>(){{ add("mysqld"); }}, CommandType.EXEC));
@@ -237,4 +250,21 @@ public class ParserTestParameters {
         return generalDockerComposeBuilder("3.8", services, new HashMap<>());
     }
 
+    private static ComposeService getComposeService() {
+        ComposeService backend = new ComposeService();
+        backend.setImage("python:3.9");
+        backend.setContainerName("backend");
+        backend.setVolumes(new ArrayList<>());
+        backend.setPorts(new ArrayList<>(){{
+            add(new Port("8080", "8080", Port.ConnectionType.TCP));
+        }});
+        backend.setEnvironments(new HashMap<>(){{
+            put("DB", "db-1");
+        }});
+        backend.setEntrypoint(new Entrypoint(new ArrayList<>(){{ add("/bin/sh -c 'python app.py'"); }}, CommandType.SHELL));
+        backend.setCommand(new Command(new ArrayList<>(){{
+            add("flask"); add("run"); add("--host=0.0.0.0"); add("--port=5001");
+        }}, CommandType.EXEC));
+        return backend;
+    }
 }

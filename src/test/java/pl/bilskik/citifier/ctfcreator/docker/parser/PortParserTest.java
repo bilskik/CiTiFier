@@ -40,6 +40,7 @@ public class PortParserTest {
     public static Stream<Arguments> dataProvider() {
         return Stream.of(
                 Arguments.of(new ArrayList<>(){{ add("8080:80"); }}, "8080", "80"),
+                Arguments.of(new ArrayList<>(){{ add("8080:80/tcp"); }}, "8080", "80"),
                 Arguments.of(new ArrayList<>(){{ add("2138:2138"); }}, "2138", "2138"),
                 Arguments.of(new ArrayList<>(){{ add("8000"); }}, "8000", "8000")
         );
