@@ -10,8 +10,10 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
+import pl.bilskik.citifier.ctfcreator.docker.datasource.ValidDockerComposeTestCases;
 import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
 import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
+import pl.bilskik.citifier.ctfcreator.docker.exception.DockerComposeParserException;
 import pl.bilskik.citifier.ctfcreator.docker.parser.*;
 
 import java.util.Map;
@@ -19,16 +21,18 @@ import java.util.stream.Stream;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static pl.bilskik.citifier.ctfcreator.docker.datasource.InvalidDockerComposeTestCases.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = {CommandEntrypointParser.class, DockerComposeParser.class, PortParser.class, ServiceParser.class, VolumeParser.class})
-class DockerComposeParserIntegrationTest extends ParserTestParameters {
+class DockerComposeParserIntegrationTest extends ValidDockerComposeTestCases {
 
     @Autowired
     private DockerComposeParser parser;
 
     @ParameterizedTest
-    @MethodSource
+    @MethodSource("validDockerComposeYaml")
     public void dockerParserTest(String yamlInput, DockerCompose expected) {
         Yaml yaml = configureYaml();
         Map<String, Object> yamlData = yaml.load(yamlInput);
@@ -53,13 +57,36 @@ class DockerComposeParserIntegrationTest extends ParserTestParameters {
         assertEquals(expected.getVolumes(), actual.getVolumes());
     }
 
-    public static Stream<Arguments> dockerParserTest() {
+    public static Stream<Arguments> validDockerComposeYaml() {
         return Stream.of(
-                Arguments.of(DOCKER_COMPOSE_1, buildDockerCompose1()),
-                Arguments.of(DOCKER_COMPOSE_2, buildDockerCompose2()),
-                Arguments.of(DOCKER_COMPOSE_3, buildDockerCompose3()),
-                Arguments.of(DOCKER_COMPOSE_4, buildDockerCompose4())
+                Arguments.of(VALID_DOCKER_COMPOSE_1, buildDockerCompose1()),
+                Arguments.of(VALID_DOCKER_COMPOSE_2, buildDockerCompose2()),
+                Arguments.of(VALID_DOCKER_COMPOSE_3, buildDockerCompose3()),
+                Arguments.of(VALID_DOCKER_COMPOSE_4, buildDockerCompose4())
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidDockerComposeYaml")
+    public void dockerParserTest_WhenInputYamlIsInvalid(String yamlInput) {
+        Yaml yaml = configureYaml();
+        Map<String, Object> yamlData = yaml.load(yamlInput);
+
+        assertThrows(DockerComposeParserException.class, () -> {
+            parser.parse(yamlData);
+        });
+    }
+
+    public static Stream<Arguments> invalidDockerComposeYaml() {
+        return Stream.of(
+                Arguments.of(INVALID_DOCKER_COMPOSE_1),
+                Arguments.of(INVALID_DOCKER_COMPOSE_2),
+                Arguments.of(INVALID_DOCKER_COMPOSE_3),
+                Arguments.of(INVALID_DOCKER_COMPOSE_4),
+                Arguments.of(INVALID_DOCKER_COMPOSE_5),
+                Arguments.of(INVALID_DOCKER_COMPOSE_6),
+                Arguments.of(INVALID_DOCKER_COMPOSE_7)
+            );
     }
 
     private Yaml configureYaml() {

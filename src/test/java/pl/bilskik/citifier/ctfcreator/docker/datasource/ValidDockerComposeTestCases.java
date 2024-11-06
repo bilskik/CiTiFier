@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.docker;
+package pl.bilskik.citifier.ctfcreator.docker.datasource;
 
 import pl.bilskik.citifier.ctfcreator.docker.entity.*;
 import pl.bilskik.citifier.ctfcreator.docker.enumeration.CommandType;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ParserTestParameters {
+public class ValidDockerComposeTestCases {
 
     private static DockerCompose generalDockerComposeBuilder(
             String version,
@@ -24,7 +24,7 @@ public class ParserTestParameters {
     }
 
 
-    protected static final String DOCKER_COMPOSE_1 =
+    public static final String VALID_DOCKER_COMPOSE_1 =
             "version: '3.8'\n" +
                     "services:\n" +
                     "  backend:\n" +
@@ -47,7 +47,7 @@ public class ParserTestParameters {
                     "    ports:\n" +
                     "      - \"5432:5432\"";
 
-    protected static DockerCompose buildDockerCompose1() {
+    public static DockerCompose buildDockerCompose1() {
         Map<String, ComposeService> services = new HashMap<>();
         ComposeService backend = new ComposeService();
         backend.setImage("node:14");
@@ -74,7 +74,7 @@ public class ParserTestParameters {
         return generalDockerComposeBuilder("3.8", services, new HashMap<>());
     }
 
-    protected static final String DOCKER_COMPOSE_2 =
+    public static final String VALID_DOCKER_COMPOSE_2 =
             "version: '3.8'\n" +
                     "services:\n" +
                     "  backend:\n" +
@@ -105,7 +105,7 @@ public class ParserTestParameters {
                     "volumes:\n" +
                     "  db-data:";
 
-    protected static DockerCompose buildDockerCompose2() {
+    public static DockerCompose buildDockerCompose2() {
         Map<String, ComposeService> services = new HashMap<>();
 
         ComposeService backend = getService();
@@ -151,7 +151,7 @@ public class ParserTestParameters {
         return backend;
     }
 
-    protected static final String DOCKER_COMPOSE_3 =
+    public static final String VALID_DOCKER_COMPOSE_3 =
             "version: '3.8'\n" +
                     "services:\n" +
                     "  backend:\n" +
@@ -174,7 +174,7 @@ public class ParserTestParameters {
                     "    ports:\n" +
                     "      - \"3307:3306\"\n";
 
-    protected static DockerCompose buildDockerCompose3() {
+    public static DockerCompose buildDockerCompose3() {
         Map<String, ComposeService> services = new HashMap<>();
         ComposeService backend = new ComposeService();
         backend.setImage("python:3.9");
@@ -206,7 +206,7 @@ public class ParserTestParameters {
         return generalDockerComposeBuilder("3.8", services, new HashMap<>());
     }
 
-    protected static final String DOCKER_COMPOSE_4 =
+    public static final String VALID_DOCKER_COMPOSE_4 =
             "version: '3.8'\n" +
                     "services:\n" +
                     "  backend:\n" +
@@ -227,9 +227,7 @@ public class ParserTestParameters {
                     "    entrypoint: [\"docker-entrypoint.sh\"]\n" +
                     "    command: [\"mysqld\"]";
 
-
-
-    protected static DockerCompose buildDockerCompose4() {
+    public static DockerCompose buildDockerCompose4() {
         Map<String, ComposeService> services = new HashMap<>();
         ComposeService backend = getComposeService();
 
