@@ -3,6 +3,8 @@ package pl.bilskik.citifier.ctfdomain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Map;
+
 @Entity
 @Table(name = "CHALLENGE_APP_DATA")
 @Getter
@@ -29,5 +31,14 @@ public class ChallengeAppData {
 
     @Column(name = "NUMBER_OF_APP", nullable = false)
     private Integer numberOfApp;
+
+    @ElementCollection
+    @CollectionTable(name = "PORT_FLAG",
+        joinColumns = {
+            @JoinColumn(name = "FK_PORT_FLAG", referencedColumnName = "CHALLENGE_APP_DATA_ID")
+    })
+    @MapKeyColumn(name = "PORT")
+    @Column(name = "FLAG")
+    private Map<Integer, String> portFlag;
 
 }

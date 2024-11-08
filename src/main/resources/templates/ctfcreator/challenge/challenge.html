@@ -79,20 +79,6 @@
                         class="invalid-feedback"
                 ></p>
             </div>
-            <div class="form-group">
-                <label
-                        th:text="#{ctfcreator.challenge.flag-generation-method}"
-                        for="flag-generation-method"
-                ></label>
-                <select
-                        id="flag-generation-method"
-                        th:field="*{flagGenerationMethod}"
-                        class="challenge form-control"
-                        required
-                >
-                    <option th:each="method: ${flagGenerationMethods}" th:text="${method}" th:value="${method}"></option>
-                </select>
-            </div>
         </div>
         <button
                 th:text="#{common.create}"

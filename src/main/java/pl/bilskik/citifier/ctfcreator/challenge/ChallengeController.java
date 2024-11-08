@@ -11,25 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
-
 import static pl.bilskik.citifier.ctfcreator.challenge.ChallengeConstraints.CHALLENGE;
 
 
 @Controller
 @RequiredArgsConstructor
 public class ChallengeController {
-
-    private final static List<String> flagGenerationMethod;
-
-    static {
-        flagGenerationMethod = FlagGenerationMethod.convertToList();
-    }
-
-    @ModelAttribute
-    public void addCommonAttributes(Model model) {
-        model.addAttribute("flagGenerationMethods", flagGenerationMethod);
-    }
 
     @GetMapping(path = "/challenge")
     public String challengePage(Model model, HttpSession httpSession) {

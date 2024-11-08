@@ -19,6 +19,7 @@ databaseChangeLog:
                   type: NVARCHAR(255)
                   constraints:
                     nullable: false
+                    unique: true
               - column:
                   name: GITHUB_LINK
                   type: NVARCHAR(100)
