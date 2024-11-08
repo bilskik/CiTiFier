@@ -1,6 +1,9 @@
 package pl.bilskik.citifier.ctfcreator.challenge;
 
 public class ChallengeConstraints {
+    public final static int MINIMUM_NUMBER_OF_CHARACTERS = 3;
+    public final static int MAXIMUM_NUMBER_OF_CHARACTERS = 3;
+
     public final static int MINIMUM_NUMBER_OF_APP = 1;
     public final static int MAXIMUM_NUMBER_OF_APP = 250;
 

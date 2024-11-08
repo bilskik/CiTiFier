@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class RegisterController {
     private final static String REGISTRATION_FAILED = "Nie można zarejstrować użytkownika!";
 
-    private final RegisterPasswordValidator validator;
+    private final RegisterLoginPasswordValidator validator;
     private final RegisterService registerService;
 
     @GetMapping(path = "/register")

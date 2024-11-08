@@ -49,7 +49,7 @@ public class CTFCreatorDaoImpl implements CTFCreatorDao {
     @Override
     @Transactional
     public CTFCreatorDTO createCTFCreator(CTFCreatorDTO ctfCreatorDTO) {
-        log.info("Creating new CTF user");
+        log.info("Creating new CTF creator");
         CTFCreator ctfCreator = mapper.toCTFCreator(ctfCreatorDTO);
         if(ctfCreator == null) {
             throw new CTFCreatorException("CTFCreatorDTO cannot be null");

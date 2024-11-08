@@ -10,15 +10,17 @@ import static pl.bilskik.citifier.ctfcreator.challenge.ChallengeConstraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@NotNull
 public class ChallengeInputDTO {
-    @Pattern(regexp = "^[a-zA-Z0-9]{4,50}$", message = "Dozwolone są tylko znaki alfanumeryczne o długości od 4 do 50 znaków.")
+    @Size(min = MINIMUM_NUMBER_OF_CHARACTERS, message = "Nazwa zadania powinna być o długości co najmniej 3 znaków!")
+    @Size(max = MAXIMUM_NUMBER_OF_CHARACTERS, message = "Nazwa zadania nie może być dłuższa niż 100 znaków!")
     private String name;
     @Min(value = MINIMUM_NUMBER_OF_APP, message = "Liczba aplikacji powinna być w przedziale między 1 a 250")
     @Max(value = MAXIMUM_NUMBER_OF_APP, message = "Liczba aplikacji powinna być w przedziale między 1 a 250")
-    @NotNull(message = "Podaj liczbę!")
+    @NotNull(message = "Proszę podać liczbę!")
     private Integer numberOfApp;
     @Min(value = START_NODE_PORT, message = "Początkowy port może być co najmniej 30000!")
-    @NotNull(message = "Podaj port!")
+    @NotNull(message = "Proszę podać port!")
     private Integer startExposedPort;
     private FlagGenerationMethod flagGenerationMethod;
 }
