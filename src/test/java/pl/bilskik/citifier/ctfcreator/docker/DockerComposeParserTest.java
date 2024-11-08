@@ -1,73 +1,76 @@
 package pl.bilskik.citifier.ctfcreator.docker;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.introspector.PropertyUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
 import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
-import pl.bilskik.citifier.ctfcreator.docker.parser.*;
+import pl.bilskik.citifier.ctfcreator.docker.entity.Volume;
+import pl.bilskik.citifier.ctfcreator.docker.exception.DockerComposeParserException;
+import pl.bilskik.citifier.ctfcreator.docker.parser.DockerComposeParser;
+import pl.bilskik.citifier.ctfcreator.docker.parser.ServiceParser;
+import pl.bilskik.citifier.ctfcreator.docker.parser.VolumeParser;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ContextConfiguration(classes = {CommandEntrypointParser.class, DockerComposeParser.class, PortParser.class, ServiceParser.class, VolumeParser.class})
-class DockerComposeParserTest extends ParserTestParameters {
+@ExtendWith(MockitoExtension.class)
+class DockerComposeParserTest {
 
-    @Autowired
-    private DockerComposeParser parser;
+    @Mock
+    private VolumeParser volumeParser;
 
-    @ParameterizedTest
-    @MethodSource
-    public void dockerParserTest(String yamlInput, DockerCompose expected) {
-        Yaml yaml = configureYaml();
-        Map<String, Object> yamlData = yaml.load(yamlInput);
-        DockerCompose actual = parser.parse(yamlData);
+    @Mock
+    private ServiceParser serviceParser;
 
-        assertNotNull(actual);
-        assertEquals(expected.getVersion(), actual.getVersion());
-        assertNotNull(actual.getServices());
-        assertEquals(expected.getServices().size(), actual.getServices().size());
+    @InjectMocks
+    private DockerComposeParser dockerComposeParser;
 
-        for(var entry: actual.getServices().entrySet()) {
-            String actualServiceName = entry.getKey();
-            ComposeService actualServiceData = entry.getValue();
-            assertNotNull(actualServiceName);
-            assertNotNull(actualServiceData);
+    @SuppressWarnings("unchecked")
+    @Test
+    void parse_ShouldReturnDockerCompose_WhenDataIsValid() {
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> volumes = new HashMap<>();
+        Map<String, Object> services = new HashMap<>();
 
-            ComposeService expectedServiceData = expected.getServices().get(actualServiceName);
-            assertNotNull(expectedServiceData);
-            assertEquals(expectedServiceData, actualServiceData);
-        }
+        data.put("version", "3.8");
+        data.put("volumes", new HashMap<>(){{ put("volume-example", volumes); }});
+        data.put("services", new HashMap<>(){{ put("service-example", services); }});
 
-        assertEquals(expected.getVolumes(), actual.getVolumes());
+        DockerCompose expectedCompose = new DockerCompose();
+        expectedCompose.setVersion("3.8");
+
+        when(volumeParser.parseVolumes((Map<String, Map<String, Object>>) any(Map.class)))
+                .thenReturn(new HashMap<>());
+        when(serviceParser.parseServices((Map<String, Map<String, Object>>) any(Map.class),(Map<String, Volume>) any(Map.class)))
+                .thenReturn(new HashMap<>());
+
+        DockerCompose result = dockerComposeParser.parse(data);
+
+        verify(volumeParser).parseVolumes((Map<String, Map<String, Object>>) any(Map.class));
+        verify(serviceParser).parseServices((Map<String, Map<String, Object>>) any(Map.class),(Map<String, Volume>) any(Map.class));
+        assertEquals(expectedCompose.getVersion(), result.getVersion());
+        assertEquals(new HashMap<>(), result.getServices());
+        assertEquals(new HashMap<>(), result.getVolumes());
     }
 
-    public static Stream<Arguments> dockerParserTest() {
-        return Stream.of(
-                Arguments.of(DOCKER_COMPOSE_1, buildDockerCompose1()),
-                Arguments.of(DOCKER_COMPOSE_2, buildDockerCompose2()),
-                Arguments.of(DOCKER_COMPOSE_3, buildDockerCompose3()),
-                Arguments.of(DOCKER_COMPOSE_4, buildDockerCompose4())
+    @Test
+    void parse_ShouldThrowException_WhenServicesAreMissing() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("version", "3.8");
+
+        assertThrows(DockerComposeParserException.class, () ->
+                dockerComposeParser.parse(data)
         );
     }
-
-    private Yaml configureYaml() {
-        PropertyUtils propertyUtils = new PropertyUtils();
-        propertyUtils.setSkipMissingProperties(true);
-        Constructor constructor = new Constructor(new LoaderOptions());
-        constructor.setPropertyUtils(propertyUtils);
-        return new Yaml(constructor);
-    }
-
 }

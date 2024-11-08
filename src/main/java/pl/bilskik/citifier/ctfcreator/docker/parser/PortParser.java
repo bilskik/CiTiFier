@@ -1,8 +1,10 @@
 package pl.bilskik.citifier.ctfcreator.docker.parser;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.ctfcreator.docker.entity.Port;
+import pl.bilskik.citifier.ctfcreator.docker.exception.DockerComposeParserException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,19 +22,16 @@ public class PortParser {
         if(o instanceof List<?>) {
             List<Port> portList = new ArrayList<>();
             List<String> list = convertToStringList((List<?>)o);
+            if(list.size() != 1) {
+                throw new DockerComposeParserException("Each docker-compose service should contain only one port mapping!");
+            }
             for(var val: list) {
                 portList.add(parsePort(val));
             }
             return portList;
-        } else if(o instanceof Map<?,?>) {
-            List<Port> portList = new ArrayList<>();
-            Map<String,String> map = convertToMapString((Map<?,?>) o);
-            for(var val: map.entrySet()) {
-                portList.add(parsePort(val.getKey() + ":" + val.getValue()));
-            }
-            return portList;
         }
-        return new ArrayList<>();
+
+        throw new DockerComposeParserException("Each docker-compose service should have port mapping!");
     }
 
     private Port parsePort(String val) {
@@ -65,6 +64,10 @@ public class PortParser {
         Port port = new Port();
         port.setHostPort(hostPort);
         port.setTargetPort(targetPort);
+        Port.ConnectionType type = Port.ConnectionType.fromString(connectionType);
+        if(type == Port.ConnectionType.UDP) {
+            throw new DockerComposeParserException("UDB connection type is currently not supported!");
+        }
         port.setConnectionType(Port.ConnectionType.fromString(connectionType));
         return port;
     }

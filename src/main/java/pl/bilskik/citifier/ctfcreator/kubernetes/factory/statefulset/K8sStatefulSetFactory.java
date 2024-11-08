@@ -1,9 +1,7 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes.factory.statefulset;
 
 
-import io.fabric8.kubernetes.api.model.SecretEnvSourceBuilder;
-import io.fabric8.kubernetes.api.model.Volume;
-import io.fabric8.kubernetes.api.model.VolumeMount;
+import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.api.model.apps.StatefulSetBuilder;
 import org.springframework.stereotype.Service;
@@ -26,11 +24,34 @@ public class K8sStatefulSetFactory {
             String containerName,
             String containerImage,
             Map<String, String> envMap,
-            String configMapName,
             String secretName,
             List<Volume> volumes,
             List<VolumeMount> volumeMounts
     ) {
+        ContainerBuilder containerBuilder = new ContainerBuilder()
+                .withName(containerName)
+                .withImage(containerImage)
+                .withEnv(convertFromMapToEnvVarList(envMap));
+
+        if(secretName != null) {
+            containerBuilder.
+                addNewEnvFrom()
+                    .withSecretRef(new SecretEnvSourceBuilder().withName(secretName).build())
+                .endEnvFrom();
+        }
+
+        if(volumeMounts != null && !volumeMounts.isEmpty()) {
+            containerBuilder
+                    .withVolumeMounts(volumeMounts);
+        }
+
+        PodSpecBuilder spec = new PodSpecBuilder()
+                .withContainers(containerBuilder.build());
+
+        if(volumes != null && !volumes.isEmpty()) {
+            spec.withVolumes(volumes);
+        }
+
         return new StatefulSetBuilder()
                 .withApiVersion(API_VERSION)
                 .withNewMetadata()
@@ -46,22 +67,7 @@ public class K8sStatefulSetFactory {
                         .withNewMetadata()
                             .addToLabels(podLabel)
                         .endMetadata()
-                        .withNewSpec()
-                            .withContainers()
-                                .addNewContainer()
-                                .withName(containerName)
-                                .withImage(containerImage)
-                                .withEnv(convertFromMapToEnvVarList(envMap))
-//                                .addNewEnvFrom()
-//                                    .withConfigMapRef(new ConfigMapEnvSourceBuilder().withName(configMapName).build())
-//                                .endEnvFrom()
-                                .addNewEnvFrom()
-                                    .withSecretRef(new SecretEnvSourceBuilder().withName(secretName).build())
-                                .endEnvFrom()
-                                .withVolumeMounts(volumeMounts)
-                            .endContainer()
-                            .withVolumes(volumes)
-                        .endSpec()
+                    .withSpec(spec.build())
                     .endTemplate()
                 .endSpec()
                 .build();

@@ -12,6 +12,8 @@ import pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sResourceContext;
 import pl.bilskik.citifier.ctfcreator.kubernetes.exception.K8sResourceCreationException;
 import pl.bilskik.citifier.ctfcreator.kubernetes.factory.config.K8sNamespaceFactory;
 
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sConstants.DB_SERVICE_NAME;
+
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +58,7 @@ public class K8sResourceManagerImpl implements K8sResourceManager {
                 String serviceName = entry.getKey();
                 ComposeService service = entry.getValue();
 
-                if(serviceName.equalsIgnoreCase("postgres")) {
+                if(serviceName.equalsIgnoreCase(DB_SERVICE_NAME)) {
                     log.info("Deploying database: {}", serviceName);
                     dbDeployer.deployDb(client, context, service);
                 } else {
@@ -65,6 +67,7 @@ public class K8sResourceManagerImpl implements K8sResourceManager {
                 }
             }
         } catch(Exception e) {
+            log.info(e.getMessage());
             if(client != null) {
                 resourceCleaner.deleteNamespaceWithResources(client, namespace);
             }

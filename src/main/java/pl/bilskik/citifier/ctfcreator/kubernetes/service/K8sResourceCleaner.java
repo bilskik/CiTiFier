@@ -3,7 +3,7 @@ package pl.bilskik.citifier.ctfcreator.kubernetes.service;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.stereotype.Service;
 
-import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sLabelConstants.*;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sConstants.*;
 
 @Service
 public class K8sResourceCleaner {

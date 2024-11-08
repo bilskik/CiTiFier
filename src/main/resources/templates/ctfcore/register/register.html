@@ -37,6 +37,7 @@
                         <input
                                 th:field="*{login}"
                                 th:classappend="${#fields.hasErrors('login') ? 'is-invalid' : ''}"
+                                th:title="#{ctfcore.register.login-regex-message}"
                                 id="login"
                                 name="login"
                                 type="text"
@@ -66,7 +67,6 @@
                                 class="form-control"
                                 required
                         />
-                        <!--                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{7,}$"-->
                         <p
                                 th:if="${#fields.hasErrors('password')}"
                                 th:errors="*{password}"

@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sLabelConstants.*;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sConstants.*;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.*;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sEnvironmentExtractor.extractNonPasswordEnv;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sEnvironmentExtractor.extractPasswordEnv;
@@ -25,7 +25,6 @@ import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sEnvironmentExtra
 public class K8sDbDeployer {
 
     private final static String STATEFULSET_NAME = "statefulset";
-    private final static String DB = "db";
     private final static String APP = "app";
 
     private final K8sHeadlessServiceFactory headlessServiceFactory;
@@ -44,33 +43,34 @@ public class K8sDbDeployer {
 
         boolean isSecretApplied = secretDeployer.applySecret(client, context, passwordEnv);
 
-        List<Volume> volumeList = volumeDeployer.createVolumes(context, composeService.getVolumes());
-        List<VolumeMount> volumeMountList = volumeDeployer.createVolumeMounts(composeService.getVolumes());
+        for(int i=0; i<context.getNumberOfApp(); i++) {
+            List<Volume> volumeList = volumeDeployer.createVolumes(context, composeService.getVolumes());
+            List<VolumeMount> volumeMountList = volumeDeployer.createVolumeMounts(composeService.getVolumes());
 
-        StatefulSet statefulSet = statefulSetFactory.createStatefulSet(
-                buildName(STATEFULSET_NAME),
-                Collections.singletonMap(APP, STATEFUL_SET_LABEL),
-                Collections.singletonMap(APP, DB_LABEL),
-                composeService.getContainerName(),
-                composeService.getImage(),
-                env,
-                "",
-                isSecretApplied ? "secret" : "",
-                volumeList,
-                volumeMountList
-        );
+            StatefulSet statefulSet = statefulSetFactory.createStatefulSet(
+                    buildName(STATEFULSET_NAME),
+                    Collections.singletonMap(APP, STATEFUL_SET_LABEL),
+                    Collections.singletonMap(APP, DB_LABEL + "-" + i),
+                    composeService.getContainerName(),
+                    composeService.getImage(),
+                    env,
+                    isSecretApplied ? "secret" : null,
+                    volumeList,
+                    volumeMountList
+            );
 
-        Service headlessService = headlessServiceFactory.createService(
-                DB,
-                Collections.singletonMap(APP, HEADLESS_SERVICE_LABEL),
-                Collections.singletonMap(APP, DB_LABEL),
-                providePortToApplication(composeService.getPorts()),
-                providePortToApplication(composeService.getPorts()),
-                null
-        );
+            Service headlessService = headlessServiceFactory.createService(
+                    composeService.getContainerName() + "-" + i,
+                    Collections.singletonMap(APP, HEADLESS_SERVICE_LABEL),
+                    Collections.singletonMap(APP, DB_LABEL + "-" + i),
+                    providePortToApplication(composeService.getPorts()),
+                    providePortToApplication(composeService.getPorts()),
+                    null
+            );
 
-        client.apps().statefulSets().inNamespace(context.getNamespace()).resource(statefulSet).create();
-        client.services().inNamespace(context.getNamespace()).resource(headlessService).create();
+            client.apps().statefulSets().inNamespace(context.getNamespace()).resource(statefulSet).create();
+            client.services().inNamespace(context.getNamespace()).resource(headlessService).create();
+        }
     }
 
 }
