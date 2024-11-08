@@ -23,11 +23,11 @@ public class ChallengeCreationService {
     public void createNewChallenge(ChallengeInputDTO challengeInput, GithubDataInputDTO githubInput) {
         if(challengeInput == null) {
             log.error("ChallengeInput is null!");
-            throw new ChallengeCreationException("OOps cos poszlo nie tak :(");
+            throw new ChallengeCreationException("Nie mogę utworzyć zadania!");
         }
         if(githubInput == null) {
             log.error("GithubInput is null!");
-            throw new ChallengeCreationException("OOps cos poszlo nie tak :(!");
+            throw new ChallengeCreationException("Nie mogę utworzyć zadania!");
         }
 
         Map<Integer, String> portFlag = challengePortFlagMapper.map(challengeInput.getStartExposedPort(), challengeInput.getNumberOfApp());

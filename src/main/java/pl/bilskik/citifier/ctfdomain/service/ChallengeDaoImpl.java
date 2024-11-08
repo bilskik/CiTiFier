@@ -31,9 +31,10 @@ public class ChallengeDaoImpl implements ChallengeDao {
     private final ChallengeMapper mapper;
 
     @Override
+    @Transactional //required to keep session with database
     public List<ChallengeDTO> findAllByLogin(String login) {
         List<Challenge> challengeList = challengeRepository.findChallengesByCtfCreatorLogin(login);
-        return challengeList.parallelStream()
+        return challengeList.stream()
                 .map(mapper::toChallengeDTO)
                 .toList();
     }

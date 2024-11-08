@@ -49,6 +49,7 @@ public class ChallengeDeployerPreparator {
                 .fullRepoFilePath(fullRepoFilePath)
                 .startExposedPort(appData.getStartExposedPort())
                 .numberOfApp(appData.getNumberOfApp())
+                .portFlag(appData.getPortFlag())
                 .build();
     }
 

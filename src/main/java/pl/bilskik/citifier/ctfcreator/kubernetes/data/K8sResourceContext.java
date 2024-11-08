@@ -3,6 +3,8 @@ package pl.bilskik.citifier.ctfcreator.kubernetes.data;
 import lombok.*;
 import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,4 +18,5 @@ public class K8sResourceContext {
     private String fullRepoFilePath;
     private Integer startExposedPort;
     private Integer numberOfApp;
+    private Map<Integer, String> portFlag;
 }

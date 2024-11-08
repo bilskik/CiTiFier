@@ -17,4 +17,6 @@ public class K8sConstants {
 
     //env
     public final static String DB_ENV_NAME = "DB";
+    public final static String CTF_FLAG_ENV_NAME = "CTF_FLAG";
+
 }

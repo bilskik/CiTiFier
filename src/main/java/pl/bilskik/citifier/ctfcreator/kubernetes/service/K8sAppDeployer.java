@@ -18,7 +18,7 @@ import java.util.Map;
 
 import static pl.bilskik.citifier.ctfcreator.kubernetes.data.K8sConstants.*;
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.buildName;
-import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.updateDbEnvNameWithIndex;
+import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sDeployerUtils.createEnvForSpecificDeployment;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
@@ -36,7 +36,8 @@ public class K8sAppDeployer {
         Port port = composeService.getPorts().getFirst();
 
         for(int i=0; i<context.getNumberOfApp(); i++) {
-            Map<String, String> envMap = updateDbEnvNameWithIndex(composeService.getEnvironments(), i);
+            String flag = context.getPortFlag().get(context.getStartExposedPort() + i);
+            Map<String, String> envMap = createEnvForSpecificDeployment(composeService.getEnvironments(), flag, i);
 
             Deployment deployment = deploymentCreator.createDeployment(
                     buildName(DEPLOYMENT_NAME, i),
