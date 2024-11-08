@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static pl.bilskik.citifier.ctfcreator.docker.datasource.InvalidDockerComposeTestCases.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = {CommandEntrypointParser.class, DockerComposeParser.class, PortParser.class, ServiceParser.class, VolumeParser.class})
+@ContextConfiguration(classes = {CommandEntrypointParser.class, DockerComposeParser.class, PortParser.class, ServiceParser.class, VolumeParser.class, EnvironmentVariableParser.class})
 class DockerComposeParserIntegrationTest extends ValidDockerComposeTestCases {
 
     @Autowired

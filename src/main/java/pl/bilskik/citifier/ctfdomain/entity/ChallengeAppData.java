@@ -36,7 +36,8 @@ public class ChallengeAppData {
     @CollectionTable(name = "PORT_FLAG",
         joinColumns = {
             @JoinColumn(name = "FK_PORT_FLAG", referencedColumnName = "CHALLENGE_APP_DATA_ID")
-    })
+        }
+    )
     @MapKeyColumn(name = "PORT")
     @Column(name = "FLAG")
     private Map<Integer, String> portFlag;

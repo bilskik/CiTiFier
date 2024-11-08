@@ -36,6 +36,9 @@ class ServiceParserTest {
     @Mock
     private CommandEntrypointParser commandEntrypointParser;
 
+    @Mock
+    private EnvironmentVariableParser environmentVariableParser;
+
     @InjectMocks
     private ServiceParser serviceParser;
 
@@ -84,7 +87,7 @@ class ServiceParserTest {
         Map<String, Object> appService = new HashMap<>();
         appService.put("image", "app_image");
         appService.put("container_name", "app_container");
-        appService.put("environment", new ArrayList<>() {{ add("DB=db"); }});
+        appService.put("environment", new ArrayList<>() {{ add("DB=db"); add("CTF_FLAG=flag");}});
         services.put("app", appService);
 
         Map<String, Volume> volumes = new HashMap<>();
@@ -114,7 +117,7 @@ class ServiceParserTest {
         Map<String, Object> appService = new HashMap<>();
         appService.put("image", "app_image");
         appService.put("container_name", "app_container");
-        appService.put("environment", new ArrayList<>() {{ add("DB=db"); }});
+        appService.put("environment", new ArrayList<>() {{ add("DB=db"); add("CTF_FLAG=flag"); }});
         services.put("app", appService);
         Map<String, Volume> volumes = new HashMap<>();
 
@@ -144,7 +147,7 @@ class ServiceParserTest {
         Map<String, Object> appService = new HashMap<>();
         appService.put("image", "app_image");
         appService.put("container_name", "app_container");
-        appService.put("environment", new ArrayList<>() {{ add("DB=db"); }});
+        appService.put("environment", new ArrayList<>() {{ add("DB=db"); add("CTF_FLAG=flag"); }});
         services.put("app", appService);
 
         mockWhenSetup();
@@ -164,27 +167,7 @@ class ServiceParserTest {
         Map<String, Object> appService = new HashMap<>();
         appService.put("image", "app_image");
         appService.put("container_name", "app_container");
-        appService.put("environment", new ArrayList<>() {{ add("DB=db"); }});
-        services.put("app", appService);
-
-        mockWhenSetup();
-
-        assertThrows(DockerComposeParserException.class, () ->
-                serviceParser.parseServices(services, new HashMap<>())
-        );
-    }
-
-    @Test
-    void parseServices_ShouldThrowException_WhenEnvDBIsMissing() {
-        Map<String, Map<String, Object>> services = new HashMap<>();
-        Map<String, Object> dbService = new HashMap<>();
-        dbService.put("image", "postgres");
-        dbService.put("container_name", "containerName");
-        services.put("db", dbService);
-
-        Map<String, Object> appService = new HashMap<>();
-        appService.put("image", "app_image");
-        appService.put("container_name", "app_container");
+        appService.put("environment", new ArrayList<>() {{ add("DB=db"); add("CTF_FLAG=flag"); }});
         services.put("app", appService);
 
         mockWhenSetup();
