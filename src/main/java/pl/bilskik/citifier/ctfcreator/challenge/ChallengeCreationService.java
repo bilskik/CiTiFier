@@ -9,6 +9,7 @@ import pl.bilskik.citifier.ctfdomain.dto.ChallengeDTO;
 import pl.bilskik.citifier.ctfdomain.entity.enumeration.ChallengeStatus;
 import pl.bilskik.citifier.ctfdomain.service.ChallengeDao;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -16,17 +17,20 @@ import java.util.UUID;
 @Slf4j
 public class ChallengeCreationService {
 
+    private final ChallengePortFlagMapper challengePortFlagMapper;
     private final ChallengeDao challengeDao;
 
     public void createNewChallenge(ChallengeInputDTO challengeInput, GithubDataInputDTO githubInput) {
         if(challengeInput == null) {
             log.error("ChallengeInput is null!");
-            throw new ChallengeCreationException("OOps cos poszlo nie tak :(");
+            throw new ChallengeCreationException("Nie mogę utworzyć zadania!");
         }
         if(githubInput == null) {
             log.error("GithubInput is null!");
-            throw new ChallengeCreationException("OOps cos poszlo nie tak :(!");
+            throw new ChallengeCreationException("Nie mogę utworzyć zadania!");
         }
+
+        Map<Integer, String> portFlag = challengePortFlagMapper.map(challengeInput.getStartExposedPort(), challengeInput.getNumberOfApp());
 
         ChallengeDTO challengeDTO = ChallengeDTO.builder()
                 .name(challengeInput.getName())
@@ -44,6 +48,7 @@ public class ChallengeCreationService {
                 .namespace(namespace)
                 .startExposedPort(challengeInput.getStartExposedPort())
                 .numberOfApp(challengeInput.getNumberOfApp())
+                .portFlag(portFlag)
                 .build();
 
         challengeDTO.setChallengeAppDataDTO(challengeAppDataDTO);

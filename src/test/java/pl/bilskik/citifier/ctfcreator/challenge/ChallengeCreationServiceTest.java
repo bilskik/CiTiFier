@@ -11,25 +11,32 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import pl.bilskik.citifier.ctfcreator.github.GithubDataInputDTO;
 import pl.bilskik.citifier.ctfdomain.dto.ChallengeAppDataDTO;
 import pl.bilskik.citifier.ctfdomain.dto.ChallengeDTO;
 import pl.bilskik.citifier.ctfdomain.entity.enumeration.ChallengeStatus;
 import pl.bilskik.citifier.ctfdomain.service.ChallengeDao;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ChallengeCreationServiceTest {
 
     @Mock
     private ChallengeDao challengeDao;
+
+    @Mock
+    private ChallengePortFlagMapper portFlagMapper;
 
     @InjectMocks
     private ChallengeCreationService challengeCreationService;
@@ -50,6 +57,8 @@ class ChallengeCreationServiceTest {
         githubInput = new GithubDataInputDTO();
         githubInput.setGithubLink("https://github.com/sample/repo_name");
         githubInput.setRelativePathToRepo("10601679-9cc7-4d2a-aa0d-ecb7c62f85a2//repo_name");
+        Map<Integer, String> portFlagMap = new HashMap<>(){{ put(8080, "12345678"); put(8081, "12345679"); }};
+        when(portFlagMapper.map(any(Integer.class), any(Integer.class))).thenReturn(portFlagMap);
     }
 
     @Test
@@ -77,6 +86,7 @@ class ChallengeCreationServiceTest {
         assertEquals(challengeInput.getStartExposedPort(), appDataDTO.getStartExposedPort());
         assertEquals(challengeInput.getNumberOfApp(), appDataDTO.getNumberOfApp());
         assertEquals(beginNamespace, appDataDTO.getNamespace().substring(0, BEGIN_NAMESPACE_LEN));
+        assertEquals(2, appDataDTO.getPortFlag().size());
     };
 
     @Test
@@ -105,6 +115,7 @@ class ChallengeCreationServiceTest {
         assertEquals(challengeInput.getStartExposedPort(), appDataDTO.getStartExposedPort());
         assertEquals(challengeInput.getNumberOfApp(), appDataDTO.getNumberOfApp());
         assertEquals(beginNamespace, appDataDTO.getNamespace().substring(0, BEGIN_NAMESPACE_LEN));
+        assertEquals(2, appDataDTO.getPortFlag().size());
     };
 
     @ParameterizedTest

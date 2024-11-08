@@ -2,6 +2,8 @@ package pl.bilskik.citifier.ctfdomain.dto;
 
 import lombok.*;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,4 +15,5 @@ public class ChallengeAppDataDTO {
     private String namespace;
     private Integer startExposedPort;
     private Integer numberOfApp;
+    private Map<Integer, String> portFlag;
 }

@@ -8,12 +8,7 @@ import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
 import pl.bilskik.citifier.ctfcreator.docker.entity.Volume;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
-
-import static pl.bilskik.citifier.ctfcreator.docker.parser.TypeConverter.convertToMapString;
-import static pl.bilskik.citifier.ctfcreator.docker.parser.TypeConverter.convertToStringList;
 
 @Service
 @RequiredArgsConstructor
@@ -29,15 +24,8 @@ public class ServiceParser {
     private final static String ENTRYPOINT = "entrypoint";
 
     private final static String DB_SERVICE_NAME = "db";
-    private final static String DB_ENV = "DB";
 
-    private final BiConsumer<String, Map<String, String>> envFunc = (val, map) -> {
-        String[] parts = val.split("=");
-        if(parts.length == 2) {
-            map.put(parts[0], parts[1]);
-        }
-    };
-
+    private final EnvironmentVariableParser environmentVariableParser;
     private final VolumeParser volumeParser;
     private final PortParser portParser;
     private final CommandEntrypointParser commandEntrypointParser;
@@ -72,7 +60,7 @@ public class ServiceParser {
             ComposeService composeService = new ComposeService();
             composeService.setImage(validateAndReturnField((String) serviceData.get(IMAGE), IMAGE));
             composeService.setContainerName(sanitize(validateAndReturnField((String) serviceData.get(CONTAINER_NAME), CONTAINER_NAME)));
-            composeService.setEnvironments(validateEnv(genericMapListParser(serviceData.get(ENVIRONMENT), envFunc), isAppService));
+            composeService.setEnvironments(environmentVariableParser.parseEnvironment(serviceData.get(ENVIRONMENT), isAppService));
             composeService.setPorts(portParser.parsePortList(serviceData.get(PORTS)));
             composeService.setVolumes(volumeParser.parseServiceVolume(serviceData.get(VOLUMES), volumes));
             composeService.setEntrypoint(commandEntrypointParser.parseEntrypoint(serviceData.get(ENTRYPOINT)));
@@ -101,31 +89,4 @@ public class ServiceParser {
         return name;
     }
 
-    private Map<String, String> validateEnv(Map<String, String> envMap, boolean isAppService) {
-        if(!isAppService) {
-            return envMap;
-        }
-
-        if(!envMap.containsKey(DB_ENV)) {
-            throw new DockerComposeParserException("Application service must include DB in environment variables!");
-        }
-        return envMap;
-    }
-
-    private Map<String, String> genericMapListParser(Object values, BiConsumer<String, Map<String, String>> callback) {
-        if(values instanceof List<?>) {
-            List<String> list = convertToStringList((List<?>)values);
-            Map<String, String> outputMap = new HashMap<>();
-            for(var val : list) {
-                if(val != null && !val.isEmpty()) {
-                    callback.accept(val, outputMap);
-                }
-            }
-            return outputMap;
-        } else if(values instanceof Map<?,?>) {
-            return convertToMapString((Map<?,?>) values);
-        }
-
-        return new HashMap<>();
-    }
 }

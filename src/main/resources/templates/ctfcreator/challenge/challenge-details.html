@@ -120,8 +120,9 @@
                             th:hx-trigger="click"
                             hx-target="body"
                             hx-swap="outerHTML"
+                            hx-push-url="true"
                             class="btn btn-danger me-3"
-                            th:disabled="${challenge.status.name() == 'NEW'}"
+                            th:disabled="${challenge.status.name() != 'STOPPED'}"
                     >
                     </button>
                     <input

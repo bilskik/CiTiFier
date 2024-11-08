@@ -3,6 +3,8 @@ package pl.bilskik.citifier.ctfcreator.challenge;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.Map;
+
 import static pl.bilskik.citifier.ctfcreator.challenge.ChallengeConstraints.*;
 
 @Getter
@@ -20,7 +22,6 @@ public class ChallengeInputDTO {
     @NotNull(message = "Proszę podać liczbę!")
     private Integer numberOfApp;
     @Min(value = START_NODE_PORT, message = "Początkowy port może być co najmniej 30000!")
-    @NotNull(message = "Proszę podać port!")
+    @NotNull(message = "Proszę podać początkowy port!")
     private Integer startExposedPort;
-    private FlagGenerationMethod flagGenerationMethod;
 }

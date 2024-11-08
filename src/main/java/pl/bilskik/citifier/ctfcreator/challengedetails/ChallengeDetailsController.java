@@ -82,10 +82,11 @@ public class ChallengeDetailsController {
         } catch(Exception e) {
             challengeDetailsService.updateStatus(challengeDTO, ChallengeStatus.ERROR, challengeDTO.getChallengeId());
             model.addAttribute("applicationError", e.getMessage());
+            return "ctfcreator/challenge/challenge-details";
         }
 
         addModelAttributes(model, challengeDTO);
-        return "ctfcreator/challenge/challenge-details";
+        return "redirect:/challenge-list";
     }
 
     private void addModelAttributes(Model model, ChallengeDTO challengeDTO) {

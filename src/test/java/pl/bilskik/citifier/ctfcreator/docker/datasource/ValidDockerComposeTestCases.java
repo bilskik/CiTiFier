@@ -33,6 +33,7 @@ public class ValidDockerComposeTestCases {
                     "    environment:\n" +
                     "      - NODE_ENV=production\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"3000:3000\"\n" +
                     "    depends_on:\n" +
@@ -55,6 +56,7 @@ public class ValidDockerComposeTestCases {
         backend.setEnvironments(new HashMap<>(){{
             put("NODE_ENV", "production");
             put("DB", "db-1");
+            put("CTF_FLAG", "ctfflag");
         }});
         backend.setPorts(new ArrayList<>(){{
             add(new Port("3000", "3000"));
@@ -83,6 +85,7 @@ public class ValidDockerComposeTestCases {
                     "    environment:\n" +
                     "      - NODE_ENV=development\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"3000\"\n" +
                     "    depends_on:\n" +
@@ -140,6 +143,7 @@ public class ValidDockerComposeTestCases {
         backend.setEnvironments(new HashMap<>() {{
             put("NODE_ENV", "development");
             put("DB", "db-1");
+            put("CTF_FLAG", "ctfflag");
         }});
         backend.setPorts(new ArrayList<>() {{
             add(new Port("3000", "3000"));
@@ -160,6 +164,7 @@ public class ValidDockerComposeTestCases {
                     "    environment:\n" +
                     "      - FLASK_ENV=production\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"5000:5001/tcp\"\n" +
                     "    depends_on:\n" +
@@ -182,6 +187,7 @@ public class ValidDockerComposeTestCases {
         backend.setEnvironments(new HashMap<>() {{
             put("FLASK_ENV", "production");
             put("DB", "db-1");
+            put("CTF_FLAG", "ctfflag");
         }});
         backend.setPorts(new ArrayList<>() {{
             add(new Port("5000", "5001", Port.ConnectionType.TCP));
@@ -218,6 +224,7 @@ public class ValidDockerComposeTestCases {
                     "    command: [\"flask\", \"run\", \"--host=0.0.0.0\", \"--port=5001\"]\n" +
                     "    environment:\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "\n" +
                     "  db:\n" +
                     "    image: mariadb:latest\n" +
@@ -258,6 +265,7 @@ public class ValidDockerComposeTestCases {
         }});
         backend.setEnvironments(new HashMap<>(){{
             put("DB", "db-1");
+            put("CTF_FLAG", "ctfflag");
         }});
         backend.setEntrypoint(new Entrypoint(new ArrayList<>(){{ add("/bin/sh -c 'python app.py'"); }}, CommandType.SHELL));
         backend.setCommand(new Command(new ArrayList<>(){{

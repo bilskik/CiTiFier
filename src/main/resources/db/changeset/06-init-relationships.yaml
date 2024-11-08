@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 7
+      id: 8
       author: bilskik
       changes:
         - addForeignKeyConstraint:
@@ -9,3 +9,9 @@ databaseChangeLog:
             referencedTableName: CHALLENGE_APP_DATA
             referencedColumnNames: CHALLENGE_APP_DATA_ID
             constraintName: FK_CHALLENGE_APP_DATA
+        - addForeignKeyConstraint:
+            baseTableName: PORT_FLAG
+            baseColumnNames: FK_PORT_FLAG
+            referencedTableName: CHALLENGE_APP_DATA
+            referencedColumnNames: CHALLENGE_APP_DATA_ID
+            constraintName: FK_CHALLENGE_APP_PORT_FLAG

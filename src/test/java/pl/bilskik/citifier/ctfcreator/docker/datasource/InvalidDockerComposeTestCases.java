@@ -11,6 +11,7 @@ public class InvalidDockerComposeTestCases {
                     "    container_name: backend\n" +
                     "    environment:\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"3000:3000\"\n" +
                     "\n" +
@@ -27,6 +28,8 @@ public class InvalidDockerComposeTestCases {
                     "  backend:\n" +
                     "    image: node:14\n" +
                     "    container_name: backend\n" +
+                    "    environment:\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"3000:3000\"\n" +
                     "\n" +
@@ -45,6 +48,7 @@ public class InvalidDockerComposeTestCases {
                     "    container_name: backend\n" +
                     "    environment:\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "\n" +
                     "  db:\n" +
                     "    image: postgres:13\n" +
@@ -60,6 +64,7 @@ public class InvalidDockerComposeTestCases {
                     "    image: node:14\n" +
                     "    environment:\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"3000:3000\"\n" +
                     "\n" +
@@ -77,6 +82,7 @@ public class InvalidDockerComposeTestCases {
                     "    container_name: backend\n" +
                     "    environment:\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"3000:3000\"\n" +
                     "\n" +
@@ -95,6 +101,7 @@ public class InvalidDockerComposeTestCases {
                     "    container_name: backend\n" +
                     "    environment:\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"3000:3000\"\n" +
                     "\n" +
@@ -116,6 +123,25 @@ public class InvalidDockerComposeTestCases {
                     "    container_name: backend\n" +
                     "    environment:\n" +
                     "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
                     "    ports:\n" +
                     "      - \"3000:3000\"\n";
+
+    //lack of 'CTF_FLAG' in app environment variables
+    public static final String INVALID_DOCKER_COMPOSE_8 =
+            "version: '3.8'\n" +
+                    "services:\n" +
+                    "  backend:\n" +
+                    "    image: node:14\n" +
+                    "    container_name: backend\n" +
+                    "    environment:\n" +
+                    "      - DB=db-1\n" +
+                    "    ports:\n" +
+                    "      - \"3000:3000\"\n" +
+                    "\n" +
+                    "  db:\n" +
+                    "    image: postgres:13\n" +
+                    "    container_name: db\n" +
+                    "    ports:\n" +
+                    "      - \"5432:5432\"";
 }
