@@ -35,6 +35,10 @@ logging:
 db:
   schemaName: ctf
 
+process:
+  timeout: 180
+  time-unit: SECONDS
+
 oauth2:
   github:
     client-id:
