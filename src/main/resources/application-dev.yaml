@@ -1,16 +1,12 @@
-kubernetess:
-  cluster-config-path:
-  docker-context:
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_HOST: tcp://127.0.0.1:56079
-    DOCKER_CERT_PATH: C:\Users\kamil\.minikube\certs
-    MINIKUBE_ACTIVE_DOCKERD: minikube
+process:
+  shell: powershell.exe
+  config: -Command
+
+kubernetes:
+  image-load: minikube image load <image>
 
 docker:
-  build:
-    shell: powershell.exe
-    config: -Command
-    command: "docker-compose build"
+  build: docker-compose build
 
 repo:
   base-file-path: D:\\CLONED_REPO_CITIFIER

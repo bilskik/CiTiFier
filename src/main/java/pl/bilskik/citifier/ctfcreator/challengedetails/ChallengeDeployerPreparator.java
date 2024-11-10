@@ -3,6 +3,7 @@ package pl.bilskik.citifier.ctfcreator.challengedetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.bilskik.citifier.ctfcreator.docker.entity.ComposeService;
 import pl.bilskik.citifier.ctfcreator.docker.entity.DockerCompose;
 import pl.bilskik.citifier.ctfcreator.docker.service.DockerComposeParserManager;
 import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.DockerImageBuilder;
@@ -14,6 +15,7 @@ import pl.bilskik.citifier.ctfdomain.dto.ChallengeDTO;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static pl.bilskik.citifier.ctfcreator.filemanager.FilePathBuilder.*;
 
@@ -33,12 +35,21 @@ public class ChallengeDeployerPreparator {
         String dockerComposeAbsolutePath = fileManager.provideDockerComposeAbsolutePath(repoAbsolutePath);
 
         DockerCompose compose = dockerComposeParserManager.parse(dockerComposeAbsolutePath);
-        dockerImageBuilder.build(repoAbsolutePath);
+        String imageName = getImageName(compose);
+        dockerImageBuilder.build(repoAbsolutePath, imageName);
 
         K8sResourceContext resourceContext = initK8sResourceContext(challengeDTO.getChallengeAppDataDTO(), repoAbsolutePath, isNamespaceCreated);
         resourceContext.setDockerCompose(compose);
 
         return resourceContext;
+    }
+
+    private String getImageName(DockerCompose dockerCompose) {
+        return dockerCompose.getServices().entrySet().stream()
+                .filter(composeService -> !composeService.getKey().equals("db"))
+                .map(composeService -> composeService.getValue().getImage())
+                .findFirst()
+                .orElse(null);
     }
 
     private K8sResourceContext initK8sResourceContext(ChallengeAppDataDTO appData, String fullRepoFilePath, boolean isNamespaceCreated) {
