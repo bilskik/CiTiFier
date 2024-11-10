@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.ctfcreator.dockerimagebuilder;
+package pl.bilskik.citifier.ctfcreator.config;
 
 public enum OperatingSystem {
     WINDOWS,

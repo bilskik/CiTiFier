@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+import pl.bilskik.citifier.ctfcreator.config.OperatingSystem;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static pl.bilskik.citifier.ctfcreator.config.ShellPropertiesConfiguration.configureShellProperties;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -71,19 +73,7 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
         Map<String, String> envMap = new HashMap<>(){{ put("DOCKER_HOST", dockerHost); }};
         when(environmentStrategy.configure()).thenReturn(envMap);
 
-        configureShellProperties();
-    }
-
-    private void configureShellProperties() {
-        if(currentOS == OperatingSystem.WINDOWS) {
-            when(dockerShellProperties.getShell()).thenReturn("powershell.exe");
-            when(dockerShellProperties.getConfig()).thenReturn("-Command");
-        } else {
-            when(dockerShellProperties.getShell()).thenReturn("sh");
-            when(dockerShellProperties.getConfig()).thenReturn("-c");
-        }
-
-        when(dockerShellProperties.getCommand()).thenReturn("docker-compose build");
+        configureShellProperties(dockerShellProperties, currentOS);
     }
 
     @AfterAll
