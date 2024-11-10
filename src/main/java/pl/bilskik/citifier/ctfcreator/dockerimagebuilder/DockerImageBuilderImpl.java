@@ -4,78 +4,59 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class DockerImageBuilderImpl implements DockerImageBuilder {
 
-    private final DockerEnvironmentStrategy environmentStrategy;
     private final DockerShellProperties shellProperties;
+    private final ProcessRunner processRunner;
+    private final CommandConfigurer commandConfigurer;
 
-    public void build(String filepath) {
+    public void build(String filepath, String imageName) {
         File file = new File(filepath);
         if(!file.exists()) {
-            log.info("Repository on filepath: {} doesn't exist!", filepath);
+            log.error("Repository on filepath: {} doesn't exist!", filepath);
             throw new DockerImageBuilderException("Cannot find repository");
         }
 
-        boolean result = executeDockerComposeBuild(file);
+        boolean buildResult = executeDockerComposeBuild(file);
 
-        if(!result) {
-            log.info("I can't build image! Image filepath: {}", filepath);
+        if(!buildResult) {
+            log.error("I can't build image! Image filepath: {}", filepath);
             throw new DockerImageBuilderException("Cannot execute docker build process properly!");
         }
-
         log.info("Image built successfully!");
+
+        boolean loadResult = executeImageLoad(imageName);
+        if(!loadResult) {
+            log.error("I can't load image! Image filepath: {}", filepath);
+            throw new DockerImageBuilderException("Cannot load image into kubernetes cluster!");
+        }
+        log.info("Image loaded successfully!");
     }
 
     private boolean executeDockerComposeBuild(File file) {
         log.info("Start building process executing docker-compose build");
+        String command = commandConfigurer.getDockerBuild();
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(file);
-
-        Map<String, String> env = processBuilder.environment();
-        Map<String, String> additionalEnv = environmentStrategy.configure();
-        env.putAll(additionalEnv);
-
-        processBuilder.command(shellProperties.getShell(), shellProperties.getConfig(), shellProperties.getCommand());
+        processBuilder.command(shellProperties.getShell(), shellProperties.getConfig(), command);
         processBuilder.redirectErrorStream(true);
 
-        return startProcess(processBuilder);
+        return processRunner.startProcess(processBuilder);
     }
 
-    private boolean startProcess(ProcessBuilder processBuilder) {
-        Process process = null;
-        try {
-            log.info("Process started");
-            process = processBuilder.start();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while((line = bufferedReader.readLine()) != null) {
-                log.info(line);
-            }
+    private boolean executeImageLoad(String image) {
+        log.info("Start building process executing loading image to kubernetes");
+        String command = commandConfigurer.getImageLoadCommand(image);
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(shellProperties.getShell(), shellProperties.getConfig(), command);
+        processBuilder.redirectErrorStream(true);
 
-            int exitCode = process.waitFor(); //TO DO define timeout
-            log.info("Process finished with code: {}", exitCode);
-            destroyProcessIfExist(process);
-            return exitCode == 0;
-        } catch (IOException | InterruptedException e) {
-            log.info("Error executing docker-compose build", e);
-            destroyProcessIfExist(process);
-            throw new DockerImageBuilderException("Cannot execute docker build process properly!");
-        }
-    }
-
-    private void destroyProcessIfExist(Process process) {
-        if(process != null && process.isAlive()) {
-            process.destroy();
-        }
+        return processRunner.startProcess(processBuilder);
     }
 
 }
