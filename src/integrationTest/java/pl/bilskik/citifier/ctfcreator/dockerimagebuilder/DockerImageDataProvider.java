@@ -12,9 +12,12 @@ public class DockerImageDataProvider {
         services:
           python_app:
             build: .
+            image: python-image
             ports:
               - "5000:5000"
         """;
+
+    public static final String IMAGE_NAME_PYTHON = "python-image";
 
     public static final String DOCKER_COMPOSE_SIMPLE_FLASK_APP = """
         version: '3.8'
@@ -22,6 +25,8 @@ public class DockerImageDataProvider {
           myapp:
             image: kashmatic/simple-flask-app:1.0
         """;
+
+    public static final String IMAGE_NAME_FLASK_APP = "kashmatic/simple-flask-app:1.0";
 
     public static final String DOCKER_COMPOSE_SIMPLE_SPRING_BOOT_APP = """
         version: '3.8'
@@ -40,6 +45,8 @@ public class DockerImageDataProvider {
             ports:
               - "5432:5432"
         """;
+
+    public static final String IMAGE_NAME_SPRING_BOOT_APP = "flopes/spring-boot-docker";
 
     public static final String INVALID_DOCKER_COMPOSE = """
         version: '3.8'

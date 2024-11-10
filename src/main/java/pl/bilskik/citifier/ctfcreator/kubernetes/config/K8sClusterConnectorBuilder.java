@@ -7,10 +7,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class K8sClusterConnectorBuilder {
-
-    @Value("${kubernetess.cluster-config-path}")
-    private String configPath;
-
     public KubernetesClient buildClient() {
         return new KubernetesClientBuilder().build();
     }

@@ -6,9 +6,10 @@ if(-not $N) {
  Write-Host "Provide namespace"
 }
 
-kubectl delete service -l app=serviceLabel -n $N
-kubectl delete service -l app=headlessService -n $N
-kubectl delete deployment -l app=deploymentLabel -n $N
-kubectl delete statefulset -l app=postgresStatefulset -n $N
-kubectl delete configmap -l app=configMap -n $N
+kubectl delete service -l app=node-port -n $N
+kubectl delete service -l app=headless-service -n $N
+kubectl delete deployment -l app=deployment -n $N
+kubectl delete statefulset -l app=statefulset -n $N
+kubectl delete configmap -l app=config-map -n $N
 kubectl delete secret -l app=secret -n $N
+kubectl delete namespace $N

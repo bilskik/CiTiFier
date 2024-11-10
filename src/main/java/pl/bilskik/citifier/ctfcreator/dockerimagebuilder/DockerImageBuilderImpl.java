@@ -22,8 +22,12 @@ public class DockerImageBuilderImpl implements DockerImageBuilder {
             throw new DockerImageBuilderException("Cannot find repository");
         }
 
-        boolean buildResult = executeDockerComposeBuild(file);
+        if(imageName == null || imageName.isEmpty()) {
+            log.error("Image name is invalid!");
+            throw new DockerImageBuilderException("Image name is invalid!");
+        }
 
+        boolean buildResult = executeDockerComposeBuild(file);
         if(!buildResult) {
             log.error("I can't build image! Image filepath: {}", filepath);
             throw new DockerImageBuilderException("Cannot execute docker build process properly!");
@@ -32,7 +36,7 @@ public class DockerImageBuilderImpl implements DockerImageBuilder {
 
         boolean loadResult = executeImageLoad(imageName);
         if(!loadResult) {
-            log.error("I can't load image! Image filepath: {}", filepath);
+            log.error("I can't load image!");
             throw new DockerImageBuilderException("Cannot load image into kubernetes cluster!");
         }
         log.info("Image loaded successfully!");

@@ -1,17 +1,11 @@
 package pl.bilskik.citifier.ctfcreator.app;
 
-import com.dajudge.kindcontainer.KindContainer;
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.PodList;
-import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,7 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import pl.bilskik.citifier.ctfcreator.challengedetails.ChallengeDeployerPreparator;
 import pl.bilskik.citifier.ctfcreator.challengedetails.ChallengeDetailsService;
 import pl.bilskik.citifier.ctfcreator.config.OperatingSystem;
-import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.DockerEnvironmentStrategy;
+import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.CommandConfigurer;
 import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.DockerShellProperties;
 import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sClusterConnectorBuilder;
 import pl.bilskik.citifier.ctfdomain.dto.ChallengeAppDataDTO;
@@ -37,10 +31,12 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static pl.bilskik.citifier.ctfcreator.app.K8sTestUtils.waitForPodsToBeReady;
+import static pl.bilskik.citifier.ctfcreator.app.K8sTestUtils.allPodsReady;
 import static pl.bilskik.citifier.ctfcreator.config.ShellPropertiesConfiguration.configureShellProperties;
 
 @SpringBootTest
@@ -52,23 +48,21 @@ public class K8sIntegrationTest {
     //3. Deploy application from repo.
 
     private static OperatingSystem currentOS;
-    private KubernetesClient client;
-//    private K3sContainer k3s;
-    private KindContainer kind;
     private ChallengeDTO challengeDTO;
     private ChallengeAppDataDTO appDataDTO;
-
-    @MockBean
-    private K8sClusterConnectorBuilder k8sClusterConnectorBuilder;
-
-    @MockBean
-    private DockerEnvironmentStrategy environmentStrategy;
+    private KubernetesClient client;
 
     @MockBean
     private DockerShellProperties dockerShellProperties;
 
     @MockBean
     private ChallengeDao challengeDao;
+
+    @MockBean
+    private K8sClusterConnectorBuilder connectorBuilder;
+
+    @MockBean
+    private CommandConfigurer commandConfigurer;
 
     @Autowired
     private ChallengeDetailsService challengeDetailsService;
@@ -85,23 +79,15 @@ public class K8sIntegrationTest {
     }
 
     @BeforeEach
-    public void setup() throws IOException {
-//        kind = new KindContainer<>();
-//        kind.start();
-//        String kubeConfigYaml = kind.getKubeconfig();
-//        Files.write(Path.of("C:\\Users\\kamil\\.kube\\k3s.yaml"), kubeConfigYaml.getBytes());
-//        Config config = Config.fromKubeconfig(kubeConfigYaml);
-//        client = new KubernetesClientBuilder()
-//                    .withConfig(config)
-//                    .build();
+    public void setup() {
+        client = new KubernetesClientBuilder().build();
 
-        configureShellProperties(dockerShellProperties, currentOS);
-
-        when(k8sClusterConnectorBuilder.buildClient())
+        when(connectorBuilder.buildClient())
                 .thenReturn(client);
-        when(environmentStrategy.configure())
-                .thenReturn(new HashMap<>()); //k3s does not need switching docker context
+        configureShellProperties(dockerShellProperties, currentOS);
         doNothing().when(challengeDao).updateChallengeStatus(any(ChallengeStatus.class), any(Long.class));
+        when(commandConfigurer.getDockerBuild())
+                .thenReturn("docker-compose build");
 
         challengeDeployerPreparator.baseFilePath = System.getProperty("java.io.tmpdir");
 
@@ -126,30 +112,27 @@ public class K8sIntegrationTest {
         challengeDTO.setChallengeAppDataDTO(appDataDTO);
     }
 
-    @AfterEach
-    public void tearDown() {
-//        k3s.stop();
-        kind.stop();
-    }
 
-//    @ParameterizedTest
-//    @MethodSource("kubernetesIntegrationTestData")
-//    public void test(String repositoryUrl) throws IOException, InterruptedException {
-//        String repositoryPath = cloneRepo(repositoryUrl);
-//        challengeDTO.setRelativePathToRepo(repositoryPath);
-//        challengeDetailsService.createAndStartApp(challengeDTO);
-//
-//        assertEquals(ChallengeStatus.RUNNING, challengeDTO.getStatus());
-//
-//        waitForPodsToBeReady(client, appDataDTO.getNamespace(), 2000000);
-//        PodList podList = client.pods().inNamespace(appDataDTO.getNamespace()).list();
-//        System.out.println(podList);
-//    }
-//    @Test
+    @ParameterizedTest
+    @MethodSource("kubernetesIntegrationTestData")
+    public void test(String repositoryUrl, String image) throws IOException, InterruptedException {
+        int expectedNumberOfServices = appDataDTO.getNumberOfApp();
+        String repositoryPath = cloneRepo(repositoryUrl);
+        challengeDTO.setRelativePathToRepo(repositoryPath);
 
-    private void assertPods() {
-        PodList podList = client.pods().inNamespace(appDataDTO.getNamespace()).list();
+        when(commandConfigurer.getImageLoadCommand(anyString()))
+                .thenReturn(String.format("minikube image load %s", image));
 
+        challengeDetailsService.createAndStartApp(challengeDTO);
+
+        assertEquals(ChallengeStatus.RUNNING, challengeDTO.getStatus());
+        assertTrue(allPodsReady(client, appDataDTO.getNamespace(), 1200000));
+        assertEquals(expectedNumberOfServices, nodePortCount());
+        assertEquals(expectedNumberOfServices, deploymentService());
+
+        challengeDetailsService.deleteApp(challengeDTO);
+
+        assertEquals(ChallengeStatus.REMOVED, challengeDTO.getStatus());
     }
 
     private String cloneRepo(String url) throws IOException {
@@ -168,8 +151,25 @@ public class K8sIntegrationTest {
 
     public static Stream<Arguments> kubernetesIntegrationTestData() {
         return Stream.of(
-                Arguments.of("https://github.com/bilskik/sample_python_app")
+                Arguments.of("https://github.com/bilskik/sample_python_app", "dockerhub-flask_live_app:1.0.0")
         );
     }
 
+    private int nodePortCount() {
+        return (int) client.services().inNamespace(appDataDTO.getNamespace())
+                .list()
+                .getItems()
+                .stream()
+                .filter(service -> "NodePort".equals(service.getSpec().getType()))
+                .count();
+    }
+
+    private int deploymentService() {
+        return (int) client.services().inNamespace(appDataDTO.getNamespace())
+                .list()
+                .getItems()
+                .stream()
+                .filter(service -> "ClusterIP".equals(service.getSpec().getType()))
+                .count();
+    }
 }

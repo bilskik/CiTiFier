@@ -1,13 +1,14 @@
 package pl.bilskik.citifier.ctfcreator.app;
 
 import io.fabric8.kubernetes.api.model.PodList;
+import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 public class K8sTestUtils {
 
     private static final String RUNNING = "Running";
 
-    public static void waitForPodsToBeReady(KubernetesClient client, String namespace, long timeoutMilis) throws InterruptedException {
+    public static boolean allPodsReady(KubernetesClient client, String namespace, long timeoutMilis) throws InterruptedException {
         long startTime = System.currentTimeMillis();
         boolean allReady = false;
 
@@ -20,13 +21,11 @@ public class K8sTestUtils {
             );
 
             if (allReady) {
-                return;
+                return true;
             }
 
             Thread.sleep(1000);
         }
-
-        throw new RuntimeException("Timeout!");
+        return false; //timeout
     }
-
 }

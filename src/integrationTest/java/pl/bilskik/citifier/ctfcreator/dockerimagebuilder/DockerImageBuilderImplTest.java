@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.k3s.K3sContainer;
 import org.testcontainers.utility.DockerImageName;
 import pl.bilskik.citifier.ctfcreator.config.OperatingSystem;
 
@@ -20,31 +20,30 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static pl.bilskik.citifier.ctfcreator.config.ShellPropertiesConfiguration.configureShellProperties;
+import static pl.bilskik.citifier.ctfcreator.config.ShellPropertiesConfiguration.setupMockOnImageLoad;
 
 @SpringBootTest
+@ContextConfiguration(classes = { DockerImageBuilderImpl.class, ProcessRunner.class })
 @ActiveProfiles("dev")
-@Testcontainers
 class DockerImageBuilderImplTest extends DockerImageDataProvider {
-    private static final int PORT = 2375;
+
     private static OperatingSystem currentOS;
 
-    @MockBean
-    private DockerEnvironmentStrategy environmentStrategy;
+    private static K3sContainer container;
 
     @MockBean
     private DockerShellProperties dockerShellProperties;
 
+    @MockBean
+    private CommandConfigurer commandConfigurer;
+
     @Autowired
     private DockerImageBuilderImpl dockerImageBuilder;
-
-    public static GenericContainer<?> container;
 
     @BeforeAll
     static void init() {
@@ -52,62 +51,54 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
         if(currentOS == OperatingSystem.UNKNOWN) {
             throw new IllegalStateException("Cannot determine current operating system!");
         }
-        configureContainer();
+        container = new K3sContainer(DockerImageName.parse("rancher/k3s:v1.21.3-k3s1"))
+                .withCommand("server");
         container.start();
     }
 
-    private static void configureContainer() {
-        String command = "dockerd --host=tcp://0.0.0.0:2375";
-        if (currentOS == OperatingSystem.WINDOWS) {
-            command += " --iptables=false";
-        }
-        container = new GenericContainer<>(DockerImageName.parse("docker:dind"))
-                .withPrivilegedMode(true)
-                .withExposedPorts(PORT)
-                .withCommand(command);
+    @AfterAll
+    static void tearDown() {
+        container.stop();
     }
 
     @BeforeEach
     void setUp() {
-        String dockerHost = String.format("tcp://%s:%d", container.getHost(), container.getMappedPort(PORT));
-        Map<String, String> envMap = new HashMap<>(){{ put("DOCKER_HOST", dockerHost); }};
-        when(environmentStrategy.configure()).thenReturn(envMap);
-
         configureShellProperties(dockerShellProperties, currentOS);
-    }
-
-    @AfterAll
-    static void afterAll() {
-        container.stop();
+        setupMockOnImageLoad(commandConfigurer, currentOS);
+        when(commandConfigurer.getDockerBuild())
+                .thenReturn("docker-compose build");
     }
 
     @ParameterizedTest
     @MethodSource("dataProvider")
-    public void build(String dockerfile, String dockerCompose) throws IOException {
+    public void build(String dockerfile, String dockerCompose, String image) throws IOException {
         String dockerComposeFilepath = setupDirectory(dockerfile, dockerCompose);
 
-        dockerImageBuilder.build(dockerComposeFilepath);
+        dockerImageBuilder.build(dockerComposeFilepath, image);
     }
 
     private static Stream<Arguments> dataProvider() {
         return Stream.of(
-                Arguments.of(DOCKERFILE_CONTENT_PYTHON, DOCKER_COMPOSE_CONTENT_PYTHON),
-                Arguments.of("", DOCKER_COMPOSE_SIMPLE_FLASK_APP),
-                Arguments.of("", DOCKER_COMPOSE_SIMPLE_SPRING_BOOT_APP)
+                Arguments.of(DOCKERFILE_CONTENT_PYTHON, DOCKER_COMPOSE_CONTENT_PYTHON, IMAGE_NAME_PYTHON),
+                Arguments.of("", DOCKER_COMPOSE_SIMPLE_FLASK_APP, IMAGE_NAME_FLASK_APP),
+                Arguments.of("", DOCKER_COMPOSE_SIMPLE_SPRING_BOOT_APP, IMAGE_NAME_SPRING_BOOT_APP)
         );
     }
 
     @Test
     public void build_WhenPathNotExist() {
         String nonExistentPath = "nonexistent/path/to-repo";
-        assertThrows(DockerImageBuilderException.class, () -> dockerImageBuilder.build(nonExistentPath));
+        String image = "image";
+
+        assertThrows(DockerImageBuilderException.class, () -> dockerImageBuilder.build(nonExistentPath, image));
     }
 
     @Test
-    public void build_WhenInvalidDockerCompose() throws IOException {
+    public void build_WhenInvalidDockerCompose() throws IOException{
         String dockerComposeFilepath = setupDirectory("", INVALID_DOCKER_COMPOSE);
+        String image = "image";
 
-        assertThrows(DockerImageBuilderException.class, () -> dockerImageBuilder.build(dockerComposeFilepath));
+        assertThrows(DockerImageBuilderException.class, () -> dockerImageBuilder.build(dockerComposeFilepath, image));
     }
 
     private String setupDirectory(String dockerfile, String dockerCompose) throws IOException {

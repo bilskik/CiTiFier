@@ -1,7 +1,9 @@
 package pl.bilskik.citifier.ctfcreator.config;
 
+import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.CommandConfigurer;
 import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.DockerShellProperties;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class ShellPropertiesConfiguration {
@@ -14,8 +16,15 @@ public class ShellPropertiesConfiguration {
             when(dockerShellProperties.getShell()).thenReturn("sh");
             when(dockerShellProperties.getConfig()).thenReturn("-c");
         }
-
-        when(dockerShellProperties.getCommand()).thenReturn("docker-compose build");
     }
 
+    public static void setupMockOnImageLoad(CommandConfigurer commandConfigurer, OperatingSystem currentOS) {
+        if(currentOS == OperatingSystem.WINDOWS) {
+            when(commandConfigurer.getImageLoadCommand(anyString()))
+                    .thenReturn("Write-Host");
+        } else if(currentOS == OperatingSystem.LINUX) {
+            when(commandConfigurer.getImageLoadCommand(anyString()))
+                    .thenReturn("echo");
+        }
+    }
 }
