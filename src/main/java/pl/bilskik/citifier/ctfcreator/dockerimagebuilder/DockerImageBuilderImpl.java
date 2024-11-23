@@ -30,33 +30,61 @@ public class DockerImageBuilderImpl implements DockerImageBuilder {
         }
         log.info("Image built successfully!");
 
-        boolean loadResult = executeImageLoad(imageName);
-        if(!loadResult) {
-            log.error("I can't load image! Image filepath: {}", filepath);
-            throw new DockerImageBuilderException("Cannot load image into kubernetes cluster!");
+        boolean tagResult = tagImageToPointLocalRegistry(imageName);
+        if(!tagResult) {
+            log.error("I can't tag image! Image filepath: {}", filepath);
+            throw new DockerImageBuilderException("Cannot tag image!");
         }
-        log.info("Image loaded successfully!");
+        log.info("Image tagged successfully!");
+
+        boolean pushImageResult = pushImageToRegistry(imageName);
+        if(!pushImageResult) {
+            log.error("I can't push image to local registry! Push filepath: {}", filepath);
+            throw new DockerImageBuilderException("Cannot push image to local registry!");
+        }
+        log.info("Image tagged successfully!");
     }
 
     private boolean executeDockerComposeBuild(File file) {
-        log.info("Start building process executing docker-compose build");
         String command = commandConfigurer.getDockerBuild();
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.directory(file);
-        processBuilder.command(shellProperties.getShell(), shellProperties.getConfig(), command);
-        processBuilder.redirectErrorStream(true);
+        log.info("Starting Docker Compose build process. Command: {}", command);
+
+        ProcessBuilder processBuilder = createProcessBuilder(
+                command,
+                file
+        );
 
         return processRunner.startProcess(processBuilder);
     }
 
-    private boolean executeImageLoad(String image) {
-        log.info("Start building process executing loading image to kubernetes");
-        String command = commandConfigurer.getImageLoadCommand(image);
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(shellProperties.getShell(), shellProperties.getConfig(), command);
-        processBuilder.redirectErrorStream(true);
+    private boolean tagImageToPointLocalRegistry(String image) {
+        log.info("Tagging image for local registry. Image: {}", image);
+
+        String command = commandConfigurer.getImageTagCommand(image);
+        ProcessBuilder processBuilder = createProcessBuilder(command, null);
 
         return processRunner.startProcess(processBuilder);
+    }
+
+    private boolean pushImageToRegistry(String image) {
+        log.info("Pushing image to local registry. Image: {}", image);
+
+        String command = commandConfigurer.getImagePushToRegistryCommand(image);
+        ProcessBuilder processBuilder = createProcessBuilder(command, null);
+
+        return processRunner.startProcess(processBuilder);
+    }
+
+    private ProcessBuilder createProcessBuilder(String command, File directory) {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(shellProperties.getShell(), shellProperties.getConfig(), command);
+
+        if (directory != null) {
+            processBuilder.directory(directory);
+        }
+
+        processBuilder.redirectErrorStream(true);
+        return processBuilder;
     }
 
 }
