@@ -24,7 +24,7 @@ import static pl.bilskik.citifier.ctfcreator.filemanager.FilePathBuilder.*;
 public class ChallengeDeployerPreparator {
 
     @Value("${repo.base-file-path}")
-    private String baseFilePath;
+    public String baseFilePath;
 
     private final FileManager fileManager;
     private final DockerComposeParserManager dockerComposeParserManager;
