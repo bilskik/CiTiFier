@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.yaml:snakeyaml:2.3'
 
 	implementation 'io.fabric8:kubernetes-client:6.13.0'
+	implementation 'com.github.docker-java:docker-java:3.4.0'
 	implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
 	implementation 'org.apache.commons:commons-lang3:3.17.0'
 
