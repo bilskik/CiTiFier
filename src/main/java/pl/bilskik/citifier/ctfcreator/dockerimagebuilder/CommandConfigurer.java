@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommandConfigurer {
 
+    @Value("${docker.host-ip-address}")
+    private String hostIpAddress;
+
     @Value("${docker.docker-registry-port}")
     private String registryPort;
 
@@ -23,11 +26,11 @@ public class CommandConfigurer {
     }
 
     public String getImageTagCommand(String imageName) {
-        return dockerTag + " " + imageName + " " + "localhost:" + registryPort + "/" + imageName;
+        return dockerTag + " " + imageName + " " + hostIpAddress + ":" + registryPort + "/" + imageName;
     }
 
     public String getImagePushToRegistryCommand(String imageName) {
-        return dockerPush + " " + "localhost:5000" + "/" + imageName;
+        return dockerPush + " " + hostIpAddress + ":" + registryPort + "/" + imageName;
     }
 
 }

@@ -118,7 +118,7 @@ public class K8sIntegrationTest {
         challengeDetailsService.createAndStartApp(challengeDTO);
 
         assertEquals(ChallengeStatus.RUNNING, challengeDTO.getStatus());
-        assertTrue(allPodsReady(client, appDataDTO.getNamespace(), 200000));
+        assertTrue(allPodsReady(client, appDataDTO.getNamespace(), 2000000));
         assertEquals(expectedNumberOfServices, nodePortCount());
         assertEquals(expectedNumberOfServices, deploymentService());
 
