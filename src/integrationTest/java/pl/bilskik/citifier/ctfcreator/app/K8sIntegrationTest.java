@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import pl.bilskik.citifier.ctfcreator.challengedetails.ChallengeDeployerPreparator;
 import pl.bilskik.citifier.ctfcreator.challengedetails.ChallengeDetailsService;
 import pl.bilskik.citifier.ctfcreator.config.OperatingSystem;
-import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.CommandConfigurer;
 import pl.bilskik.citifier.ctfcreator.dockerimagebuilder.DockerShellProperties;
 import pl.bilskik.citifier.ctfcreator.kubernetes.config.K8sClusterConnectorBuilder;
 import pl.bilskik.citifier.ctfdomain.dto.ChallengeAppDataDTO;
@@ -28,12 +27,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static pl.bilskik.citifier.ctfcreator.app.K8sTestUtils.allPodsReady;
@@ -61,9 +60,6 @@ public class K8sIntegrationTest {
     @MockBean
     private K8sClusterConnectorBuilder connectorBuilder;
 
-    @MockBean
-    private CommandConfigurer commandConfigurer;
-
     @Autowired
     private ChallengeDetailsService challengeDetailsService;
 
@@ -86,8 +82,6 @@ public class K8sIntegrationTest {
                 .thenReturn(client);
         configureShellProperties(dockerShellProperties, currentOS);
         doNothing().when(challengeDao).updateChallengeStatus(any(ChallengeStatus.class), any(Long.class));
-        when(commandConfigurer.getDockerBuild())
-                .thenReturn("docker-compose build");
 
         challengeDeployerPreparator.baseFilePath = System.getProperty("java.io.tmpdir");
 
@@ -95,10 +89,11 @@ public class K8sIntegrationTest {
             put(30000, "flagaopl"); put(30001, "flagaokl");
         }};
 
+        Random r = new Random();
         appDataDTO = new ChallengeAppDataDTO();
         appDataDTO.setChallengeAppDataId(1L);
         appDataDTO.setChallengeAppName("challenge-app-name");
-        appDataDTO.setNamespace("test-namespace");
+        appDataDTO.setNamespace("test-namespace" + r.nextInt());
         appDataDTO.setStartExposedPort(30000);
         appDataDTO.setNumberOfApp(2);
         appDataDTO.setPortFlag(portFlag);
@@ -115,18 +110,15 @@ public class K8sIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("kubernetesIntegrationTestData")
-    public void test(String repositoryUrl, String image) throws IOException, InterruptedException {
+    public void test(String repositoryUrl) throws IOException, InterruptedException {
         int expectedNumberOfServices = appDataDTO.getNumberOfApp();
         String repositoryPath = cloneRepo(repositoryUrl);
         challengeDTO.setRelativePathToRepo(repositoryPath);
 
-        when(commandConfigurer.getImageLoadCommand(anyString()))
-                .thenReturn(String.format("minikube image load %s", image));
-
         challengeDetailsService.createAndStartApp(challengeDTO);
 
         assertEquals(ChallengeStatus.RUNNING, challengeDTO.getStatus());
-        assertTrue(allPodsReady(client, appDataDTO.getNamespace(), 1200000));
+        assertTrue(allPodsReady(client, appDataDTO.getNamespace(), 200000));
         assertEquals(expectedNumberOfServices, nodePortCount());
         assertEquals(expectedNumberOfServices, deploymentService());
 
@@ -151,7 +143,7 @@ public class K8sIntegrationTest {
 
     public static Stream<Arguments> kubernetesIntegrationTestData() {
         return Stream.of(
-                Arguments.of("https://github.com/bilskik/sample_python_app", "dockerhub-flask_live_app:1.0.0")
+                Arguments.of("https://github.com/bilskik/sample_python_app")
         );
     }
 

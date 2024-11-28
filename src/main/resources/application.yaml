@@ -35,6 +35,13 @@ logging:
 db:
   schemaName: ctf
 
+docker:
+  build: docker-compose build
+  tag: docker tag
+  push: docker push
+  host-ip-address: 192.168.8.152
+  docker-registry-port: 5000
+
 process:
   timeout: 180
   time-unit: SECONDS

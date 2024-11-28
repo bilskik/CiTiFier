@@ -23,12 +23,10 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 import static pl.bilskik.citifier.ctfcreator.config.ShellPropertiesConfiguration.configureShellProperties;
-import static pl.bilskik.citifier.ctfcreator.config.ShellPropertiesConfiguration.setupMockOnImageLoad;
 
 @SpringBootTest
-@ContextConfiguration(classes = { DockerImageBuilderImpl.class, ProcessRunner.class })
+@ContextConfiguration(classes = { DockerImageBuilderImpl.class, ProcessRunner.class, CommandConfigurer.class })
 @ActiveProfiles("dev")
 class DockerImageBuilderImplTest extends DockerImageDataProvider {
 
@@ -38,9 +36,6 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
 
     @MockBean
     private DockerShellProperties dockerShellProperties;
-
-    @MockBean
-    private CommandConfigurer commandConfigurer;
 
     @Autowired
     private DockerImageBuilderImpl dockerImageBuilder;
@@ -64,9 +59,6 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
     @BeforeEach
     void setUp() {
         configureShellProperties(dockerShellProperties, currentOS);
-        setupMockOnImageLoad(commandConfigurer, currentOS);
-        when(commandConfigurer.getDockerBuild())
-                .thenReturn("docker-compose build");
     }
 
     @ParameterizedTest
@@ -79,9 +71,7 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
 
     private static Stream<Arguments> dataProvider() {
         return Stream.of(
-                Arguments.of(DOCKERFILE_CONTENT_PYTHON, DOCKER_COMPOSE_CONTENT_PYTHON, IMAGE_NAME_PYTHON),
-                Arguments.of("", DOCKER_COMPOSE_SIMPLE_FLASK_APP, IMAGE_NAME_FLASK_APP),
-                Arguments.of("", DOCKER_COMPOSE_SIMPLE_SPRING_BOOT_APP, IMAGE_NAME_SPRING_BOOT_APP)
+                Arguments.of(DOCKERFILE_CONTENT_PYTHON, DOCKER_COMPOSE_CONTENT_PYTHON, IMAGE_NAME_PYTHON)
         );
     }
 

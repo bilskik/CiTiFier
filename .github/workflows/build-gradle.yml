@@ -33,9 +33,11 @@ jobs:
       run: |
         sudo curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
         sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+    - name: Setup local docker registry
+      run: docker run -d -p 5000:5000 --name registry registry:2
     - name: Run minikube
       run: |
-        minikube start
+         minikube --driver=docker start --insecure-registry="$(hostname -I | awk '{print $1}'):5000"
     - name: Setup JDK 21
       uses: actions/setup-java@v4
       with:

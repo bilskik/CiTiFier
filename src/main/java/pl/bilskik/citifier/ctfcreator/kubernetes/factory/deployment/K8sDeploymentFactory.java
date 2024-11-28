@@ -17,8 +17,11 @@ public class K8sDeploymentFactory {
     private final static String IF_NOT_PRESENT = "IfNotPresent";
     private final static String TCP = "TCP";
 
-    @Value("${docker.registry-ip-address}")
-    private String registryIpAddress;
+    @Value("${docker.host-ip-address}")
+    private String hostIpAddress;
+
+    @Value("${docker.docker-registry-port}")
+    private String registryPort;
 
     public Deployment createDeployment(
             String deploymentName,
@@ -63,7 +66,7 @@ public class K8sDeploymentFactory {
     }
 
     private String buildImageLocation(String image) {
-        return registryIpAddress + "/" + image;
+        return hostIpAddress + ":" + registryPort + "/" + image;
     }
 
 }

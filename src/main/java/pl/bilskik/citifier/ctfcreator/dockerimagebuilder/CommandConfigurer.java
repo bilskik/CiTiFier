@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommandConfigurer {
 
-    @Value("${docker.registry-ip-address}")
-    private String registryIpAddress;
+    @Value("${docker.docker-registry-port}")
+    private String registryPort;
 
     @Value("${docker.build}")
     private String dockerBuild;
@@ -23,20 +23,11 @@ public class CommandConfigurer {
     }
 
     public String getImageTagCommand(String imageName) {
-        String registryIpAddress = validateRegistryIpAddress();
-        return dockerTag + " " + imageName + " " + registryIpAddress + "/" + imageName;
+        return dockerTag + " " + imageName + " " + "localhost:" + registryPort + "/" + imageName;
     }
 
     public String getImagePushToRegistryCommand(String imageName) {
-        String registryIpAddress = validateRegistryIpAddress();
-        return dockerPush + " " + registryIpAddress + "/" + imageName;
-    }
-
-    private String validateRegistryIpAddress() {
-        if(registryIpAddress == null || registryIpAddress.isEmpty()) {
-            throw new DockerImageBuilderException("Cannot resolve docker registry ip!");
-        }
-        return registryIpAddress;
+        return dockerPush + " " + "localhost:5000" + "/" + imageName;
     }
 
 }
