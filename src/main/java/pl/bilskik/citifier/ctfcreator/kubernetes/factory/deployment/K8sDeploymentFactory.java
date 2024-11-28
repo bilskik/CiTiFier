@@ -1,12 +1,10 @@
 package pl.bilskik.citifier.ctfcreator.kubernetes.factory.deployment;
 
-import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static pl.bilskik.citifier.ctfcreator.kubernetes.util.K8sFactoryUtils.convertFromMapToEnvVarList;
@@ -18,6 +16,9 @@ public class K8sDeploymentFactory {
     private final static int REPLICA_NUMBER = 1;
     private final static String IF_NOT_PRESENT = "IfNotPresent";
     private final static String TCP = "TCP";
+
+    @Value("${docker.registry-ip-address}")
+    private String registryIpAddress;
 
     public Deployment createDeployment(
             String deploymentName,
@@ -47,7 +48,7 @@ public class K8sDeploymentFactory {
                             .withContainers()
                                 .addNewContainer()
                                 .withName(containerName)
-                                .withImage(containerImage)
+                                .withImage(buildImageLocation(containerImage))
                                 .addNewPort()
                                     .withContainerPort(containerPort)
                                     .withProtocol(TCP)
@@ -59,6 +60,10 @@ public class K8sDeploymentFactory {
                     .endTemplate()
                 .endSpec()
                 .build();
+    }
+
+    private String buildImageLocation(String image) {
+        return registryIpAddress + "/" + image;
     }
 
 }

@@ -2,11 +2,11 @@ process:
   shell: powershell.exe
   config: -Command
 
-kubernetes:
-  image-load: minikube image load <image>
-
 docker:
   build: docker-compose build
+  tag: docker tag
+  push: docker push
+  registry-ip-address: 10.12.4.214:5000
 
 repo:
   base-file-path: D:\\CLONED_REPO_CITIFIER
