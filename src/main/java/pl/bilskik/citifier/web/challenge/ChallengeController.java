@@ -7,29 +7,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import static pl.bilskik.citifier.web.challenge.ChallengeConstraints.CHALLENGE;
 
-
 @Controller
+@RequestMapping("/challenge")
 @RequiredArgsConstructor
 public class ChallengeController {
 
-    @GetMapping(path = "/challenge")
+    @GetMapping
     public String challengePage(Model model, HttpSession httpSession) {
         ChallengeInputDTO challengeInputDTO = new ChallengeInputDTO();
         if(httpSession.getAttribute(CHALLENGE) != null) {
             challengeInputDTO = (ChallengeInputDTO) httpSession.getAttribute(CHALLENGE);
         }
         model.addAttribute("challengeInputDTO", challengeInputDTO);
-        return "ctfcreator/challenge/challenge";
+        return "challenge/challenge";
     }
 
     @HxRequest
-    @PostMapping(value = "/ctf-creator/challenge")
+    @PostMapping
     public String submitChallenge(
             @ModelAttribute @Valid ChallengeInputDTO challengeInputDTO,
             BindingResult result,
@@ -41,7 +39,7 @@ public class ChallengeController {
         }
 
         if(result.hasErrors()) {
-            return "ctfcreator/challenge/challenge";
+            return "challenge/challenge";
         }
 
         httpSession.setAttribute(CHALLENGE, challengeInputDTO);

@@ -17,7 +17,7 @@ public class SecurityConfig {
                 .csrf(x -> x.disable())
                 .formLogin((login) -> { login
                         .loginPage("/login")
-                        .loginProcessingUrl("/ctf-core/login")
+                        .loginProcessingUrl("/login")
                         .usernameParameter("login")
                         .passwordParameter("password")
                         .defaultSuccessUrl("/challenge-list", true)
@@ -27,8 +27,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> {
                     auth
                         .requestMatchers(
-                                "/register", "/ctf-core/register", "/ctf-core/register/redirect-to-login",
-                                "/login", "/ctf-core/login/redirect-to-register",
+                                "/register", "/register/redirect-to-login",
+                                "/login", "/login/redirect-to-register",
                                 "/css/**", "/js/**","/img/**", "/webjars/**"
                         )
                         .permitAll()

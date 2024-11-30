@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.bilskik.citifier.domain.dto.ChallengeDTO;
@@ -16,21 +17,22 @@ import pl.bilskik.citifier.domain.service.ChallengeDao;
 import java.util.List;
 
 @Controller
+@RequestMapping("/challenge-list")
 @RequiredArgsConstructor
 public class ChallengeListController {
 
     private final ChallengeDao challengeDao;
 
-    @GetMapping("/challenge-list")
+    @GetMapping
     public String challengeList(Model model, Authentication auth) {
         String login = retrieveLoginFromAuthentication(auth);
         List<ChallengeDTO> challengeList = challengeDao.findAllByLogin(login);
         challengeList = filterActive(challengeList);
         model.addAttribute("challengeList", challengeList);
-        return "ctfcreator/challenge/challenge-list";
+        return "/challenge/challenge-list";
     }
 
-    @PostMapping("/ctf-creator/challenge-details")
+    @PostMapping("/redirect")
     public RedirectView parseComposeAndDeployApp(Model model, Long challengeId, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("challengeId", challengeId);
         return new RedirectView("/challenge-details");

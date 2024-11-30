@@ -9,8 +9,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/register")
 @RequiredArgsConstructor
 public class RegisterController {
     private final static String REGISTRATION_FAILED = "Nie można zarejstrować użytkownika!";
@@ -18,14 +20,14 @@ public class RegisterController {
     private final RegisterLoginPasswordValidator validator;
     private final RegisterService registerService;
 
-    @GetMapping(path = "/register")
+    @GetMapping
     public String getRegisterPage(Model model) {
         model.addAttribute("registerDTO", new RegisterDTO());
-        return "ctfcore/register/register";
+        return "register/register";
     }
 
     @HxRequest
-    @PostMapping(path = "/ctf-core/register")
+    @PostMapping
     public String submitRegister(
             @ModelAttribute @Valid RegisterDTO registerDTO,
             BindingResult bindingResult,
@@ -46,21 +48,21 @@ public class RegisterController {
         }
 
         if(bindingResult.hasErrors()) {
-            return "ctfcore/register/register";
+            return "register/register";
         }
 
         try {
             registerService.register(registerDTO);
         } catch(Exception e) {
             model.addAttribute("registerExceptionMessage", REGISTRATION_FAILED);
-            return "ctfcore/register/register";
+            return "register/register";
         }
 
         return "redirect:/login";
     }
 
     @HxRequest
-    @GetMapping(path = "/ctf-core/register/redirect-to-login")
+    @GetMapping("/redirect-to-login")
     public String redirectToLogin() {
         return "redirect:/login";
     }

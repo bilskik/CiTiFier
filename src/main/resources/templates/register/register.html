@@ -11,7 +11,7 @@
         <div class="row h-80 pt-5">
             <div class="col-md-6 mx-auto border p-5 rounded">
                 <form
-                        th:hx-post="@{ctf-core/register}"
+                        th:hx-post="@{/register}"
                         th:hx-trigger="submit"
                         th:hx-boost="true"
                         th:hx-target="body"
@@ -88,7 +88,7 @@
                 </form>
                 <hr>
                 <a
-                        th:href="@{/ctf-core/register/redirect-to-login}"
+                        th:href="@{/register/redirect-to-login}"
                         th:text="#{common.login}"
                         th:hx-boost="true"
                         th:hx-push-url="true"

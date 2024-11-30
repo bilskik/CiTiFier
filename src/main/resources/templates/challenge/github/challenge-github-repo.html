@@ -8,7 +8,7 @@
     <th:block th:insert="~{common/navbar.html}">
     </th:block>
         <form
-            th:hx-post="@{/ctf-creator/challenge/github-link}"
+            th:hx-post="@{/challenge/github-link}"
             th:hx-include=".github"
             th:hx-target="body"
             th:hx-swap="outerHTML"
@@ -45,7 +45,7 @@
                 >
                 </label>
                 <input
-                        th:hx-post="@{/ctf-creator/challenge/github-repo-visibility}"
+                        th:hx-post="@{/challenge/github-repo-visibility}"
                         th:hx-trigger="change"
                         th:field="*{isPrivateRepo}"
                         hx-target="#challenge-github-button"
@@ -60,11 +60,11 @@
                 />
                 <div id="challenge-github-button" hx-on::after-swap="handleAfterSwap(event);">
                     <span th:if="*{!isPrivateRepo}">
-                        <th:block th:insert="~{ctfcreator/challenge/github/github-public-repo-button.html}">
+                        <th:block th:insert="~{challenge/github/github-public-repo-button.html}">
                         </th:block>
                     </span>
                     <span th:if="*{isPrivateRepo}">
-                        <th:block th:insert="~{ctfcreator/challenge/github/github-private-repo-button.html}">
+                        <th:block th:insert="~{challenge/github/github-private-repo-button.html}">
                         </th:block>
                     </span>
                 </div>
@@ -73,7 +73,7 @@
                         id="create-challenge"
                         type="button"
                         class="btn btn-primary border"
-                        th:hx-post="@{/ctf-creator/challenge-creation}"
+                        th:hx-post="@{/challenge-creation}"
                         th:hx-push-url="true"
                         th:disabled="*{!isRepoClonedSuccessfully}"
                 >

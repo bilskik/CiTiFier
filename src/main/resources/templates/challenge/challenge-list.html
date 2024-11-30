@@ -24,7 +24,7 @@
                         <td th:text="${challenge.name}"></td>
                         <td th:text="${challenge.repoName}"></td>
                         <td th:switch="${challenge.status.name()}">
-                            <th:block th:insert="~{ctfcreator/challenge/challenge-status.html}">
+                            <th:block th:insert="~{challenge/challenge-status.html}">
                             </th:block>
                         </td>
                         <td>
@@ -36,7 +36,7 @@
                                     th:value="${challenge.challengeId}"
                             />
                             <button
-                                    th:hx-post="@{/ctf-creator/challenge-details}"
+                                    th:hx-post="@{/challenge-list/redirect}"
                                     th:hx-include="|.${challenge.name}-${challenge.challengeId}|"
                                     th:hx-trigger="click"
                                     th:hx-target="body"

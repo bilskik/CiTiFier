@@ -34,14 +34,14 @@ public class ChallengeGithubController {
         if(!githubDataInputDTO.getIsRepoClonedSuccessfully() && error != null && !error.isEmpty()) {
             modelGithubDataInputDTO.setGithubLink(githubDataInputDTO.getGithubLink());
             bindingResult.rejectValue("githubLink","error.githubLink", error);
-            return "ctfcreator/challenge/github/challenge-github-repo";
+            return "challenge/github/challenge-github-repo";
         }
 
         model.addAttribute("githubDataInputDTO", githubDataInputDTO);
-        return "ctfcreator/challenge/github/challenge-github-repo";
+        return "challenge/github/challenge-github-repo";
     }
 
-    @PostMapping("/ctf-creator/challenge-creation")
+    @PostMapping("/challenge-creation")
     public String createChallenge(Model model, HttpSession session) {
         ChallengeInputDTO challengeInputDTO = (ChallengeInputDTO) session.getAttribute(CHALLENGE);
         GithubDataInputDTO githubDataInputDTO = (GithubDataInputDTO) session.getAttribute(GITHUB_DATA);
@@ -50,7 +50,7 @@ public class ChallengeGithubController {
             challengeCreationService.createNewChallenge(challengeInputDTO, githubDataInputDTO);
         } catch(Exception e) {
             model.addAttribute("githubDataInputDTO", githubDataInputDTO);
-            return "ctfcreator/challenge/github/challenge-github-repo";
+            return "challenge/github/challenge-github-repo";
         }
         session.removeAttribute(CHALLENGE);
         session.removeAttribute(GITHUB_DATA);

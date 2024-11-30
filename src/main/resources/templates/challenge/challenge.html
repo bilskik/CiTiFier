@@ -8,7 +8,7 @@
     <th:block th:insert="~{common/navbar.html}">
     </th:block>
     <form
-        th:hx-post="@{/ctf-creator/challenge}"
+        th:hx-post="@{/challenge}"
         th:hx-trigger="submit"
         th:hx-include=".challenge"
         hx-target="body"

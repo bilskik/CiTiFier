@@ -6,25 +6,27 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import pl.bilskik.citifier.domain.dto.ChallengeAppDataDTO;
 import pl.bilskik.citifier.domain.dto.ChallengeDTO;
 import pl.bilskik.citifier.domain.entity.enumeration.ChallengeStatus;
 
 @Controller
+@RequestMapping("/challenge-details")
 @RequiredArgsConstructor
 public class ChallengeDetailsController {
 
     private final ChallengeDetailsService challengeDetailsService;
 
-    @GetMapping("/challenge-details")
+    @GetMapping
     public String getChallengeDetails(Model model) {
         Long challengeId = (Long) model.getAttribute("challengeId");
         ChallengeDTO challengeDTO = challengeDetailsService.findChallengeById(challengeId);
         addModelAttributes(model, challengeDTO);
-        return "ctfcreator/challenge/challenge-details";
+        return "/challenge/challenge-details";
     }
 
-    @PostMapping("/ctf-creator/challenge-deploy-start")
+    @PostMapping("/deploy-start")
     @HxRequest
     public String createAndStartApp(Model model, Long challengeId) {
         ChallengeDTO challengeDTO = challengeDetailsService.findChallengeById(challengeId);
@@ -37,10 +39,10 @@ public class ChallengeDetailsController {
         }
 
         addModelAttributes(model, challengeDTO);
-        return "ctfcreator/challenge/challenge-details";
+        return "challenge/challenge-details";
     }
 
-    @PostMapping("/ctf-creator/challenge-start")
+    @PostMapping("/start")
     @HxRequest
     public String startApp(Model model, Long challengeId) {
         ChallengeDTO challengeDTO = challengeDetailsService.findChallengeById(challengeId);
@@ -53,10 +55,10 @@ public class ChallengeDetailsController {
         }
 
         addModelAttributes(model, challengeDTO);
-        return "ctfcreator/challenge/challenge-details";
+        return "challenge/challenge-details";
     }
 
-    @PostMapping("/ctf-creator/challenge-stop")
+    @PostMapping("/stop")
     @HxRequest
     public String stopApp(Model model, Long challengeId) {
         ChallengeDTO challengeDTO = challengeDetailsService.findChallengeById(challengeId);
@@ -69,10 +71,10 @@ public class ChallengeDetailsController {
         }
 
         addModelAttributes(model, challengeDTO);
-        return "ctfcreator/challenge/challenge-details";
+        return "challenge/challenge-details";
     }
 
-    @PostMapping("/ctf-creator/challenge-finish")
+    @PostMapping("/finish")
     @HxRequest
     public String finishApp(Model model, Long challengeId) {
         ChallengeDTO challengeDTO = challengeDetailsService.findChallengeById(challengeId);
@@ -82,7 +84,7 @@ public class ChallengeDetailsController {
         } catch(Exception e) {
             challengeDetailsService.updateStatus(challengeDTO, ChallengeStatus.ERROR, challengeDTO.getChallengeId());
             model.addAttribute("applicationError", e.getMessage());
-            return "ctfcreator/challenge/challenge-details";
+            return "challenge/challenge-details";
         }
 
         addModelAttributes(model, challengeDTO);

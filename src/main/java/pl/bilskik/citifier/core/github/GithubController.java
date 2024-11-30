@@ -20,7 +20,7 @@ import static pl.bilskik.citifier.web.challenge.ChallengeConstraints.GITHUB_DATA
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/ctf-creator/challenge")
+@RequestMapping("/challenge")
 public class GithubController {
 
     private final GithubService githubService;
@@ -41,10 +41,10 @@ public class GithubController {
         } catch(GithubException e) {
             saveErrorGithubInputDataIntoSession(session, githubLink);
             bindingResult.rejectValue("githubLink","error.githubLink", e.getMessage());
-            return "ctfcreator/challenge/github/challenge-github-repo";
+            return "challenge/github/challenge-github-repo";
         }
         model.addAttribute("githubInputDataDTO", githubDataInputDTO);
-        return "ctfcreator/challenge/github/challenge-github-repo";
+        return "challenge/github/challenge-github-repo";
     }
 
     @HxRequest
@@ -57,9 +57,9 @@ public class GithubController {
         if(isPrivateRepo) {
             String redirectUrl = githubService.buildRedirectUrl(githubLink);
             model.addAttribute("redirectUrl", redirectUrl);
-            return "ctfcreator/challenge/github/github-private-repo-button";
+            return "challenge/github/github-private-repo-button";
         }
-        return "ctfcreator/challenge/github/github-public-repo-button";
+        return "challenge/github/github-public-repo-button";
     }
 
     @GetMapping("/github-link-redirect")
