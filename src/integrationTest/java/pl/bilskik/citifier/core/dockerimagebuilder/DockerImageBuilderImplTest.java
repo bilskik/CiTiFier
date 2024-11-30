@@ -66,7 +66,7 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
     public void build(String dockerfile, String dockerCompose, String image) throws IOException {
         String dockerComposeFilepath = setupDirectory(dockerfile, dockerCompose);
 
-        dockerImageBuilder.build(dockerComposeFilepath, image);
+        dockerImageBuilder.buildAndPush(dockerComposeFilepath, image);
     }
 
     private static Stream<Arguments> dataProvider() {
@@ -80,7 +80,7 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
         String nonExistentPath = "nonexistent/path/to-repo";
         String image = "image";
 
-        assertThrows(DockerImageBuilderException.class, () -> dockerImageBuilder.build(nonExistentPath, image));
+        assertThrows(DockerImageBuilderException.class, () -> dockerImageBuilder.buildAndPush(nonExistentPath, image));
     }
 
     @Test
@@ -88,7 +88,7 @@ class DockerImageBuilderImplTest extends DockerImageDataProvider {
         String dockerComposeFilepath = setupDirectory("", INVALID_DOCKER_COMPOSE);
         String image = "image";
 
-        assertThrows(DockerImageBuilderException.class, () -> dockerImageBuilder.build(dockerComposeFilepath, image));
+        assertThrows(DockerImageBuilderException.class, () -> dockerImageBuilder.buildAndPush(dockerComposeFilepath, image));
     }
 
     private String setupDirectory(String dockerfile, String dockerCompose) throws IOException {
