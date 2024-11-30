@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.core.github;
+package pl.bilskik.citifier.web.github;
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.servlet.http.HttpSession;

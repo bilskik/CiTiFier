@@ -30,7 +30,7 @@ public class ChallengeDeployerPreparator {
 
         DockerCompose compose = dockerComposeParserManager.parse(dockerComposeAbsolutePath);
         String imageName = getImageName(compose);
-        dockerImageBuilder.build(repoAbsolutePath, imageName);
+        dockerImageBuilder.buildAndPush(repoAbsolutePath, imageName);
 
         K8sResourceContext resourceContext = initK8sResourceContext(challengeDTO.getChallengeAppDataDTO(), repoAbsolutePath, isNamespaceCreated);
         resourceContext.setDockerCompose(compose);

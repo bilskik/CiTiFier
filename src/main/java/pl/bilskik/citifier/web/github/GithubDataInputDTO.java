@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.core.github;
+package pl.bilskik.citifier.web.github;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;

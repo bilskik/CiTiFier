@@ -3,7 +3,7 @@ package pl.bilskik.citifier.web.challenge;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.bilskik.citifier.core.github.GithubDataInputDTO;
+import pl.bilskik.citifier.web.github.GithubDataInputDTO;
 import pl.bilskik.citifier.domain.dto.ChallengeAppDataDTO;
 import pl.bilskik.citifier.domain.dto.ChallengeDTO;
 import pl.bilskik.citifier.domain.entity.enumeration.ChallengeStatus;

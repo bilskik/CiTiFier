@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.core.github;
+package pl.bilskik.citifier.web.github;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

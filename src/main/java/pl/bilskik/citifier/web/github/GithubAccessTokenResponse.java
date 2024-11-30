@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.core.github;
+package pl.bilskik.citifier.web.github;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

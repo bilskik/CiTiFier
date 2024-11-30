@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import pl.bilskik.citifier.core.github.GithubDataInputDTO;
+import pl.bilskik.citifier.web.github.GithubDataInputDTO;
 import pl.bilskik.citifier.domain.dto.ChallengeAppDataDTO;
 import pl.bilskik.citifier.domain.dto.ChallengeDTO;
 import pl.bilskik.citifier.domain.entity.enumeration.ChallengeStatus;

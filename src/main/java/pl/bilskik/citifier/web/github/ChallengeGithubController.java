@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.core.github;
+package pl.bilskik.citifier.web.github;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

@@ -15,7 +15,7 @@ public class DockerImageBuilderImpl implements DockerImageBuilder {
     private final ProcessRunner processRunner;
     private final CommandConfigurer commandConfigurer;
 
-    public void build(String filepath, String imageName) {
+    public void buildAndPush(String filepath, String imageName) {
         File file = new File(filepath);
         if(!file.exists()) {
             log.error("Repository on filepath: {} doesn't exist!", filepath);

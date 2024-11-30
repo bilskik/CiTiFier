@@ -94,4 +94,4 @@ jobs:
       - name: Run integration tests
         env:
           DOCKER_HOST_IP_ADDRESS: ${{ env.HOST_IP }}
-        run: ./gradlew integrationTest --debug
+        run: ./gradlew integrationTest
