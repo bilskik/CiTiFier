@@ -101,8 +101,8 @@ public class ChallengeDetailsController {
             return "";
         }
         if(appDataDTO.getStartExposedPort() != null && appDataDTO.getNumberOfApp() != null) {
-            int lastPort = appDataDTO.getStartExposedPort() + appDataDTO.getNumberOfApp();
-            return appDataDTO.getStartExposedPort() + " - " + lastPort;
+            int lastPort = appDataDTO.getStartExposedPort() + appDataDTO.getNumberOfApp() - 1;
+            return "<" + appDataDTO.getStartExposedPort() + " - " + lastPort + ">";
         }
         return "";
     }
