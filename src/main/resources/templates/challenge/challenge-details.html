@@ -88,7 +88,7 @@
                             hx-target="body"
                             hx-swap="outerHTML"
                             class="btn btn-success ms-3"
-                            th:disabled="${challenge.status.name() != 'NEW' && challenge.status.name() != 'ERROR'}"
+                            th:disabled="${challenge.status.name() == 'RUNNING' || challenge.status.name() == 'STOPPED'}"
                     >
                     </button>
                     <button
@@ -99,7 +99,8 @@
                             hx-target="body"
                             hx-swap="outerHTML"
                             class="btn btn-success"
-                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'RUNNING'}"
+                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'RUNNING' ||
+                                challenge.status.name() == 'ERROR'}"
                     >
                     </button>
                     <button
@@ -110,7 +111,8 @@
                             hx-target="body"
                             hx-swap="outerHTML"
                             class="btn btn-warning"
-                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'STOPPED'}"
+                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'RUNNING' ||
+                             challenge.status.name() == 'STOPPED'}"
                     >
                     </button>
                     <button

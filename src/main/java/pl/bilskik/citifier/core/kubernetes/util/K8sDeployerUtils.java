@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.lang.Integer.parseInt;
 import static pl.bilskik.citifier.core.kubernetes.data.K8sConstants.CTF_FLAG_ENV_NAME;
 import static pl.bilskik.citifier.core.kubernetes.data.K8sConstants.DB_ENV_NAME;
 
@@ -30,18 +31,25 @@ public class K8sDeployerUtils {
     }
 
     public static Integer providePortToApplication(List<Port> ports) {
-        if(ports == null) {
-            return null; //throw exception
+        if(ports == null || ports.isEmpty()) {
+            throw new K8sResourceCreationException("Provided ports are empty!");
         }
         Port port = ports.getFirst(); //simple case -> one port mapping
-        if(port != null && isValidPort(port.getHostPort())) {
-            return Integer.parseInt(port.getHostPort());
+        if(isValidPort(port.getHostPort())) {
+            return parseInt(port.getHostPort());
         }
-        return null; //throw exception
+        throw new K8sResourceCreationException(String.format(
+                "Invalid ports provided! HostPort: %s, TargetPort: %s", port.getHostPort(), port.getTargetPort()
+        ));
     }
 
     private static boolean isValidPort(String value) {
-        return StringUtils.isNumeric(value);
+        boolean isNumeric = StringUtils.isNumeric(value);
+        if(!isNumeric) {
+            return false;
+        }
+        int port = parseInt(value);
+        return port >= MIN_PORT_RANGE && port <= MAX_PORT_RANGE;
     }
 
     public static Map<String, String> createEnvForSpecificDeployment(Map<String, String> envMap, String flag, int i) {

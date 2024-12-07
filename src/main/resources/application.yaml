@@ -1,3 +1,8 @@
+server:
+  port: 8080
+  error:
+    path: /error
+
 spring:
   application:
     name: CiTiFier
@@ -39,7 +44,7 @@ docker:
   build: docker-compose build
   tag: docker tag
   push: docker push
-  host-ip-address: 192.168.1.16
+  host-ip-address: 10.12.4.214
   docker-registry-port: 5000
 
 process:

@@ -18,26 +18,26 @@ public class CommandConfigurer {
     private String registryPort;
 
     @Value("${docker.build}")
-    private String dockerBuild;
+    private String dockerBuildCommand;
 
     @Value("${docker.push}")
-    private String dockerPush;
+    private String dockerPushCommand;
 
     @Value("${docker.tag}")
-    private String dockerTag;
+    private String dockerTagCommand;
 
     public String getDockerBuild() {
-        return dockerBuild;
+        return dockerBuildCommand;
     }
 
     public String getImageTagCommand(String imageName) {
         validateIpAddressAndRegistryPort();
-        return dockerTag + " " + imageName + " " + hostIpAddress + ":" + registryPort + "/" + imageName;
+        return dockerTagCommand + " " + imageName + " " + hostIpAddress + ":" + registryPort + "/" + imageName;
     }
 
     public String getImagePushToRegistryCommand(String imageName) {
         validateIpAddressAndRegistryPort();
-        return dockerPush + " " + hostIpAddress + ":" + registryPort + "/" + imageName;
+        return dockerPushCommand + " " + hostIpAddress + ":" + registryPort + "/" + imageName;
     }
 
     private void validateIpAddressAndRegistryPort() {

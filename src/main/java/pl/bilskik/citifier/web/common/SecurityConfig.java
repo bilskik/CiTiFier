@@ -29,7 +29,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/register", "/register/redirect-to-login",
                                 "/login", "/login/redirect-to-register",
-                                "/css/**", "/js/**","/img/**", "/webjars/**"
+                                "/css/bootstrap.min.css", "/css/default-style.css",
+                                "js/bootstrap.bundle.min.js", "js/challenge/challenge",
+                                "img/arrow.svg", "img/flag.png", "img/sad-pepe.png",
+                                "/webjars/htmx.org/**"
                         )
                         .permitAll()
                         .anyRequest()

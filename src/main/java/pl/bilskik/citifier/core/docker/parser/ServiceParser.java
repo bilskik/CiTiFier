@@ -59,7 +59,7 @@ public class ServiceParser {
 
             ComposeService composeService = new ComposeService();
             composeService.setImage(validateAndReturnField((String) serviceData.get(IMAGE), IMAGE));
-            composeService.setContainerName(sanitize(validateAndReturnField((String) serviceData.get(CONTAINER_NAME), CONTAINER_NAME)));
+            composeService.setContainerName(normalizeName(validateAndReturnField((String) serviceData.get(CONTAINER_NAME), CONTAINER_NAME)));
             composeService.setEnvironments(environmentVariableParser.parseEnvironment(serviceData.get(ENVIRONMENT), isAppService));
             composeService.setPorts(portParser.parsePortList(serviceData.get(PORTS)));
             composeService.setVolumes(volumeParser.parseServiceVolume(serviceData.get(VOLUMES), volumes));
@@ -79,7 +79,7 @@ public class ServiceParser {
         return field;
     }
 
-    private String sanitize(String name) {
+    private String normalizeName(String name) {
         name = name.toLowerCase();
         name = name.replaceAll("[^a-z0-9-]", "");
         name = name.replaceAll("^-+|-+$", "");

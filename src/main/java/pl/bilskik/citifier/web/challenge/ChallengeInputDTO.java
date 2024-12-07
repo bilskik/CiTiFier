@@ -12,6 +12,7 @@ import lombok.*;
 public class ChallengeInputDTO {
     @Size(min = ChallengeConstraints.MINIMUM_NUMBER_OF_CHARACTERS, message = "Nazwa zadania powinna być o długości co najmniej 3 znaków!")
     @Size(max = ChallengeConstraints.MAXIMUM_NUMBER_OF_CHARACTERS, message = "Nazwa zadania nie może być dłuższa niż 100 znaków!")
+    @Pattern(regexp = "^[^#]*$", message = "Nazwa zadania nie może zawierać znaku '#'!")
     private String name;
     @Min(value = ChallengeConstraints.MINIMUM_NUMBER_OF_APP, message = "Liczba aplikacji powinna być w przedziale między 1 a 250")
     @Max(value = ChallengeConstraints.MAXIMUM_NUMBER_OF_APP, message = "Liczba aplikacji powinna być w przedziale między 1 a 250")

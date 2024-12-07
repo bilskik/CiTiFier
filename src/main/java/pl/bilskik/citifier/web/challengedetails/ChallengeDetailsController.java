@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pl.bilskik.citifier.domain.dto.ChallengeAppDataDTO;
@@ -18,9 +19,8 @@ public class ChallengeDetailsController {
 
     private final ChallengeDetailsService challengeDetailsService;
 
-    @GetMapping
-    public String getChallengeDetails(Model model) {
-        Long challengeId = (Long) model.getAttribute("challengeId");
+    @GetMapping("/{challengeId}")
+    public String getChallengeDetails(Model model, @PathVariable Long challengeId) {
         ChallengeDTO challengeDTO = challengeDetailsService.findChallengeById(challengeId);
         addModelAttributes(model, challengeDTO);
         return "/challenge/challenge-details";

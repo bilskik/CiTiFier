@@ -85,7 +85,9 @@ class DockerComposeParserIntegrationTest extends ValidDockerComposeTestCases {
                 Arguments.of(INVALID_DOCKER_COMPOSE_4),
                 Arguments.of(INVALID_DOCKER_COMPOSE_5),
                 Arguments.of(INVALID_DOCKER_COMPOSE_6),
-                Arguments.of(INVALID_DOCKER_COMPOSE_7)
+                Arguments.of(INVALID_DOCKER_COMPOSE_7),
+                Arguments.of(INVALID_DOCKER_COMPOSE_8),
+                Arguments.of(INVALID_DOCKER_COMPOSE_9)
             );
     }
 

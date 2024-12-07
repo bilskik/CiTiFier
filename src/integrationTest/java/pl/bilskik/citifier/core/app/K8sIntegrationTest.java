@@ -125,6 +125,7 @@ public class K8sIntegrationTest {
         challengeDetailsService.deleteApp(challengeDTO);
 
         assertEquals(ChallengeStatus.REMOVED, challengeDTO.getStatus());
+        // TO DO podłączyc się do k8s i sprawdzic ilosc obiektow w namespace.
     }
 
     private String cloneRepo(String url) throws IOException {

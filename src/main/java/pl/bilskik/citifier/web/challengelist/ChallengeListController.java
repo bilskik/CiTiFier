@@ -33,9 +33,8 @@ public class ChallengeListController {
     }
 
     @PostMapping("/redirect")
-    public RedirectView parseComposeAndDeployApp(Model model, Long challengeId, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("challengeId", challengeId);
-        return new RedirectView("/challenge-details");
+    public RedirectView parseComposeAndDeployApp(Long challengeId, RedirectAttributes redirectAttributes) {
+        return new RedirectView("/challenge-details/" + challengeId);
     }
 
     private String retrieveLoginFromAuthentication(Authentication auth) {

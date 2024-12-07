@@ -144,4 +144,22 @@ public class InvalidDockerComposeTestCases {
                     "    container_name: db\n" +
                     "    ports:\n" +
                     "      - \"5432:5432\"";
+
+    //lack of image name in db service
+    public static final String INVALID_DOCKER_COMPOSE_9 =
+            "version: '3.8'\n" +
+                    "services:\n" +
+                    "  backend:\n" +
+                    "    image: node:14\n" +
+                    "    container_name: backend\n" +
+                    "    environment:\n" +
+                    "      - DB=db-1\n" +
+                    "      - CTF_FLAG=ctfflag\n" +
+                    "    ports:\n" +
+                    "      - \"3000:3000\"\n" +
+                    "\n" +
+                    "  db:\n" +
+                    "    container_name: db\n" +
+                    "    ports:\n" +
+                    "      - \"5432:5432\"";
 }

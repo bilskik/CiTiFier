@@ -47,7 +47,7 @@ public class PortParser {
         } else {
             return createPort(val, val);
         }
-        return null;
+        throw new DockerComposeParserException(String.format("Invalid port definition: %s!", val));
     }
 
     private Port createPort(String hostPort, String targetPort) {
