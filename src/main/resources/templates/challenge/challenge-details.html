@@ -19,7 +19,7 @@
             <div class="col-6">
                 <div>
                     <label
-                            th:text="#{ctfcreator.challenge.github-link}"
+                            th:text="#{challenge.github-link}"
                             for="challenge-github-link"
                             class="form-label"
                     >
@@ -34,7 +34,7 @@
                 </div>
                 <div>
                     <label
-                            th:text="#{ctfcreator.challenge-list.repo-name}"
+                            th:text="#{challenge-list.repo-name}"
                             for="challenge-repo-name"
                             class="form-label"
                     >
@@ -49,7 +49,7 @@
                 </div>
                 <div>
                     <label
-                            th:text="#{ctfcreator.challenge-details.exposed-ports}"
+                            th:text="#{challenge-details.exposed-ports}"
                             for="challenge-exposed-ports"
                             class="form-label"
                     >
@@ -64,7 +64,7 @@
                 </div>
                 <div>
                     <label
-                            th:text="#{ctfcreator.challenge-details.number-of-app}"
+                            th:text="#{challenge-details.number-of-app}"
                             for="challenge-number-of-app"
                             class="form-label"
                     >
@@ -77,11 +77,26 @@
                             disabled
                     >
                 </div>
+                <div>
+                    <label
+                            th:text="#{challenge-details.namespace}"
+                            for="challenge-namespace"
+                            class="form-label"
+                    >
+                    </label>
+                    <input
+                            id="challenge-namespace"
+                            type="text"
+                            class="form-control"
+                            th:value="${challenge.challengeAppDataDTO.namespace}"
+                            disabled
+                    >
+                </div>
             </div>
             <div class="w-100">
                 <div class="col-6 d-flex justify-content-between align-items-start w-100">
                     <button
-                            th:text="#{ctfcreator.challenge-details.deploy-start}"
+                            th:text="#{challenge-details.deploy-start}"
                             th:hx-post="@{/challenge-details/deploy-start}"
                             hx-include="#challenge-id"
                             th:hx-trigger="click"
@@ -92,7 +107,7 @@
                     >
                     </button>
                     <button
-                            th:text="#{ctfcreator.challenge-details.start-again}"
+                            th:text="#{challenge-details.start-again}"
                             th:hx-post="@{/challenge-details/start}"
                             hx-include="#challenge-id"
                             th:hx-trigger="click"
@@ -104,19 +119,18 @@
                     >
                     </button>
                     <button
-                            th:text="#{ctfcreator.challenge-details.stop}"
+                            th:text="#{challenge-details.stop}"
                             th:hx-post="@{/challenge-details/stop}"
                             hx-include="#challenge-id"
                             th:hx-trigger="click"
                             hx-target="body"
                             hx-swap="outerHTML"
                             class="btn btn-warning"
-                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'RUNNING' ||
-                             challenge.status.name() == 'STOPPED'}"
+                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'STOPPED'}"
                     >
                     </button>
                     <button
-                            th:text="#{ctfcreator.challenge-details.finish}"
+                            th:text="#{challenge-details.finish}"
                             th:hx-post="@{/challenge-details/finish}"
                             hx-include="#challenge-id"
                             th:hx-trigger="click"

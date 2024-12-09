@@ -5,7 +5,7 @@
 ></p>
 <p
         th:case="'RUNNING'"
-        th:text="#{challenge.status.getDisplayName()}"
+        th:text="${challenge.status.getDisplayName()}"
         class="badge bg-success"
 ></p>
 <p

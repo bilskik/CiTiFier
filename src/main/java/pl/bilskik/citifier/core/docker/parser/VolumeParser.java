@@ -62,6 +62,7 @@ public class VolumeParser {
     }
 
     private Volume createBindMountVolume(String hostPath, String containerPath) {
+        log.info("Create bind mount volume! HostPath: {}, ContainerPath: {}", hostPath, containerPath);
         Volume volume = new Volume();
         volume.setVolumeType(VolumeType.BIND_MOUNT);
         volume.setHostPath(hostPath);
@@ -70,6 +71,7 @@ public class VolumeParser {
     }
 
     private Volume createNamedVolume(String volumeName, String containerPath) {
+        log.info("Create named volume! VolumeName: {}, ContainerPath: {}", volumeName, containerPath);
         Volume volume = new Volume();
         volume.setVolumeName(volumeName);
         volume.setVolumeType(VolumeType.VOLUME);

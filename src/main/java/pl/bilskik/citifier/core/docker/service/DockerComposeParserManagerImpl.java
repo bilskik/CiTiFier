@@ -29,12 +29,12 @@ public class DockerComposeParserManagerImpl implements DockerComposeParserManage
             Map<String, Object> dockerComposeData = yaml.load(inputStream);
             if(dockerComposeData == null || dockerComposeData.isEmpty()) {
                 log.error("Docker-compose file is empty! Filepath: {}", filepath);
-                throw new DockerComposeParserException("File is empty!");
+                throw new DockerComposeParserException("Plik docker-compose jest pusty!");
             }
             return composeParser.parse(dockerComposeData);
         } catch (IOException e) {
             log.error("Cannot open docker-compose file! Filepath: {}", filepath);
-            throw new DockerComposeParserException("Cannot open docker-compose file!");
+            throw new DockerComposeParserException("Nie można otworzyć pliku docker-compose!");
         }
     }
 

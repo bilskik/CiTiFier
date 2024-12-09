@@ -26,7 +26,7 @@ public class DockerComposeParser {
         log.info("Parsing docker-compose file! Data: {}", data);
         if(data.get(SERVICES) == null) {
             log.error("Services doesn't exist in docker-compose file!");
-            throw new DockerComposeParserException("Services doesn't exist in docker-compose file!");
+            throw new DockerComposeParserException("Brak definicji serwisów w pliku docker-compose");
         }
 
         DockerCompose compose = initializeDockerCompose((String) data.get(VERSION));

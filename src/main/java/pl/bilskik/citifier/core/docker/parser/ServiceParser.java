@@ -36,11 +36,11 @@ public class ServiceParser {
     ) {
         if(services == null || services.isEmpty()) {
             log.info("No services found in the Docker Compose configuration");
-            throw new DockerComposeParserException("Services doesn't exist in docker-compose file!");
+            throw new DockerComposeParserException("Serwis nie istnieje w pliku docker-compose!");
         }
         if(services.size() != 2) {
             log.info("Expected exactly 2 services in Docker Compose configuration!");
-            throw new DockerComposeParserException("Expected exactly 2 services in docker-compose file!");
+            throw new DockerComposeParserException("Błąd! Spodziewano dokładnie dwóch serwisów w pliku docker-compose!");
         }
         if(!services.containsKey(DB_SERVICE_NAME)) {
             log.info("Invalid service name: One of the service name must include 'db'!");
