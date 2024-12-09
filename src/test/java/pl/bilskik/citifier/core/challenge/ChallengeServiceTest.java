@@ -154,9 +154,9 @@ class ChallengeServiceTest {
         String login = "login";
         String name = "name";
         when(challengeDao.findAllByLogin(login)).thenReturn(new ArrayList<>(){{
-            add(ChallengeDTO.builder().name("name-1").build());
-            add(ChallengeDTO.builder().name("name-2").build());
-            add(ChallengeDTO.builder().name("name").build());
+            add(ChallengeDTO.builder().name("name-1").status(ChallengeStatus.NEW).build());
+            add(ChallengeDTO.builder().name("name-2").status(ChallengeStatus.NEW).build());
+            add(ChallengeDTO.builder().name("name").status(ChallengeStatus.NEW).build());
         }});
 
         boolean result = challengeService.isChallengeNameUniqueForCTFCreator(login, name);
@@ -169,9 +169,9 @@ class ChallengeServiceTest {
         String login = "login";
         String name = "name";
         when(challengeDao.findAllByLogin(login)).thenReturn(new ArrayList<>(){{
-            add(ChallengeDTO.builder().name("name-1").build());
-            add(ChallengeDTO.builder().name("name-2").build());
-            add(ChallengeDTO.builder().name("name-3").build());
+            add(ChallengeDTO.builder().name("name-1").status(ChallengeStatus.NEW).build());
+            add(ChallengeDTO.builder().name("name-2").status(ChallengeStatus.NEW).build());
+            add(ChallengeDTO.builder().name("name-3").status(ChallengeStatus.NEW).build());
         }});
 
         boolean result = challengeService.isChallengeNameUniqueForCTFCreator(login, name);
