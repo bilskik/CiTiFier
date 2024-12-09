@@ -33,11 +33,11 @@
                         th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}"
                         required
                 />
-                <p
+                <span
                         th:if="${#fields.hasErrors('name')}"
                         th:errors="*{name}"
                         class="invalid-feedback"
-                ></p>
+                ></span>
             </div>
             <div class="form-group">
                 <label
@@ -53,11 +53,11 @@
                         class="challenge numberOfApp form-control"
                         required
                 >
-                <p
+                <span
                         th:if="${#fields.hasErrors('numberOfApp')}"
                         th:errors="*{numberOfApp}"
                         class="invalid-feedback"
-                ></p>
+                ></span>
             </div>
             <div class="form-group">
                 <label
@@ -73,11 +73,11 @@
                         class="challenge startExposedPort form-control"
                         required
                 >
-                <p
+                <span
                         th:if="${#fields.hasErrors('startExposedPort')}"
                         th:errors="*{startExposedPort}"
                         class="invalid-feedback"
-                ></p>
+                ></span>
             </div>
         </div>
         <button

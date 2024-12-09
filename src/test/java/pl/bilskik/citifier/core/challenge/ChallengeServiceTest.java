@@ -19,22 +19,22 @@ import pl.bilskik.citifier.domain.dto.ChallengeDTO;
 import pl.bilskik.citifier.domain.entity.enumeration.ChallengeStatus;
 import pl.bilskik.citifier.domain.service.ChallengeDao;
 import pl.bilskik.citifier.web.challenge.ChallengeCreationException;
-import pl.bilskik.citifier.web.challenge.ChallengeCreationService;
+import pl.bilskik.citifier.web.challenge.ChallengeService;
 import pl.bilskik.citifier.web.challenge.ChallengeInputDTO;
 import pl.bilskik.citifier.web.challenge.ChallengePortFlagMapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ChallengeCreationServiceTest {
+class ChallengeServiceTest {
 
     @Mock
     private ChallengeDao challengeDao;
@@ -43,7 +43,7 @@ class ChallengeCreationServiceTest {
     private ChallengePortFlagMapper portFlagMapper;
 
     @InjectMocks
-    private ChallengeCreationService challengeCreationService;
+    private ChallengeService challengeService;
 
     @Captor
     private ArgumentCaptor<ChallengeDTO> challengeCaptor;
@@ -72,7 +72,7 @@ class ChallengeCreationServiceTest {
         String beginNamespace = "reponame-";
         int BEGIN_NAMESPACE_LEN = beginNamespace.length();
 
-        challengeCreationService.createNewChallenge(challengeInput, githubInput);
+        challengeService.createNewChallenge(challengeInput, githubInput);
 
         verify(challengeDao, times(1)).createNewChallenge(challengeCaptor.capture());
 
@@ -101,7 +101,7 @@ class ChallengeCreationServiceTest {
         String beginNamespace = "reponamewithmorethan30ch-";
         int BEGIN_NAMESPACE_LEN = beginNamespace.length();
 
-        challengeCreationService.createNewChallenge(challengeInput, githubInput);
+        challengeService.createNewChallenge(challengeInput, githubInput);
 
         verify(challengeDao, times(1)).createNewChallenge(challengeCaptor.capture());
 
@@ -126,7 +126,7 @@ class ChallengeCreationServiceTest {
     @MethodSource("provideChallengeCreationNullInput")
     public void createNewChallenge_WhenInputIsNull(ChallengeInputDTO challengeInput, GithubDataInputDTO githubInput) {
         assertThrows(ChallengeCreationException.class, () -> {
-            challengeCreationService.createNewChallenge(challengeInput, githubInput);
+            challengeService.createNewChallenge(challengeInput, githubInput);
         });
     }
 
@@ -136,6 +136,47 @@ class ChallengeCreationServiceTest {
                 Arguments.of(new ChallengeInputDTO(), null),
                 Arguments.of(null, new GithubDataInputDTO())
         );
+    }
+
+    @Test
+    public void isChallengeNameUniqueForCTFCreator_whenChallengeDTOListIsEmpty() {
+        String login = "login";
+        String name = "name";
+        when(challengeDao.findAllByLogin(login)).thenReturn(new ArrayList<>());
+
+        boolean result = challengeService.isChallengeNameUniqueForCTFCreator(login, name);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void isChallengeNameUniqueForCTFCreator_whenChallengeDTOListContainsProvidedName() {
+        String login = "login";
+        String name = "name";
+        when(challengeDao.findAllByLogin(login)).thenReturn(new ArrayList<>(){{
+            add(ChallengeDTO.builder().name("name-1").build());
+            add(ChallengeDTO.builder().name("name-2").build());
+            add(ChallengeDTO.builder().name("name").build());
+        }});
+
+        boolean result = challengeService.isChallengeNameUniqueForCTFCreator(login, name);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isChallengeNameUniqueForCTFCreator_whenChallengeDTOListNotContainsProvidedName() {
+        String login = "login";
+        String name = "name";
+        when(challengeDao.findAllByLogin(login)).thenReturn(new ArrayList<>(){{
+            add(ChallengeDTO.builder().name("name-1").build());
+            add(ChallengeDTO.builder().name("name-2").build());
+            add(ChallengeDTO.builder().name("name-3").build());
+        }});
+
+        boolean result = challengeService.isChallengeNameUniqueForCTFCreator(login, name);
+
+        assertTrue(result);
     }
 
 }

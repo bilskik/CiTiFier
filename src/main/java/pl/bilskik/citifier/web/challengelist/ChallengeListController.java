@@ -16,6 +16,8 @@ import pl.bilskik.citifier.domain.service.ChallengeDao;
 
 import java.util.List;
 
+import static pl.bilskik.citifier.web.common.CommonWebUtils.retrieveLoginFromAuthentication;
+
 @Controller
 @RequestMapping("/challenge-list")
 @RequiredArgsConstructor
@@ -33,15 +35,8 @@ public class ChallengeListController {
     }
 
     @PostMapping("/redirect")
-    public RedirectView parseComposeAndDeployApp(Long challengeId, RedirectAttributes redirectAttributes) {
+    public RedirectView parseComposeAndDeployApp(Long challengeId) {
         return new RedirectView("/challenge-details/" + challengeId);
-    }
-
-    private String retrieveLoginFromAuthentication(Authentication auth) {
-        if(auth.getPrincipal() instanceof UserDetails) {
-            return ((UserDetails) auth.getPrincipal()).getUsername();
-        }
-        return "";
     }
 
     private List<ChallengeDTO> filterActive(List<ChallengeDTO> challengeList) {

@@ -19,7 +19,7 @@ public class Challenge {
     @Column(name = "CHALLENGE_ID", nullable = false)
     private Long challengeId;
 
-    @Column(name = "NAME", nullable = false, unique = true)
+    @Column(name = "NAME", nullable = false)
     private String name;
 
     @Column(name = "GITHUB_LINK", nullable = false)

@@ -20,7 +20,7 @@
             <tbody>
                 <th:block th:each="challenge, iteration: ${challengeList}">
                     <tr>
-                        <td th:text="${iteration.index}"></td>
+                        <td th:text="${iteration.index + 1}"></td>
                         <td th:text="${challenge.name}"></td>
                         <td th:text="${challenge.repoName}"></td>
                         <td th:switch="${challenge.status.name()}">

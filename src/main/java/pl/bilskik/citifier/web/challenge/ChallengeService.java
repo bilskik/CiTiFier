@@ -3,19 +3,20 @@ package pl.bilskik.citifier.web.challenge;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.bilskik.citifier.web.github.GithubDataInputDTO;
 import pl.bilskik.citifier.domain.dto.ChallengeAppDataDTO;
 import pl.bilskik.citifier.domain.dto.ChallengeDTO;
 import pl.bilskik.citifier.domain.entity.enumeration.ChallengeStatus;
 import pl.bilskik.citifier.domain.service.ChallengeDao;
+import pl.bilskik.citifier.web.github.GithubDataInputDTO;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ChallengeCreationService {
+public class ChallengeService {
 
     private final ChallengePortFlagMapper challengePortFlagMapper;
     private final ChallengeDao challengeDao;
@@ -71,6 +72,18 @@ public class ChallengeCreationService {
     private String buildNamespace(String appName) {
         String uuid = UUID.randomUUID().toString();
         return appName + "-" + uuid.substring(0, 30);
+    }
+
+    public boolean isChallengeNameUniqueForCTFCreator(String login, String name) {
+        List<ChallengeDTO> challengeDTOList = challengeDao.findAllByLogin(login);
+        if(challengeDTOList == null || challengeDTOList.isEmpty()) {
+            return true;
+        }
+        return challengeDTOList.stream()
+                .filter(x -> !x.getStatus().equals(ChallengeStatus.REMOVED))
+                .filter(x -> x.getName().equals(name))
+                .toList()
+                .isEmpty();
     }
 
 }

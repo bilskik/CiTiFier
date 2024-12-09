@@ -1,4 +1,4 @@
-package pl.bilskik.citifier.web.github;
+package pl.bilskik.citifier.web.challenge;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -7,8 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import pl.bilskik.citifier.web.challenge.ChallengeCreationService;
-import pl.bilskik.citifier.web.challenge.ChallengeInputDTO;
+import pl.bilskik.citifier.web.github.GithubDataInputDTO;
 
 import static pl.bilskik.citifier.web.challenge.ChallengeConstraints.*;
 
@@ -16,7 +15,7 @@ import static pl.bilskik.citifier.web.challenge.ChallengeConstraints.*;
 @RequiredArgsConstructor
 public class ChallengeGithubController {
 
-    private final ChallengeCreationService challengeCreationService;
+    private final ChallengeService challengeService;
 
     @GetMapping("/challenge-repo-link")
     public String githubChallengeLinkPage(
@@ -47,7 +46,7 @@ public class ChallengeGithubController {
         GithubDataInputDTO githubDataInputDTO = (GithubDataInputDTO) session.getAttribute(GITHUB_DATA);
 
         try {
-            challengeCreationService.createNewChallenge(challengeInputDTO, githubDataInputDTO);
+            challengeService.createNewChallenge(challengeInputDTO, githubDataInputDTO);
         } catch(Exception e) {
             model.addAttribute("githubDataInputDTO", githubDataInputDTO);
             return "challenge/github/challenge-github-repo";

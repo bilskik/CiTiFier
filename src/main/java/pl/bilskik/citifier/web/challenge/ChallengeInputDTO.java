@@ -16,9 +16,10 @@ public class ChallengeInputDTO {
     private String name;
     @Min(value = ChallengeConstraints.MINIMUM_NUMBER_OF_APP, message = "Liczba aplikacji powinna być w przedziale między 1 a 250")
     @Max(value = ChallengeConstraints.MAXIMUM_NUMBER_OF_APP, message = "Liczba aplikacji powinna być w przedziale między 1 a 250")
-    @NotNull(message = "Proszę podać liczbę!")
+    @NotNull(message = "Proszę podać liczbę instancji zadań!")
     private Integer numberOfApp;
     @Min(value = ChallengeConstraints.START_NODE_PORT, message = "Początkowy port może być co najmniej 30000!")
+    @Max(value = ChallengeConstraints.LAST_NODE_PORT, message = "Maksymalna wartość ostatniego portu to 32767!")
     @NotNull(message = "Proszę podać początkowy port!")
     private Integer startExposedPort;
 }
