@@ -12,6 +12,10 @@ import pl.bilskik.citifier.core.kubernetes.data.K8sResourceContext;
 import pl.bilskik.citifier.core.kubernetes.exception.K8sResourceCreationException;
 import pl.bilskik.citifier.core.kubernetes.factory.config.K8sNamespaceFactory;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static pl.bilskik.citifier.core.kubernetes.data.K8sConstants.DB_SERVICE_NAME;
 
 
@@ -54,6 +58,7 @@ public class K8sResourceManagerImpl implements K8sResourceManager {
                 client.namespaces().resource(namespaceResource).create();
             }
 
+            String dbContainerName = retrieveDbContainerName(dockerCompose.getServices().entrySet());
             for(var entry: dockerCompose.getServices().entrySet()) {
                 String serviceName = entry.getKey();
                 ComposeService service = entry.getValue();
@@ -63,7 +68,7 @@ public class K8sResourceManagerImpl implements K8sResourceManager {
                     dbDeployer.deployDb(client, context, service);
                 } else {
                     log.info("Deploying app: {}", serviceName);
-                    appDeployer.deployApp(client, context, service);
+                    appDeployer.deployApp(client, context, service, dbContainerName);
                 }
             }
         } catch(Exception e) {
@@ -73,6 +78,14 @@ public class K8sResourceManagerImpl implements K8sResourceManager {
             }
             throw new K8sResourceCreationException("Nie można prawidłowo wdrożyć zadania!");
         }
+    }
+
+    private String retrieveDbContainerName(Set<Map.Entry<String, ComposeService>> entries) {
+        return entries.stream()
+                .filter(entry -> entry.getKey().equalsIgnoreCase(DB_SERVICE_NAME))
+                .map(entry -> entry.getValue().getContainerName())
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

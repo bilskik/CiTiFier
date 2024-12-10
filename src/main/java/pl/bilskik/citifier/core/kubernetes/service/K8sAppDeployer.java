@@ -31,13 +31,13 @@ public class K8sAppDeployer {
     private final K8sDeploymentFactory deploymentCreator;
     private final K8sNodePortFactory nodePortCreator;
 
-    public void deployApp(KubernetesClient client, K8sResourceContext context, ComposeService composeService) {
+    public void deployApp(KubernetesClient client, K8sResourceContext context, ComposeService composeService, String containerName) {
         String namespace = context.getNamespace();
         Port port = composeService.getPorts().getFirst();
 
         for(int i=0; i<context.getNumberOfApp(); i++) {
             String flag = context.getPortFlag().get(context.getStartExposedPort() + i);
-            Map<String, String> envMap = createEnvForSpecificDeployment(composeService.getEnvironments(), flag, i);
+            Map<String, String> envMap = createEnvForSpecificDeployment(composeService.getEnvironments(), flag, i, containerName);
 
             Deployment deployment = deploymentCreator.createDeployment(
                     buildName(DEPLOYMENT_NAME, i),

@@ -60,7 +60,7 @@ public class K8sDbDeployer {
             );
 
             Service headlessService = headlessServiceFactory.createService(
-                    composeService.getContainerName() + "-" + i,
+                    buildDBLinkName(composeService.getContainerName(), i),
                     Collections.singletonMap(APP, HEADLESS_SERVICE_LABEL),
                     Collections.singletonMap(APP, DB_LABEL + "-" + i),
                     providePortToApplication(composeService.getPorts()),
