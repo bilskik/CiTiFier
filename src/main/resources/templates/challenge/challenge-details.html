@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title>ChallengeDetails</title>
+</head>
+<body>
+<th:block th:insert="~{common/navbar.html}">
+</th:block>
+    <div class="m-3">
+        <div>
+            <h4 th:text="${challenge.name}" class="text-center"></h4>
+            <div th:switch="${challenge.status.name()}" th:class="text-center">
+                <th:block th:insert="~{challenge/challenge-status.html}">
+                </th:block>
+            </div>
+        </div>
+        <hr>
+        <div class="d-flex flex-row">
+            <div class="col-6">
+                <div>
+                    <label
+                            th:text="#{challenge.github-link}"
+                            for="challenge-github-link"
+                            class="form-label"
+                    >
+                    </label>
+                    <input
+                            id="challenge-github-link"
+                            type="text"
+                            class="form-control"
+                            th:value="${challenge.githubLink}"
+                            disabled
+                    >
+                </div>
+                <div>
+                    <label
+                            th:text="#{challenge-list.repo-name}"
+                            for="challenge-repo-name"
+                            class="form-label"
+                    >
+                    </label>
+                    <input
+                            id="challenge-repo-name"
+                            type="text"
+                            class="form-control"
+                            th:value="${challenge.repoName}"
+                            disabled
+                    >
+                </div>
+                <div>
+                    <label
+                            th:text="#{challenge-details.exposed-ports}"
+                            for="challenge-exposed-ports"
+                            class="form-label"
+                    >
+                    </label>
+                    <input
+                            id="challenge-exposed-ports"
+                            type="text"
+                            class="form-control"
+                            th:value="${exposedPorts}"
+                            disabled
+                    >
+                </div>
+                <div>
+                    <label
+                            th:text="#{challenge-details.number-of-app}"
+                            for="challenge-number-of-app"
+                            class="form-label"
+                    >
+                    </label>
+                    <input
+                            id="challenge-number-of-app"
+                            type="text"
+                            class="form-control"
+                            th:value="${challenge.challengeAppDataDTO.numberOfApp}"
+                            disabled
+                    >
+                </div>
+                <div>
+                    <label
+                            th:text="#{challenge-details.namespace}"
+                            for="challenge-namespace"
+                            class="form-label"
+                    >
+                    </label>
+                    <input
+                            id="challenge-namespace"
+                            type="text"
+                            class="form-control"
+                            th:value="${challenge.challengeAppDataDTO.namespace}"
+                            disabled
+                    >
+                </div>
+            </div>
+            <div class="w-100">
+                <div class="col-6 d-flex justify-content-between align-items-start w-100">
+                    <button
+                            th:text="#{challenge-details.deploy-start}"
+                            th:hx-post="@{/challenge-details/deploy-start}"
+                            hx-include="#challenge-id"
+                            th:hx-trigger="click"
+                            hx-target="body"
+                            hx-swap="outerHTML"
+                            class="btn btn-success ms-3"
+                            th:disabled="${challenge.status.name() == 'RUNNING' || challenge.status.name() == 'STOPPED'}"
+                    >
+                    </button>
+                    <button
+                            th:text="#{challenge-details.start-again}"
+                            th:hx-post="@{/challenge-details/start}"
+                            hx-include="#challenge-id"
+                            th:hx-trigger="click"
+                            hx-target="body"
+                            hx-swap="outerHTML"
+                            class="btn btn-success"
+                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'RUNNING' ||
+                                challenge.status.name() == 'ERROR'}"
+                    >
+                    </button>
+                    <button
+                            th:text="#{challenge-details.stop}"
+                            th:hx-post="@{/challenge-details/stop}"
+                            hx-include="#challenge-id"
+                            th:hx-trigger="click"
+                            hx-target="body"
+                            hx-swap="outerHTML"
+                            class="btn btn-warning"
+                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'STOPPED' || challenge.status.name() == 'ERROR'}"
+                    >
+                    </button>
+                    <button
+                            th:text="#{challenge-details.finish}"
+                            th:hx-post="@{/challenge-details/finish}"
+                            hx-include="#challenge-id"
+                            th:hx-trigger="click"
+                            hx-target="body"
+                            hx-swap="outerHTML"
+                            hx-push-url="true"
+                            class="btn btn-danger me-3"
+                            th:disabled="${challenge.status.name() != 'STOPPED'}"
+                    >
+                    </button>
+                    <input
+                            id="challenge-id"
+                            name="challengeId"
+                            type="hidden"
+                            th:value="${challenge.challengeId}"
+                    />
+                </div>
+                <div>
+                    <div
+                            th:if="${applicationError != null && !applicationError.isEmpty()}"
+                            class="text-danger fw-bold mt-2 mb-2 ms-3"
+                    >
+                        <span th:text="${applicationError}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

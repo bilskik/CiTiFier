@@ -4,3 +4,16 @@ process:
 
 repo:
   base-file-path: D:\\CLONED_REPO_CITIFIER
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        highlight_sql: true
+
+logging:
+  level:
+    org:
+      springframework.security: TRACE
