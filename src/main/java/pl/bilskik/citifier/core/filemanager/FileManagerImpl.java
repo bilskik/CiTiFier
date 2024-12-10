@@ -49,7 +49,7 @@ public class FileManagerImpl implements FileManager {
         throw new FileManagerException("Docker compose not found!");
     }
 
-    public void deleteDirAndRepo(String filepath) { //TO DO
+    public void deleteDirAndRepo(String filepath) {
         log.info("Deleting repository at: {}", filepath);
 
         File file = new File(filepath);

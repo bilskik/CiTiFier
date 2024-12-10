@@ -2,6 +2,13 @@ server:
   port: 8080
   error:
     path: /error
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        domain: localhost
+        same-site: strict
+        max-age: 1000
 
 spring:
   application:
