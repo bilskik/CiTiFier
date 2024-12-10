@@ -3,23 +3,95 @@ name: Java build with Gradle
 on:
   push:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout project sources
-      uses: actions/checkout@v4
-    - name: Setup JDK 21
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'zulu'
-        java-version: '21'
-    - name: Setup gradle 
-      uses: gradle/gradle-build-action@v2
-    - name: Make gradlew executable
-      run: chmod +x ./gradlew
-    - name: Run and build
-      run: ./gradlew build
+      - name: Set IP address as env variable
+        run: |
+          echo "HOST_IP=$(hostname -I | awk '{print $1}')" >> $GITHUB_ENV
+        shell: bash
 
+      - name: Setup insecure registry
+        run: |
+          sudo systemctl stop docker
+          sudo dockerd --insecure-registry "${{ env.HOST_IP }}:5000" --insecure-registry localhost:5000 &
+        shell: bash
+
+      - name: Start PostgreSQL container
+        run: |
+          docker run -d --name postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_DB=pg \
+            -p 5432:5432 \
+            --health-cmd "pg_isready -U postgres -d pg" \
+            --health-interval 10s \
+            --health-timeout 5s \
+            --health-retries 5 \
+            postgres:latest
+        shell: bash
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until docker exec postgres pg_isready -U postgres -d pg; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 5
+          done
+          echo "PostgreSQL is ready."
+        shell: bash
+
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+        shell: bash
+
+      - name: Install minikube for integration tests
+        run: |
+          sudo curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+        shell: bash
+
+      - name: Setup local docker registry
+        run: docker run -d -p 5000:5000 --name registry registry:2
+        shell: bash
+
+      - name: Delete minikube
+        run: minikube delete
+        shell: bash
+
+      - name: Run minikube
+        run: |
+          minikube start --insecure-registry="${{ env.HOST_IP }}:5000"
+        shell: bash
+
+      - name: Verify registry access from Minikube
+        run: |
+          minikube ssh -- curl http://$HOST_IP:5000/v2/_catalog
+        shell: bash
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Setup gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Build and run unit tests
+        run: ./gradlew clean build
+
+      - name: Run integration tests
+        env:
+          DOCKER_HOST_IP_ADDRESS: ${{ env.HOST_IP }}
+        run: ./gradlew integrationTest

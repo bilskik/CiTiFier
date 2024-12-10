@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: bilskik
+      changes:
+        - createTable:
+            tableName: CHALLENGE
+            schemaName: ctf
+            columns:
+              - column:
+                  name: CHALLENGE_ID
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyConstraintName: PK_CHALLENGE_ID
+              - column:
+                  name: NAME
+                  type: NVARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: GITHUB_LINK
+                  type: NVARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: RELATIVE_PATH_TO_REPO
+                  type: NVARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: REPO_NAME
+                  type: NVARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: STATUS
+                  type: NVARCHAR(15)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: FK_CHALLENGE_APP_DATA
+                  type: BIGINT
+              - column:
+                  name: FK_CTF_CREATOR_ID
+                  type: BIGINT
+
+
+

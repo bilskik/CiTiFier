@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7
+      author: bilskik
+      changes:
+        - createTable:
+            tableName: PORT_FLAG
+            schemaName: ctf
+            columns:
+              - column:
+                  name: FK_PORT_FLAG
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: PORT
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: FLAG
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+
+
+
+

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml">
+<head th:replace="~{fragments/head :: head}">
+    <title>Challenge</title>
+</head>
+<script type="text/javascript" src="/js/challenge/challenge.js" defer></script>
+<body>
+    <th:block th:insert="~{common/navbar.html}">
+    </th:block>
+        <form
+            th:hx-post="@{/challenge/github-link}"
+            th:hx-include=".github"
+            th:hx-target="body"
+            th:hx-swap="outerHTML"
+            th:hx-push-url="false"
+            id="challenge-github-link-form"
+            class="container-fluid ps-5 pe-5 w-100 h-100"
+            th:object="${githubDataInputDTO}"
+        >
+            <div class="form-group">
+                <label
+                        th:text="#{challenge.github-link}"
+                        for="github-link"
+                        class="form-label"
+                ></label>
+                <input
+                        id="github-link"
+                        th:field="*{githubLink}"
+                        th:disabled="*{isRepoClonedSuccessfully}"
+                        th:classappend="${#fields.hasErrors('githubLink')} ? 'is-invalid' : ''"
+                        type="text"
+                        class="github githubLink form-control"
+                        pattern="https:\/\/github\.com\/([^\/]+)\/([^\/]+)"
+                        required
+                >
+                <p
+                        th:if="${#fields.hasErrors('githubLink')}"
+                        th:errors="*{githubLink}"
+                        class="invalid-feedback"
+                ></p>
+                <label
+                        th:text="#{challenge.is-github-repo-visibility}"
+                        for="github-repo-visibility"
+                        class="form-check-label"
+                >
+                </label>
+                <input
+                        th:hx-post="@{/challenge/github-repo-visibility}"
+                        th:hx-trigger="change"
+                        th:field="*{isPrivateRepo}"
+                        hx-target="#challenge-github-button"
+                        th:hx-include=".githubLink"
+                        th:hx-swap="innerHTML"
+                        th:hx-push-url="false"
+                        th:disabled="*{isRepoClonedSuccessfully}"
+                        id="github-repo-visibility"
+                        name="isPrivateRepo"
+                        type="checkbox"
+                        class="form-check-input githubLink"
+                />
+                <div id="challenge-github-button" hx-on::after-swap="handleAfterSwap(event);">
+                    <span th:if="*{!isPrivateRepo}">
+                        <th:block th:insert="~{challenge/github/github-public-repo-button.html}">
+                        </th:block>
+                    </span>
+                    <span th:if="*{isPrivateRepo}">
+                        <th:block th:insert="~{challenge/github/github-private-repo-button.html}">
+                        </th:block>
+                    </span>
+                </div>
+                <button
+                        th:text="#{challenge.create-challenge}"
+                        id="create-challenge"
+                        type="button"
+                        class="btn btn-primary border"
+                        th:hx-post="@{/challenge-creation}"
+                        th:hx-push-url="true"
+                        th:disabled="*{!isRepoClonedSuccessfully}"
+                >
+                </button>
+            </div>
+        </form>
+</body>
+</html>

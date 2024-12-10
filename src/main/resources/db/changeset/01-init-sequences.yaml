@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: bilskik
+      changes:
+        - createSequence:
+            sequenceName: user_seq
+            incrementBy: 50
+            startValue: 1
+            minValue: 1
+            cacheSize: 100
+            schemaName: ctf
+
+  - changeSet:
+      id: 2
+      author: bilskik
+      changes:
+        - createSequence:
+            sequenceName: challenge_seq
+            incrementBy: 50
+            startValue: 1
+            minValue: 1
+            cacheSize: 100
+            schemaName: ctf
+
+  - changeSet:
+        id: 3
+        author: bilskik
+        changes:
+            - createSequence:
+                  sequenceName: challenge_app_data_seq
+                  incrementBy: 50
+                  startValue: 1
+                  minValue: 1
+                  cacheSize: 100
+                  schemaName: ctf

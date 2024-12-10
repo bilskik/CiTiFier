@@ -15,25 +15,65 @@ repositories {
 	mavenCentral()
 }
 
-ext {
-	set('springModulithVersion', "1.1.4")
+sourceSets {
+	integrationTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	integrationTestImplementation.extendsFrom testImplementation
+	integrationTestImplementation.extendsFrom runtimeOnly
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.modulith:spring-modulith-starter-core'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
+	implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.5'
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	implementation 'org.yaml:snakeyaml:2.3'
 
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
-	}
+	implementation 'io.fabric8:kubernetes-client:6.13.0'
+	implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
+	implementation 'org.apache.commons:commons-lang3:3.17.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.3.1'
+	implementation 'net.lbruun.springboot:preliquibase-spring-boot-starter:1.5.1'
+	implementation 'org.liquibase:liquibase-core'
+	implementation 'org.hibernate.common:hibernate-commons-annotations:7.0.0.Final'
+	implementation 'org.postgresql:postgresql:42.7.3'
+
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:3.4.1'
+	implementation('org.webjars.npm:htmx.org:1.9.12')
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	integrationTestImplementation 'org.testcontainers:junit-jupiter:1.20.2'
+	integrationTestImplementation "org.testcontainers:k3s:1.20.3"
+//	integrationTestImplementation 'com.dajudge.kindcontainer:kindcontainer:1.4.7'
+
+	integrationTestImplementation 'org.bouncycastle:bcprov-jdk18on:1.79' //k3s container requires it
+	integrationTestImplementation 'org.bouncycastle:bcpkix-jdk18on:1.79' //k3s container requires it
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('integrationTest', Test) {
+	description = 'Runs integration tests'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	useJUnitPlatform()
+	shouldRunAfter test
 }

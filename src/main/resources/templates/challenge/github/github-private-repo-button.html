@@ -1,0 +1,8 @@
+<a
+        th:text="#{common.submit}"
+        th:href="${redirectUrl}"
+        th:classappend="*{isRepoClonedSuccessfully} ? 'disabled' : ''"
+        id="challenge-github-link-button"
+        type="button"
+        class="btn btn-primary border"
+></a>

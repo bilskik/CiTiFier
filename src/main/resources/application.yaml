@@ -1,0 +1,55 @@
+server:
+  port: 8080
+  error:
+    path: /error
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        domain: localhost
+        same-site: strict
+        max-age: 1000
+
+spring:
+  application:
+    name: CiTiFier
+  profiles:
+    active: dev
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pg
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    dbcp2:
+      default-schema: ${db.schemaName}
+
+  liquibase:
+    change-log: db/changelog/changelog-master.yaml
+    default-schema: ${db.schemaName}
+
+preliquibase:
+  sql-script-references: classpath:/db/preliquibase/schema-creation.sql
+
+db:
+  schemaName: ctf
+
+docker:
+  build: docker-compose build
+  tag: docker tag
+  push: docker push
+  host-ip-address: 10.12.4.214
+  docker-registry-port: 5000
+
+process:
+  timeout: 180
+  time-unit: SECONDS
+
+oauth2:
+  github:
+    client-id:
+    client-secret:
+    app-id:
