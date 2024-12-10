@@ -20,7 +20,8 @@ public class PortParser {
             List<Port> portList = new ArrayList<>();
             List<String> list = convertToStringList((List<?>)o);
             if(list.size() != 1) {
-                throw new DockerComposeParserException("Each docker-compose service should contain only one port mapping!");
+                log.error("Each service in docker-compose can contain maximum one port mapping!");
+                throw new DockerComposeParserException("Każdy z serwisów w pliku docker-compose może zawierać maksymalnie jedno mapowanie portów!");
             }
             for(var val: list) {
                 portList.add(parsePort(val));
@@ -28,7 +29,8 @@ public class PortParser {
             return portList;
         }
 
-        throw new DockerComposeParserException("Each docker-compose service should have port mapping!");
+        log.error("Each service in docker-compose can contain maximum one port mapping!");
+        throw new DockerComposeParserException("Każdy z serwisów w pliku docker-compose może zawierać maksymalnie jedno mapowanie portów!");
     }
 
     private Port parsePort(String val) {
@@ -47,7 +49,8 @@ public class PortParser {
         } else {
             return createPort(val, val);
         }
-        throw new DockerComposeParserException(String.format("Invalid port definition: %s!", val));
+        log.error("Invalid port definition: {}!", val);
+        throw new DockerComposeParserException(String.format("Nieprawidłowa definicja portów: %s!", val));
     }
 
     private Port createPort(String hostPort, String targetPort) {
@@ -63,7 +66,8 @@ public class PortParser {
         port.setTargetPort(targetPort);
         Port.ConnectionType type = Port.ConnectionType.fromString(connectionType);
         if(type == Port.ConnectionType.UDP) {
-            throw new DockerComposeParserException("UDB connection type is currently not supported!");
+            log.error("UDB connection type is currently not supported!");
+            throw new DockerComposeParserException("Połączenie typu UDB jest obecnie niewspierane!");
         }
         port.setConnectionType(Port.ConnectionType.fromString(connectionType));
         return port;

@@ -1,5 +1,6 @@
 package pl.bilskik.citifier.core.docker.parser;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.core.docker.exception.DockerComposeParserException;
 
@@ -12,6 +13,7 @@ import static pl.bilskik.citifier.core.docker.parser.TypeConverter.convertToMapS
 import static pl.bilskik.citifier.core.docker.parser.TypeConverter.convertToStringList;
 
 @Service
+@Slf4j
 public class EnvironmentVariableParser {
 
     private final static String DB_ENV = "DB";
@@ -25,6 +27,7 @@ public class EnvironmentVariableParser {
     };
 
     public Map<String, String> parseEnvironment(Object env, boolean isAppService) {
+        log.info("Parsing environment variables: {}", env);
         Map<String, String> envMap = parse(env, callback);
         return validateEnv(envMap, isAppService);
     }
@@ -52,10 +55,12 @@ public class EnvironmentVariableParser {
         }
 
         if(!envMap.containsKey(DB_ENV)) {
-            throw new DockerComposeParserException("Application service must include DB in environment variables!");
+            log.error("Application service must include DB in environment variables!");
+            throw new DockerComposeParserException("Serwis aplikacji musi zawierać 'DB' w zmiennych środowiskowych");
         }
         if(!envMap.containsKey(CTF_FLAG_ENV)) {
-            throw new DockerComposeParserException("Application service must include CTF_FLAG in environment variables!");
+            log.error("Application service must include CTF_FLAG in environment variables!");
+            throw new DockerComposeParserException("Serwis aplikacji musi zawierać 'CTF_FLAG' w zmiennych środowiskowych");
         }
 
         return envMap;

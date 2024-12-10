@@ -2,6 +2,7 @@ package pl.bilskik.citifier.core.kubernetes.factory.deployment;
 
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.util.Map;
 import static pl.bilskik.citifier.core.kubernetes.util.K8sFactoryUtils.convertFromMapToEnvVarList;
 
 @Service
+@Slf4j
 public class K8sDeploymentFactory {
 
     private final static String API_VERSION = "apps/v1";
@@ -32,6 +34,9 @@ public class K8sDeploymentFactory {
             Integer containerPort,
             Map<String, String> containerEnv
     ) {
+        String imageWithLocation = buildImageLocation(containerImage);
+        log.info("Creating deployment, deploymentName: {}, deploymentLabel: {}, podLabel: {}, containerName: {}, containerImage: {}"
+                ,deploymentName, deploymentLabel, podLabel, containerName, imageWithLocation);
         return new DeploymentBuilder()
                 .withApiVersion(API_VERSION)
                 .withNewMetadata()
@@ -51,7 +56,7 @@ public class K8sDeploymentFactory {
                             .withContainers()
                                 .addNewContainer()
                                 .withName(containerName)
-                                .withImage(buildImageLocation(containerImage))
+                                .withImage(imageWithLocation)
                                 .addNewPort()
                                     .withContainerPort(containerPort)
                                     .withProtocol(TCP)

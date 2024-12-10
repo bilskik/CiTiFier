@@ -22,7 +22,7 @@ public class ProcessRunner {
     public boolean startProcess(ProcessBuilder processBuilder) {
         Process process = null;
         try {
-            log.info("Process started");
+            log.info("Strating process");
             process = processBuilder.start();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -44,9 +44,9 @@ public class ProcessRunner {
                 return false;
             }
         } catch (IOException | InterruptedException e) {
-            log.info("Error executing docker-compose build", e);
+            log.info("Error executing command {}", processBuilder.command());
             destroyProcessIfExist(process);
-            throw new DockerImageBuilderException("Cannot execute docker build process properly!");
+            throw new DockerImageBuilderException(String.format("Błąd podczas uruchamiania komendy %s!", processBuilder.command()));
         }
     }
 
@@ -60,6 +60,7 @@ public class ProcessRunner {
         if("SECONDS".equals(timeunit)) {
             return TimeUnit.SECONDS;
         }
-        throw new DockerImageBuilderException("No time-unit specified");
+        log.error("No time-unit specified");
+        throw new DockerImageBuilderException("Błąd! Brak specyfikacji jednostki czasu!");
     }
 }

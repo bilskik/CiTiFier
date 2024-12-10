@@ -67,11 +67,11 @@ public class K8sResourceManagerImpl implements K8sResourceManager {
                 }
             }
         } catch(Exception e) {
-            log.info(e.getMessage());
+            log.info("Cannot deploy app! I am cleaning resources, Reason: {}", e.getMessage());
             if(client != null) {
                 resourceCleaner.deleteNamespaceWithResources(client, namespace);
             }
-            throw new K8sResourceCreationException("Resource cannot be deployed!");
+            throw new K8sResourceCreationException("Nie można prawidłowo wdrożyć zadania!");
         }
     }
 

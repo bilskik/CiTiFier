@@ -44,14 +44,14 @@ public class ServiceParser {
         }
         if(!services.containsKey(DB_SERVICE_NAME)) {
             log.info("Invalid service name: One of the service name must include 'db'!");
-            throw new DockerComposeParserException("Invalid service name: One of the service name must include 'db'!");
+            throw new DockerComposeParserException("Nieprawidłowa nazwa serwisu! Jeden z serwisów musi zawierać nazwę 'db'!");
         }
 
         Map<String, ComposeService> composeServices = new HashMap<>();
         services.forEach((serviceName, serviceData) -> {
             if(serviceName != null && serviceData == null || serviceData.isEmpty()) {
                 log.error("Skipping service {}: No data found!", serviceName);
-                throw new DockerComposeParserException(String.format("Service (%s) is empty!", serviceName));
+                throw new DockerComposeParserException(String.format("Serwis (%s) jest pusty!", serviceName));
             }
             log.info("Parsing service: {} ", serviceName);
 
@@ -74,7 +74,8 @@ public class ServiceParser {
 
     private String validateAndReturnField(String field, String fieldName) {
         if(field == null || field.isEmpty()) {
-            throw new DockerComposeParserException(String.format("Docker compose must contain field: %s",fieldName));
+            log.info("Docker-compose must contain field {}", fieldName);
+            throw new DockerComposeParserException(String.format("Docker-compose musi zawierać pole: %s",fieldName));
         }
         return field;
     }

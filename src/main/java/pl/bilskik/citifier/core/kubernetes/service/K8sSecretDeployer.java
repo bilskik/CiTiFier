@@ -10,14 +10,12 @@ import pl.bilskik.citifier.core.kubernetes.factory.config.K8sSecretFactory;
 import java.util.Collections;
 import java.util.Map;
 
-import static pl.bilskik.citifier.core.kubernetes.data.K8sConstants.APP;
-import static pl.bilskik.citifier.core.kubernetes.data.K8sConstants.SECRET_LABEL;
+import static pl.bilskik.citifier.core.kubernetes.data.K8sConstants.*;
 import static pl.bilskik.citifier.core.kubernetes.util.K8sEnvironmentExtractor.getFirstKey;
 
 @Service
 @RequiredArgsConstructor
 public class K8sSecretDeployer {
-    private final static String SECRET = "secret";
     private final static String OPAQUE = "Opaque";
 
     private final K8sSecretFactory secretFactory;

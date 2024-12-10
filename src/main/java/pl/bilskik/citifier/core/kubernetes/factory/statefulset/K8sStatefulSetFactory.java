@@ -4,6 +4,7 @@ package pl.bilskik.citifier.core.kubernetes.factory.statefulset;
 import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.api.model.apps.StatefulSetBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
 import static pl.bilskik.citifier.core.kubernetes.util.K8sFactoryUtils.convertFromMapToEnvVarList;
 
 @Service
+@Slf4j
 public class K8sStatefulSetFactory {
 
     private final static String API_VERSION = "apps/v1";
@@ -28,6 +30,8 @@ public class K8sStatefulSetFactory {
             List<Volume> volumes,
             List<VolumeMount> volumeMounts
     ) {
+        log.info("Creating StatefulSet service, statefulSetName: {}, statefulSetLabel: {}, podLabel: {}, containerName: {}, containerImage: {}, secretName: {}",
+                statefulSetName, statefulSetLabel, podLabel, containerName, containerImage, secretName);
         ContainerBuilder containerBuilder = new ContainerBuilder()
                 .withName(containerName)
                 .withImage(containerImage)

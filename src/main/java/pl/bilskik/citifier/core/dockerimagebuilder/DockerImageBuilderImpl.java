@@ -19,28 +19,28 @@ public class DockerImageBuilderImpl implements DockerImageBuilder {
         File file = new File(filepath);
         if(!file.exists()) {
             log.error("Repository on filepath: {} doesn't exist!", filepath);
-            throw new DockerImageBuilderException("Cannot find repository");
+            throw new DockerImageBuilderException("Nie można znaleźć repozytorium na ścieżce!");
         }
 
         boolean buildResult = executeDockerComposeBuild(file);
 
         if(!buildResult) {
             log.error("I can't build image! Image filepath: {}", filepath);
-            throw new DockerImageBuilderException("Cannot execute docker build process properly!");
+            throw new DockerImageBuilderException("Błąd! Nie można zbudować obrazu!");
         }
         log.info("Image built successfully!");
 
         boolean tagResult = tagImageToPointLocalRegistry(imageName);
         if(!tagResult) {
             log.error("I can't tag image! Image filepath: {}", filepath);
-            throw new DockerImageBuilderException("Cannot tag image!");
+            throw new DockerImageBuilderException("Błąd! Nie można otagować obrazu!");
         }
         log.info("Image tagged successfully!");
 
         boolean pushImageResult = pushImageToRegistry(imageName);
         if(!pushImageResult) {
             log.error("I can't push image to local registry! Push filepath: {}", filepath);
-            throw new DockerImageBuilderException("Cannot push image to local registry!");
+            throw new DockerImageBuilderException("Błąd! Nie można załadować obrazu do lokalnego rejestru");
         }
         log.info("Image tagged successfully!");
     }

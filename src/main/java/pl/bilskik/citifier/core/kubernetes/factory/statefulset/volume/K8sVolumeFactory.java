@@ -3,10 +3,12 @@ package pl.bilskik.citifier.core.kubernetes.factory.statefulset.volume;
 import io.fabric8.kubernetes.api.model.HostPathVolumeSource;
 import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.api.model.VolumeBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bilskik.citifier.core.kubernetes.exception.K8sResourceCreationException;
 
 @Service
+@Slf4j
 public class K8sVolumeFactory {
 
     private final static String CONFIG_MAP = "CONFIG_MAP";
@@ -20,6 +22,7 @@ public class K8sVolumeFactory {
             String sourceName,
             String hostPath
     ) {
+        log.info("Creating volume, volumeType: {}, volumeName: {}", volumeType, volumeName);
         if(volumeType == null) {
             throw new K8sResourceCreationException("Invalid volume type!");
         }

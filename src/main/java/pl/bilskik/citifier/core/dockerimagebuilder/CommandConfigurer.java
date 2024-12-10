@@ -1,5 +1,6 @@
 package pl.bilskik.citifier.core.dockerimagebuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Pattern;
 
 @Service
+@Slf4j
 public class CommandConfigurer {
 
     private final static String IPV4_REGEX = "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$";
@@ -43,10 +45,12 @@ public class CommandConfigurer {
     private void validateIpAddressAndRegistryPort() {
         Pattern pattern = Pattern.compile(IPV4_REGEX);
         if(!pattern.matcher(hostIpAddress).matches()) {
-            throw new DockerImageBuilderException(String.format("Invalid hostIpAddress %s!", hostIpAddress));
+            log.error("Invalid hostIpAddress {}!", hostIpAddress);
+            throw new DockerImageBuilderException(String.format("Nieprawidłowy adres IP hoosta %s!", hostIpAddress));
         }
         if (registryPort == null || registryPort.isEmpty() || !StringUtils.isNumeric(registryPort)) {
-            throw new DockerImageBuilderException(String.format("Invalid registry port %s!", registryPort));
+            log.error("Invalid registry port {}!", registryPort);
+            throw new DockerImageBuilderException(String.format("Nieprawidłowy adres IP rejestru %s!", registryPort));
         }
     }
 

@@ -54,7 +54,7 @@ public class K8sDbDeployer {
                     composeService.getContainerName(),
                     composeService.getImage(),
                     env,
-                    isSecretApplied ? "secret" : null,
+                    isSecretApplied ? SECRET : null,
                     volumeList,
                     volumeMountList
             );

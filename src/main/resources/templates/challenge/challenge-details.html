@@ -126,7 +126,7 @@
                             hx-target="body"
                             hx-swap="outerHTML"
                             class="btn btn-warning"
-                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'STOPPED'}"
+                            th:disabled="${challenge.status.name() == 'NEW' || challenge.status.name() == 'STOPPED' || challenge.status.name() == 'ERROR'}"
                     >
                     </button>
                     <button
@@ -151,7 +151,7 @@
                 <div>
                     <div
                             th:if="${applicationError != null && !applicationError.isEmpty()}"
-                            class="text-danger fw-bold mt-2 mb-2"
+                            class="text-danger fw-bold mt-2 mb-2 ms-3"
                     >
                         <span th:text="${applicationError}"></span>
                     </div>
