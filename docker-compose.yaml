@@ -1,0 +1,14 @@
+version: 8.8
+
+
+services:
+  app:
+    container_name: CiTiFier
+    image: CiTiFier
+    build:
+      context: . 
+    environment:
+      - PROCESS_SHELL=/bin/bash
+      - PROCESS_CONFIG=-c
+      - REPO_CLONE_PATH=/tmp
+      - 
