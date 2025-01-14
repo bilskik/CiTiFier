@@ -1,0 +1,22 @@
+process:
+  shell: ${PROCESS_SHELL}
+  config: ${PROCESS_CONFIG}
+
+repo:
+  base-file-path: ${REPO_CLONE_PATH}
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+docker:
+  host-ip-address: ${DOCKER_HOST_IP_ADDRESS}
+  docker-registry-port: ${DOCKER_REGISTRY_PORT}
+
+oauth2:
+  github:
+    client-id: ${GITHUB_CLIENT_ID}
+    client-secret: ${GITHUB_CLIENT_SECRET}
+    app-id: ${GITHUB_APP_ID}

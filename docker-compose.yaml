@@ -1,14 +1,12 @@
-version: 8.8
-
+version: "3.8"
 
 services:
-  app:
-    container_name: CiTiFier
-    image: CiTiFier
-    build:
-      context: . 
+  postgres:
+    container_name: postgresdb
+    image: postgres
     environment:
-      - PROCESS_SHELL=/bin/bash
-      - PROCESS_CONFIG=-c
-      - REPO_CLONE_PATH=/tmp
-      - 
+      - 'POSTGRES_DB=db'
+      - 'POSTGRES_USER=user'
+      - 'POSTGRES_PASSWORD=password'
+    ports:
+      - "5432:5432"

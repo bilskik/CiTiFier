@@ -30,7 +30,7 @@ public class FileManagerImpl implements FileManager {
         File directory = new File(filePathWithUuidDirectory);
         if(!directory.mkdir()) {
             log.error("Directory: {} on filepath: {} cannot be created!", dirName, filePathWithUuidDirectory);
-            throw new FileManagerException("Directory on filepath: {} cannot be created!");
+            throw new FileManagerException(String.format("Directory on filepath: %s cannot be created!", filePathWithUuidDirectory));
         }
 
         String[] tokens = splitUrl(url);

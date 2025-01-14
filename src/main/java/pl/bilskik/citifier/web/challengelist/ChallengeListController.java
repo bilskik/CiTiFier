@@ -31,7 +31,7 @@ public class ChallengeListController {
         List<ChallengeDTO> challengeList = challengeDao.findAllByLogin(login);
         challengeList = filterActive(challengeList);
         model.addAttribute("challengeList", challengeList);
-        return "/challenge/challenge-list";
+        return "challenge/challenge-list";
     }
 
     @PostMapping("/redirect")
