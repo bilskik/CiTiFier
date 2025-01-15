@@ -23,7 +23,7 @@ public class ChallengeDetailsController {
     public String getChallengeDetails(Model model, @PathVariable Long challengeId) {
         ChallengeDTO challengeDTO = challengeDetailsService.findChallengeById(challengeId);
         addModelAttributes(model, challengeDTO);
-        return "/challenge/challenge-details";
+        return "challenge/challenge-details";
     }
 
     @PostMapping("/deploy-start")

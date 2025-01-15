@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'pl.bilskik'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
 	sourceCompatibility = '21'
@@ -58,7 +58,6 @@ dependencies {
 
 	integrationTestImplementation 'org.testcontainers:junit-jupiter:1.20.2'
 	integrationTestImplementation "org.testcontainers:k3s:1.20.3"
-//	integrationTestImplementation 'com.dajudge.kindcontainer:kindcontainer:1.4.7'
 
 	integrationTestImplementation 'org.bouncycastle:bcprov-jdk18on:1.79' //k3s container requires it
 	integrationTestImplementation 'org.bouncycastle:bcpkix-jdk18on:1.79' //k3s container requires it
